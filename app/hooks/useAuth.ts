@@ -44,14 +44,13 @@ export const useAuth = () => {
     try {
       const userCredential = await AuthService.googleSignIn();
       console.log('Google Sign In credential:', userCredential);
-    
+      const email = userCredential.email;
+      const defaultUsername = email ? email.split('@')[0] : 'defaultUser';
         console.log('Creating user in Firestore:', userCredential);
         await createUserInFirestore(
           userCredential.uid,
-          userCredential.displayName || 'Anonymous',
-          userCredential.email || '',
-          userCredential.photoURL || '',
-          '' // Bio can be updated later by the user
+          defaultUsername
+         
         );
      
       router.push('/');

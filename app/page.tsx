@@ -1,33 +1,96 @@
 "use client"
 import Image from 'next/image'
-import { useState, useRef } from "react"
+import { useState, useRef, useEffect } from "react"
 import Head from "next/head"
 import Navbar from './components/navigation/Navbar';
 import { useUser } from "./contexts/UserContext";
 import { Poppins } from 'next/font/google';
 import Sidebar from './components/navigation/Sidebar';
 
-
 const poppins = Poppins({
   subsets: ['latin'],
   weight: '600',
 });
 
-
-
 export default function Store() {
   const user = useUser()
-  const [activeGame, setActiveGame] = useState("Wuthering Waves")
+  const [activeGameIndex, setActiveGameIndex] = useState(0)
+  const [progress, setProgress] = useState(0)
+  const [prevGameIndex, setPrevGameIndex] = useState(0)
+  const [isTransitioning, setIsTransitioning] = useState(false)
   const [scrollPosition, setScrollPosition] = useState(0)
-  const carouselRef = useRef<HTMLDivElement>(null)
-console.log(user)
+  const discoverCarouselRef = useRef<HTMLDivElement>(null)
+  const freeGamesCarouselRef = useRef<HTMLDivElement>(null)
+  const newReleasesCarouselRef = useRef<HTMLDivElement>(null)
+
   const games = [
-    { id: 1, title: "Split Fiction", new: false ,img : '/games/split.png'},
-    { id: 2, title: "Grand Theft Auto V", subtitle: "Enhanced", new: false, price: true ,img : '/games/gta.png'},
-    { id: 3, title: "Red Dead 2", new: true , img: '/games/red.png'},
-    { id: 4, title: "Cyber Punk", new: false ,img:'/games/cyber.png'},
-    { id: 5, title: "Black Myth Wukong", subtitle: "Expedition 33", new: false  ,img:'/games/wukong.png'},
-    { id: 6, title: "Horizon zero down", new: false, img:'/games/horizon.png'  },
+    { 
+      id: 1, 
+      title: "Split Fiction", 
+      subtitle: "Base Game",
+      new: false,
+      img: '/games/split.png',
+      bannerDescription: "Experience the thrilling world of Split Fiction. Join millions of players in this action-packed adventure!",
+      status: "NEW RELEASE",
+      price: "Free",
+      banner: '/games/banners/splitfiction.jpeg'
+    },
+    { 
+      id: 2, 
+      title: "Grand Theft Auto V", 
+      subtitle: "Enhanced", 
+      new: false, 
+      img: '/games/gta.png',
+      bannerDescription: "Los Santos: a sprawling metropolis full of self-help gurus, starlets, and fading celebrities.",
+      status: "POPULAR",
+      price: "$29.99",
+      banner: '/games/banners/gtav.png'
+    },
+    { 
+      id: 3, 
+      title: "Red Dead 2", 
+      subtitle: "Base Game",
+      new: true, 
+      img: '/games/red.png',
+      bannerDescription: "America, 1899. Experience the epic tale of Arthur Morgan and the Van der Linde gang.",
+      status: "FEATURED",
+      price: "$59.99",
+      banner: '/games/banners/reddead.png'
+    },
+    { 
+      id: 4, 
+      title: "Cyber Punk", 
+      subtitle: "2.0 Update",
+      new: false,
+      img: '/games/cyber.png',
+      bannerDescription: "Enter the vast open world of Night City in this action-adventure RPG.",
+      status: "UPDATED",
+      price: "$49.99",
+      banner: '/games/banners/cyberpunk.png'
+    },
+    { 
+      id: 5, 
+      title: "Black Myth Wukong", 
+      subtitle: "Expedition 33", 
+      new: false,
+      img: '/games/wukong.png',
+      bannerDescription: "Embark on a legendary journey inspired by Chinese mythology.",
+      status: "COMING SOON",
+      price: "$69.99",
+      banner: '/games/banners/wukong.png'
+    },
+    { 
+      id: 6, 
+      title: "Horizon Zero Dawn", 
+      subtitle: "Complete Edition",
+      new: false, 
+      img: '/games/horizon.png',
+      bannerDescription: "Experience Aloy's entire legendary quest to unravel the mysteries of a world ruled by deadly machines.",
+      status: "BEST SELLER",
+      price: "$49.99",
+      banner: '/games/banners/horizon.png'
+    },
+    
   ]
 
   const discoverGames = [
@@ -37,25 +100,71 @@ console.log(user)
     { id: 4, title: "God of war", tag: "WINDOWS 10+ PRE-RELEASE", img: '/games/gow.png', price: 59.99, discount: 33 },
     { id: 5, title: "Forza horizon 5", tag: "", img: '/games/forza.png', price: 59.99 },
     { id: 6, title: "The witcher 3", tag: "", img: '/games/thewitcher3.png', price: 39.99, discount: 50 },
-    { id: 3, title: "EA FC25", tag: "", img: '/games/fc25.png', price: 69.99 },
-    { id: 4, title: "God of war", tag: "WINDOWS 10+ PRE-RELEASE", img: '/games/gow.png', price: 59.99, discount: 33 },
-    { id: 5, title: "Forza horizon 5", tag: "", img: '/games/forza.png', price: 59.99 },
-    { id: 6, title: "The witcher 3", tag: "", img: '/games/thewitcher3.png', price: 39.99, discount: 50 },
+    { id: 7, title: "EA FC25", tag: "", img: '/games/fc25.png', price: 69.99 },
+    { id: 8, title: "God of war", tag: "WINDOWS 10+ PRE-RELEASE", img: '/games/gow.png', price: 59.99, discount: 33 },
+    { id: 9, title: "Forza horizon 5", tag: "", img: '/games/forza.png', price: 59.99 },
+    { id: 10, title: "The witcher 3", tag: "", img: '/games/thewitcher3.png', price: 39.99, discount: 50 },
+    { id: 11, title: "The witcher 3", tag: "", img: '/games/thewitcher3.png', price: 39.99, discount: 50 },
+    { id: 12, title: "EA FC25", tag: "", img: '/games/fc25.png', price: 69.99 },
+    { id: 13, title: "God of war", tag: "WINDOWS 10+ PRE-RELEASE", img: '/games/gow.png', price: 59.99, discount: 33 },
+    { id: 14, title: "Forza horizon 5", tag: "", img: '/games/forza.png', price: 59.99 },
+    { id: 15, title: "The witcher 3", tag: "", img: '/games/thewitcher3.png', price: 39.99, discount: 50 },
   ]
 
-  const scrollCarousel = (direction: "left" | "right") => {
+  const scrollCarousel = (direction: "left" | "right", carouselRef: React.RefObject<HTMLDivElement>) => {
     if (carouselRef.current) {
       const scrollAmount = 300
-      const newPosition = direction === "left" ? scrollPosition - scrollAmount : scrollPosition + scrollAmount
+      const currentScroll = carouselRef.current.scrollLeft
+      const newPosition = direction === "left" ? currentScroll - scrollAmount : currentScroll + scrollAmount
 
       carouselRef.current.scrollTo({
         left: newPosition,
         behavior: "smooth",
       })
-
-      setScrollPosition(newPosition)
     }
   }
+
+  useEffect(() => {
+    const duration = 8000; 
+    const interval = 50;
+    setProgress(0); 
+  
+    let elapsed = 0;
+    
+    const progressTimer = setInterval(() => {
+      setProgress((prev) => {
+        const newProgress = prev + (interval / duration) * 100;
+        return newProgress >= 100 ? 100 : newProgress; 
+      });
+      elapsed += interval;
+    }, interval);
+  
+  
+    const gameTimer = setTimeout(() => {
+      clearInterval(progressTimer);
+      setIsTransitioning(true);
+  
+      setTimeout(() => {
+        setPrevGameIndex(activeGameIndex);
+        setActiveGameIndex((current) => (current + 1) % games.length);
+        setIsTransitioning(false);
+      }, 500);
+    }, duration);
+  
+    return () => {
+      clearInterval(progressTimer);
+      clearTimeout(gameTimer);
+    };
+  }, [activeGameIndex]);
+  
+  useEffect(() => {
+    if (isTransitioning) {
+      const timeout = setTimeout(() => {
+        setIsTransitioning(false);
+      }, 500); // Match this with the CSS transition duration
+      return () => clearTimeout(timeout);
+    }
+  }, [isTransitioning]);
 
   return (
     <>
@@ -74,54 +183,123 @@ console.log(user)
           {/* Main content area */}
           <div className="flex-1 overflow-auto">
             <div className="h-full overflow-auto">
-              {/* Featured game banner */}
-              <div className="relative">
-                <div className="relative h-[400px] md:h-[500px] bg-gradient-to-r from-[#1a1a2e] to-[#16213e] overflow-hidden">
-                  {/* Diagonal line */}
-                  <div className="absolute h-[200%] w-1 bg-white/30 transform rotate-[15deg] left-1/2 -translate-x-1/2 top-[-50%]"></div>
-
-                  {/* Left side character silhouette */}
-                  <div className="absolute left-[15%] bottom-0 w-[300px] h-[450px] opacity-30">
-                    <div className="absolute bottom-0 w-full h-[70%] bg-gradient-to-t from-[#1a1a2e] to-transparent"></div>
+              {/* Featured game banner with right sidebar */}
+              <div className="relative px-6 py-4 flex gap-4">
+                {/* Main banner - REDUCED WIDTH BY 20% using w-4/5 */}
+                <div className="relative h-[400px] md:h-[625px] overflow-hidden xl:w-3/4 w-full rounded-xl">
+                  {/* Previous image */}
+                  <div
+                    className={`absolute inset-0 transition-all duration-500 ease-in-out transform  
+                      ${isTransitioning ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}
+                  >
+                    <Image
+                      src={games[prevGameIndex].banner}
+                      fill
+                      alt=""
+                      className="object-cover object-center w-full h-full rounded-xl"
+                      priority
+                      sizes="(max-width: 1200px) 100vw, 1200px"
+                      quality={100}
+                    />
                   </div>
 
-                  {/* Right side character silhouette */}
-                  <div className="absolute right-[10%] bottom-0 w-[350px] h-[450px] opacity-30">
-                    <div className="absolute bottom-0 w-full h-[70%] bg-gradient-to-t from-[#16213e] to-transparent"></div>
+                  {/* Current image */}
+                  <div
+                    className={`absolute inset-0 transition-all duration-500 ease-in-out transform
+                      ${isTransitioning ? 'translate-x-full opacity-0' : 'translate-x-0 opacity-100'}`}
+                  >
+                    <Image
+                      src={games[activeGameIndex].banner}
+                      fill
+                      alt=""
+                      className="object-cover object-center w-full h-full rounded-xl"
+                      priority
+                      sizes="(max-width: 1200px) 100vw, 1200px"
+                      quality={100}
+                    />
                   </div>
 
                   {/* Gradient overlay */}
-                  <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/40 to-transparent"></div>
+                  <div className="absolute inset-0 bg-gradient-to-r from-black/70 via-black/40 to-transparent rounded-xl" />
+
+                  {/* Content */}
+                  <div className="absolute bottom-0 left-0 p-8 max-w-xl">
+                    <div className={`transition-all duration-500 transform
+                      ${isTransitioning ? 'translate-x-12 opacity-0' : 'translate-x-0 opacity-100'}`}>
+                      <div className="mb-2">
+                        <span className="text-xs font-bold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                          {games[activeGameIndex].status}
+                        </span>
+                      </div>
+                      <div className="mb-4">
+                        <h1 className="text-5xl text-white/90 font-bold tracking-wide mb-2">
+                          {games[activeGameIndex].title}
+                        </h1>
+                        <p className="text-base text-gray-200 leading-relaxed">
+                          {games[activeGameIndex].bannerDescription}
+                        </p>
+                      </div>
+                      <div className="mb-6">
+                        <span className="text-2xl font-bold">{games[activeGameIndex].price}</span>
+                      </div>
+                      <div className="flex items-center space-x-4">
+                        <button className="bg-white/95 hover:bg-white  text-black font-semibold px-8 py-3 rounded-lg transition-colors">
+                          Buy Now
+                        </button>
+                        <button className="bg-black/30 backdrop-blur-sm border border-white/20 font-semibold px-6 py-3 rounded hover:bg-white/10 transition-colors">
+                          Add to Wishlist
+                        </button>
+                      </div>
+                    </div>
+                  </div>
                 </div>
 
-                <div className="absolute bottom-0 left-0 p-6 md:p-10 max-w-xl">
-                  <div className="mb-6">
-                    <h1 className="text-4xl font-bold tracking-wider uppercase mb-2">WUTHERING WAVES</h1>
-                  </div>
-                  <div className="mb-2">
-                    <span className="text-xs font-bold bg-green-500 px-2 py-1 rounded">NEW UPDATE</span>
-                  </div>
-                  <p className="text-sm md:text-base mb-4">
-                    Version 2.1 "Waves Sing, and the Cerulean Bird Calls" is here! Join to convene 5-star Resonators
-                    "Brant" and "Changli"!
-                  </p>
-                  <div className="mb-4">
-                    <span className="font-bold">Free</span>
-                  </div>
-                  <div className="flex items-center space-x-3">
-                    <button className="bg-white text-black hover:bg-gray-200 font-bold px-6 py-2 rounded-sm transition-colors">
-                      Play For Free
-                    </button>
-                    <button className="border border-white font-semibold  flex items-center gap-2 rounded-sm px-4 py-2 hover:bg-white/10 transition-colors">
-                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                        <path
-                          d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                        />
-                      </svg>
-                      Add to Wishlist
-                    </button>
+                {/* Right sidebar with game thumbnails */}
+                <div className="w-[350px] bg-[#111111] hidden xl:block font-medium">
+                  <div className="h-full overflow-auto">
+                    <div className="p-4">
+                      {games.map((game, index) => (
+                        <div
+                          key={game.id}
+                          className={`relative flex items-center p-2 rounded-lg mb-2 cursor-pointer transition-colors overflow-hidden
+                            ${activeGameIndex === index ? "bg-[#303030]" : "hover:bg-[#252525]"}`}
+                          onClick={() => {
+                            setPrevGameIndex(activeGameIndex);
+                            setIsTransitioning(true);
+                            setActiveGameIndex(index);
+                            setProgress(0);
+                          }}
+                        >
+                          {/* Loading indicator overlay */}
+                          {activeGameIndex === index && (
+                            <div 
+                              className="absolute inset-0 bg-white/10 transition-all duration-100"
+                              style={{ 
+                                width: `${progress}%`,
+                              }}
+                            />
+                          )}
+
+                          {/* Game thumbnail */}
+                          <div className="w-16 h-20 relative flex-shrink-0">
+                            <Image
+                              src={game.img}
+                              alt={game.title}
+                              fill
+                              className="object-cover rounded"
+                            />
+                          </div>
+
+                          {/* Game info */}
+                          <div className="ml-3 flex-1">
+                            <h3 className="text-sm font-semibold">{game.title}</h3>
+                            {game.subtitle && (
+                              <p className="text-xs text-gray-400">{game.subtitle}</p>
+                            )}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -133,7 +311,7 @@ console.log(user)
                   <div className="flex space-x-2">
                     <button
                       className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
-                      onClick={() => scrollCarousel("left")}
+                      onClick={() => scrollCarousel("left", discoverCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="15 18 9 12 15 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -141,7 +319,7 @@ console.log(user)
                     </button>
                     <button
                       className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
-                      onClick={() => scrollCarousel("right")}
+                      onClick={() => scrollCarousel("right", discoverCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="9 18 15 12 9 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -151,13 +329,13 @@ console.log(user)
                 </div>
 
                 <div
-                  ref={carouselRef}
+                  ref={discoverCarouselRef}
                   className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                   {discoverGames.map((game, index) => (
                     <div
-                      key={index}
+                      key={`discover-${game.id}-${index}`}
                       className="flex-shrink-0 w-[180px] rounded-lg overflow-hidden group cursor-pointer"
                     >
                       <div className="relative aspect-[3/4] h-[240px]">
@@ -169,7 +347,7 @@ console.log(user)
                         <Image 
                           src={game.img || ''} 
                           fill
-                          alt='' 
+                          alt={game.title} 
                           className='rounded-lg object-cover'
                         /> 
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
@@ -179,7 +357,7 @@ console.log(user)
                         </div>
                       </div>
                       <div className="mt-2">
-                        <h3 className="text-sm font-medium text-white">{game.title}</h3>
+                        <h3 className={`text-sm ${poppins.className} text-white`}>{game.title}</h3>
                         <p className="text-xs text-gray-400 mt-1">Base Game</p>
                         <div className="mt-2 flex items-center gap-2">
                           {game.discount && (
@@ -212,7 +390,7 @@ console.log(user)
                   <div className="flex space-x-2">
                     <button
                       className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
-                      onClick={() => scrollCarousel("left")}
+                      onClick={() => scrollCarousel("left", freeGamesCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="15 18 9 12 15 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -220,7 +398,7 @@ console.log(user)
                     </button>
                     <button
                       className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
-                      onClick={() => scrollCarousel("right")}
+                      onClick={() => scrollCarousel("right", freeGamesCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="9 18 15 12 9 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -230,13 +408,13 @@ console.log(user)
                 </div>
 
                 <div
-                  ref={carouselRef}
+                  ref={freeGamesCarouselRef}
                   className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                   {discoverGames.map((game, index) => (
                     <div
-                      key={index}
+                      key={`free-${game.id}-${index}`}
                       className="flex-shrink-0 w-[180px] rounded-lg overflow-hidden group cursor-pointer"
                     >
                       <div className="relative aspect-[3/4] h-[240px]">
@@ -248,7 +426,7 @@ console.log(user)
                         <Image 
                           src={game.img || ''} 
                           fill
-                          alt='' 
+                          alt={game.title} 
                           className='rounded-lg object-cover'
                         /> 
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
@@ -291,7 +469,7 @@ console.log(user)
                   <div className="flex space-x-2">
                     <button
                       className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
-                      onClick={() => scrollCarousel("left")}
+                      onClick={() => scrollCarousel("left", newReleasesCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="15 18 9 12 15 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -299,7 +477,7 @@ console.log(user)
                     </button>
                     <button
                       className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
-                      onClick={() => scrollCarousel("right")}
+                      onClick={() => scrollCarousel("right", newReleasesCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
                         <polyline points="9 18 15 12 9 6" strokeLinecap="round" strokeLinejoin="round" />
@@ -309,13 +487,13 @@ console.log(user)
                 </div>
 
                 <div
-                  ref={carouselRef}
+                  ref={newReleasesCarouselRef}
                   className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                   {discoverGames.map((game, index) => (
                     <div
-                      key={index}
+                      key={`new-${game.id}-${index}`}
                       className="flex-shrink-0 w-[180px] rounded-lg overflow-hidden group cursor-pointer"
                     >
                       <div className="relative aspect-[3/4] h-[240px]">
@@ -327,7 +505,7 @@ console.log(user)
                         <Image 
                           src={game.img || ''} 
                           fill
-                          alt='' 
+                          alt={game.title} 
                           className='rounded-lg object-cover'
                         /> 
                         <div className="absolute inset-0 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-black/40">
@@ -366,40 +544,7 @@ console.log(user)
           </div>
 
           {/* Right sidebar */}
-          <div className="w-[250px] bg-[#111111] hidden xl:block border-l border-[#2a2a2a] font-medium">
-            <div className="h-full overflow-auto">
-              <div className="p-4">
-                {games.map((game, index) => (
-                  <div
-                    key={index}
-                    className={`flex items-center p-2 rounded-lg mb-2 cursor-pointer transition-colors ${
-                      activeGame === game.title ? "bg-[#303030]" : "hover:bg-[#252525]"
-                    }`}
-                    onClick={() => setActiveGame(game.title)}
-                  >
-                    <div className="relative w-12 h-16 mr-3 bg-gradient-to-br from-[#333] to-[#222] rounded flex items-center justify-center overflow-hidden">
-                      {/* Game thumbnail placeholder */}
-                      <div className="absolute inset-0 flex items-center justify-center">
-                       <Image src={game.img || ''} width={100} height={200} alt={''}></Image>
-                      </div>
-
-                     
-                    </div>
-                    <div className="text-sm">
-                      {game.subtitle ? (
-                        <>
-                          <div>{game.title}</div>
-                          <div className="text-gray-400">{game.subtitle}</div>
-                        </>
-                      ) : (
-                        game.title
-                      )}
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+        
         </div>
       </div>
 
@@ -418,4 +563,3 @@ console.log(user)
     </>
   )
 }
-
