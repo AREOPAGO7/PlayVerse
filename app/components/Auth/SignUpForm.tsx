@@ -3,7 +3,6 @@ import { useState } from 'react';
 import { useAuth } from '../../hooks/useAuth';
 import Image from 'next/image';
 import { Poppins } from 'next/font/google';
-import AuthPopup from '../Auth/AuthPopup';
 import { FaRegEye } from "react-icons/fa6";
 import { LuEyeClosed } from "react-icons/lu";
 import { createUserInFirestore } from '@/app/services/UserServiceFirebase';
@@ -16,10 +15,10 @@ const poppins = Poppins({
 });
 interface SignInProps {
   onClose: () => void;
-  toggleAuth: () => void;
+  // toggleAuth: () => void;
 }
 
-const SignUpForm = ({ toggleAuth }: SignInProps) => {
+const SignUpForm = ({  }: SignInProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');

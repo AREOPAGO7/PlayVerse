@@ -1,5 +1,6 @@
 "use client"
 import { useState, useEffect, useRef } from "react";
+import Image from 'next/image';
 import { collection, getDocs, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import TopicCard from "@/app/components/forum/TopicCard";
@@ -189,75 +190,46 @@ export default function ForumsPage() {
         }
     };
     
-    // Update the topics grid section
-    <div className="grid gap-4 md:gap-6">
-        {loading ? (
-            <div className="flex items-center justify-center py-8">
-                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-green-500"></div>
-            </div>
-        ) : error ? (
-            <div className="text-red-500 text-center py-8">{error}</div>
-        ) : (
-            topics
-                .filter(topic => selectedCategory === 'all' || topic.category === selectedCategory)
-                .sort((a, b) => b.createdAt.seconds - a.createdAt.seconds)
-                .map(topic => (
-                    <div 
-                        key={topic.id} 
-                        onClick={() => handleTopicClick(topic.id)}
-                        className={`cursor-pointer transition-opacity ${isLoadingTopic ? 'opacity-50' : 'opacity-100'}`}
-                    >
-                        <TopicCard
-                            topic={topic}
-                            onClick={() => handleTopicClick(topic.id)}
-                        />
-                    </div>
-                ))
-        )}
-    </div>
     
-    {/* Update the create topic button */}
-    // Remove the duplicate button section and update the header section
-    <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-white">Forums</h1>
-        <div className="flex flex-wrap gap-2 md:gap-4">
-            <button
-                onClick={() => setShowNewTopicForm(true)}
-                className="bg-zinc-600 hover:bg-green-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base"
-                disabled={isUploading}
-            >
-                {isUploading ? (
-                    <div className="flex items-center gap-2">
-                        <div className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full"></div>
-                        <span>Creating...</span>
-                    </div>
-                ) : (
-                    'New Topic'
-                )}
-            </button>
-        </div>
-    </div>
-
+    
+    // Remove these sections that are outside the return statement
+    // Delete from line 225-238:
+  
+    // Keep the button that's already inside the return statement (around line 350)
     return (
         <div className="font-medium bg-[#111111] min-h-screen">
             <div className="fixed top-0 w-full z-50">
                 <Navbar />
             </div>
             <div className="flex flex-col md:flex-row">
-                <div className="fixed left-0 h-screen hidden 2xl:block pt-[72.5px]">
+                <div className="fixed left-0 h-screen hidden 2xl:block pt-[72.5px] border-r border-white/5  ">
                     <Sidebar />
                 </div>
-                <main className="flex-1 p-4 md:p-8 2xl:ml-64 pt-16 overflow-y-auto w-full">
+                <main className="flex-1 p-4 md:p-8 2xl:ml-64 pt-16 overflow-y-auto w-full mt-20">
                     <div className="max-w-[90%] mx-auto">
-                        {/* Header with New Topic button */}
-                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8 ">
-                            <h1 className="text-2xl md:text-3xl font-bold text-white ">Forums</h1>
+                        {/* This is the working button section */}
+                        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
+                            <h1 className="text-2xl md:text-3xl font-bold text-white">Forums</h1>
                             <div className="flex flex-wrap gap-2 md:gap-4">
                                 <button
                                     onClick={() => setShowNewTopicForm(true)}
-                                    className="bg-zinc-600 hover:bg-green-700 text-white px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base"
+                                    className="hover:bg-green-700 border border-white/10 text-white/80 px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base flex items-center gap-2"
                                     disabled={isUploading}
                                 >
+                                    <svg
+                                        xmlns="http://www.w3.org/2000/svg"
+                                        className="h-4 w-4 text-white/60 mr-1"
+                                        fill="none"
+                                        viewBox="0 0 24 24"
+                                        stroke="currentColor"
+                                    >
+                                        <path
+                                            strokeLinecap="round"
+                                            strokeLinejoin="round"
+                                            strokeWidth={2}
+                                            d="M12 4v16m8-8H4"
+                                        />
+                                    </svg>
                                     {isUploading ? (
                                         <div className="flex items-center gap-2">
                                             <div className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full"></div>
@@ -275,16 +247,31 @@ export default function ForumsPage() {
                             <div className="mb-8 border border-white/10 p-6 rounded-lg">
                                 <div className="flex justify-between items-start gap-4 mb-4">
                                     <h2 className="text-xl font-semibold text-white">Create New Topic</h2>
-                                    <select
-                                        value={selectedCategory1}
-                                        onChange={(e) => setSelectedCategory1(e.target.value)}
-                                        className="w-48 p-2 rounded-lg border bg-[#111] border-white/10 text-white text-sm"
-                                    >
-                                        <option value="general">General Discussion</option>
-                                        <option value="gaming">Gaming</option>
-                                        <option value="tech">Technology</option>
-                                        <option value="offtopic">Off Topic</option>
-                                    </select>
+                                    <div className="relative">
+                                        <select
+                                            value={selectedCategory1}
+                                            onChange={(e) => setSelectedCategory1(e.target.value)}
+                                            className="p-2 pr-8 rounded-lg border bg-[#111] border-white/10 text-white/80 text-sm appearance-none text-center w-28"
+                                        >
+                                            <option value="general">General</option>
+                                            <option value="gaming">Gaming</option>
+                                            <option value="tech">Technology</option>
+                                            <option value="offtopic">Off Topic</option>
+                                        </select>
+                                        <svg
+                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none"
+                                            fill="none"
+                                            stroke="currentColor"
+                                            viewBox="0 0 24 24"
+                                        >
+                                            <path
+                                                strokeLinecap="round"
+                                                strokeLinejoin="round"
+                                                strokeWidth={2}
+                                                d="M19 9l-7 7-7-7"
+                                            />
+                                        </svg>
+                                    </div>
                                 </div>
                                 <input
                                     type="text"
@@ -299,7 +286,7 @@ export default function ForumsPage() {
                                     placeholder="Topic Description"
                                     className="w-full p-3 mb-4 rounded-lg border bg-[#111] border-white/10 text-white placeholder:text-zinc-400 min-h-[100px]"
                                 />
-                                // Update the media preview section in the form
+                               
                                 <div className="mb-4">
                                     <input
                                         type="file"
@@ -316,8 +303,8 @@ export default function ForumsPage() {
                                         <span className="text-zinc-400">Attach Media</span>
                                     </button>
                                     {mediaPreview && (
-                                        <div className="mt-4 relative w-full">
-                                            <div className="relative aspect-video w-full max-w-2xl mx-auto bg-black/20 rounded-lg overflow-hidden">
+                                        <div className=" relative w-full">
+                                            <div className="relative aspect-video w-full max-w-[30rem] mt-4  rounded-lg overflow-hidden">
                                                 {mediaFile?.type.startsWith('video') ? (
                                                     <video 
                                                         src={mediaPreview} 
@@ -325,10 +312,12 @@ export default function ForumsPage() {
                                                         controls 
                                                     />
                                                 ) : (
-                                                    <img 
+                                                    <Image
                                                         src={mediaPreview} 
                                                         alt="Preview" 
-                                                        className="w-full h-full object-contain" 
+                                                        className=" object-contain rounded-xl" 
+                                                        width={400}
+                                                        height={400}
                                                     />
                                                 )}
                                                 <button
@@ -336,7 +325,7 @@ export default function ForumsPage() {
                                                         setMediaFile(null);
                                                         setMediaPreview(null);
                                                     }}
-                                                    className="absolute top-2 right-2 p-2 bg-black/50 backdrop-blur-sm rounded-full text-white hover:bg-red-600 transition-colors"
+                                                    className={`absolute top-1  left-1  p-2 bg-white/20 backdrop-blur-sm rounded-full text-white hover:bg-red-600 transition-colors`}
                                                 >
                                                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />

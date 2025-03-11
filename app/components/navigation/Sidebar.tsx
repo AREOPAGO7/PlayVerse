@@ -10,7 +10,7 @@ const Sidebar = () => {
   const pathname = usePathname(); // Get the current pathname
 
   return (
-    <div className="w-[325px]  h-full bg-[#111111] hidden lg:block border-r border-white/5 ">
+    <div className="w-[325px]  h-full bg-[#111111] hidden lg:block  ">
       <div className=" flex flex-col mt-2">
         <nav className="p-2">
           {/* Store link */}

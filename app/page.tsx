@@ -176,9 +176,11 @@ export default function Store() {
 
       <div className="flex flex-col h-screen bg-[#111111] text-white overflow-hidden font-sans">
        <Navbar/>
-        <div className="flex flex-1 overflow-hidden">
-       
+        <div className="flex flex-1 overflow-hidden ">
+       <div className='border-r border-white/5'>
          <Sidebar/>
+       </div>
+        
 
           {/* Main content area */}
           <div className="flex-1 overflow-auto">

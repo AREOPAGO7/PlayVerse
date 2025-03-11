@@ -169,7 +169,10 @@ const Library = () => {
 
             <div className="flex flex-1 overflow-hidden"> {/* Added overflow-hidden */}
                 {/* Fixed Sidebar on the Left */}
-                <Sidebar />
+                <div className="border-r border-white/5">
+                     <Sidebar  />
+                </div>
+               
 
                 {/* Main Content Area */}
                 <div className="flex-1">

@@ -13,10 +13,10 @@ const poppins = Poppins({
 });
 interface SignInProps {
   onClose: () => void;
-  toggleAuth: () => void;
+  // toggleAuth: () => void;
 }
 
-const LoginForm = ({ toggleAuth }: SignInProps) => {
+const LoginForm = ({  }: SignInProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [rememberMe, setRememberMe] = useState(false);

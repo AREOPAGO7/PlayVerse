@@ -36,7 +36,7 @@ const ProfileModel: React.FC<ProfileModelProps> = ({ isOpen, onClose }) => {
         {/* Profile Header */}
         <div className="flex items-center gap-3 p-2 border-b border-white/10">
           <Image
-            src={user.profilePictureUrl || "https://github.com/shadcn.png"}
+            src={user.avatar || "https://github.com/shadcn.png"}
             alt="Profile"
             width={48}
             height={48}
@@ -44,7 +44,7 @@ const ProfileModel: React.FC<ProfileModelProps> = ({ isOpen, onClose }) => {
           />
           <div>
             <h2 className="font-bold text-white">{user.username}</h2>
-            <p className="text-sm text-zinc-400">{user.email}</p>
+            <p className="text-sm text-zinc-400">{user.level}</p>
           </div>
         </div>
 

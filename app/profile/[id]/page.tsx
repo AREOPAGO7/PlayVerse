@@ -148,7 +148,10 @@ const statusColors = {
       <Navbar />
       
       <div className="flex flex-1 overflow-hidden">
-        <Sidebar />
+        <div className='border-r border-white/10'>
+           <Sidebar />
+        </div>
+       
         
         <div className="flex-1">
           <div className="h-full overflow-y-auto">

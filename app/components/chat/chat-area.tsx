@@ -37,7 +37,7 @@ export default function ChatArea({ messages, users, currentUser, activeChat, onS
       {/* Chat Header */}
       <div className="p-4 border-b border-zinc-800 flex items-center gap-3">
         <div className="w-10 h-10 rounded-full overflow-hidden">
-          <img
+          <Image
             src={getOtherUser(activeChat).avatar || "/placeholder.svg"}
             alt={getOtherUser(activeChat).username}
             className="w-full h-full object-cover"

@@ -4,7 +4,10 @@ import { useRouter } from 'next/navigation';
 import { AuthService } from '../services/userService';
 import { useAuthContext } from '../contexts/AuthContext';
 import { createUserInFirestore } from '../services/UserServiceFirebase';
-
+interface AuthError {
+  code: string;
+  message: string;
+}
 export const useAuth = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -17,7 +20,7 @@ export const useAuth = () => {
     try {
       await AuthService.login(email, password);
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -31,7 +34,7 @@ export const useAuth = () => {
       const uid = await AuthService.signup(email, password, name);
       router.push('/');
       return uid;
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -54,7 +57,7 @@ export const useAuth = () => {
         );
      
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Google Sign In error:', err);
       setError(AuthService.getErrorMessage(err));
     } finally {
@@ -70,7 +73,7 @@ export const useAuth = () => {
     try {
       await AuthService.githubSignIn(); // Call the new GitHub sign-in method
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -83,7 +86,7 @@ export const useAuth = () => {
     try {
       await AuthService.logout();
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -95,7 +98,7 @@ export const useAuth = () => {
     setError('');
     try {
       const message = await AuthService.resetPassword(email); // Set success message as error to display it
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err)); // Use the getErrorMessage method for specific error handling
     } finally {
       setLoading(false);

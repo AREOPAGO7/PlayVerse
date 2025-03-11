@@ -26,13 +26,13 @@ export default function Navbar() {
 
     <header className="flex items-center px-4 py-4 bg-[#111111] border-b border-white/10">
       <div className="flex items-center">
-        <a href="/" className="mr-64">
+        <Link href="/" className="mr-64">
           <div className="w-10 h-10 rounded flex items-center justify-center">
             {/* <Image src='/logo.png' width={100} height={100} alt={''}></Image> */}
             <p className={` ${poppins.className} ml-28 text-lg`}>PlayVerse </p><span
               className='text-[10px] mt-[0.20rem] ml-1 font-bold text-green-400'>v1.0</span>
           </div>
-        </a>
+        </Link>
         <button className="p-2 mr-2 rounded-full hover:bg-[#303030] lg:flex hidden">
          
         </button>

@@ -21,9 +21,9 @@ const AuthPopup: React.FC<AuthPopupProps> = ({ onClose, isSignUp, toggleAuth }) 
       {/* Auth Container */}
       <div className="relative z-10 w-full max-w-md bg-white rounded-lg  p-6 shadow-xl transition-all duration-300 ease-in-out">
         {isSignUp ? (
-          <SignUp onClose={onClose} toggleAuth={toggleAuth} />
+          <SignUp onClose={onClose} />
         ) : (
-          <SignIn onClose={onClose} toggleAuth={toggleAuth} />
+          <SignIn onClose={onClose}  />
         )}
         <div className="mt-4 text-center text-sm">
           <span className="text-gray-500">

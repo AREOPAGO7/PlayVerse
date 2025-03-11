@@ -182,8 +182,11 @@ const Browse = () => {
             <Navbar />
 
             <div className="flex flex-1 overflow-hidden"> {/* Added overflow-hidden */}
+                <div className="border-r border-white/5">
+                     <Sidebar />
+                </div>
                 {/* Fixed Sidebar on the Left */}
-                <Sidebar />
+               
 
                 {/* Main Content Area */}
                 <div className="flex-1">
