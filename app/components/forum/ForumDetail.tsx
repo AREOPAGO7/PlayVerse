@@ -9,7 +9,7 @@ interface Post {
   id: string;
   content: string;
   userId: string;
-  createdAt: any;
+  createdAt: Timestamp;
   username: string;
   userAvatar: string;
   replyTo?: {
@@ -29,9 +29,6 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
   const [replyingTo, setReplyingTo] = useState<Post | null>(null);
   const { user } = useUser();
 
-  useEffect(() => {
-    fetchPosts();
-  }, [forumId]);
 
   const fetchPosts = async () => {
     try {
@@ -58,6 +55,9 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
       console.error("Error fetching posts:", error);
     }
   };
+  useEffect(() => {
+    fetchPosts();
+  }, [forumId, fetchPosts]);
 
   const handleCreatePost = async () => {
     if (!user || !newPost.trim()) return;

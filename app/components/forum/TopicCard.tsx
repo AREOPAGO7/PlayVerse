@@ -1,4 +1,5 @@
 import { ForumTopic } from "@/app/types/forum";
+import Image from 'next/image';
 import { formatDistanceToNow } from "date-fns";
 import { FaReply } from "react-icons/fa";
 
@@ -28,10 +29,12 @@ export default function TopicCard({ topic, onClick }: { topic: ForumTopic; onCli
                                     controls
                                 />
                             ) : topic.mediaType === 'image' && (
-                                <img 
+                                <Image
                                     src={topic.mediaUrl} 
                                     alt={topic.title}
                                     className="w-full h-full object-cover"
+                                    width={400}
+                                    height={400}
                                 />
                             )}
                         </div>

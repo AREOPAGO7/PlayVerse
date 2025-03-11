@@ -1,5 +1,5 @@
 "use client"
-
+import Image from 'next/image';
 import { useRef, useEffect } from "react"
 import Message from "./message"
 import MessageInput from "./message-input"
@@ -41,6 +41,8 @@ export default function ChatArea({ messages, users, currentUser, activeChat, onS
             src={getOtherUser(activeChat).avatar || "/placeholder.svg"}
             alt={getOtherUser(activeChat).username}
             className="w-full h-full object-cover"
+            width={10}
+            height={10}
           />
         </div>
         <div>
