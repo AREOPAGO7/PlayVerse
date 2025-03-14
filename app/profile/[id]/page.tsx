@@ -48,8 +48,8 @@ const UserProfilePage = () => {
         const docSnap = await getDoc(docRef)
 
         if (docSnap.exists()) {
-          setProfileData({ id: docSnap.id, ...docSnap.data() } as User)
-          setEditedUser({ id: docSnap.id, ...docSnap.data() } as User)
+          setProfileData({ id: docSnap.id, ...docSnap.data() } as unknown as User)
+          setEditedUser({ id: docSnap.id, ...docSnap.data() } as unknown as User)
         } else {
           const newUser = {
             uid: user.uid,
