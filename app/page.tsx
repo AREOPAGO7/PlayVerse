@@ -343,7 +343,7 @@ export default function Store() {
                       ${isTransitioning ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'}`}
                   >
                     <Image
-                      src={games[prevGameIndex]?.banner || '/games/banners/placeholder.jpg'}
+                      src={games[activeGameIndex]?.banner || '/games/banners/placeholder.jpg'}
                       fill
                       alt=""
                       className="object-cover object-center w-full h-full rounded-xl"
