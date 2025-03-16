@@ -13,6 +13,7 @@ import UserBio from "../../components/profile/user-bio"
 import LevelProgress from "../../components/profile/level-progress"
 import FavoriteGame from "../../components/profile/favourite-game"
 import AchievementsSection from "../../components/profile/achievements-section"
+import Spinner from "@/app/components/spinners/Spinner"
 
 // Types
 interface User {
@@ -102,26 +103,26 @@ const UserProfilePage = () => {
   if (loading) {
     return (
       <div className="min-h-screen bg-[#111111] flex items-center justify-center">
-        <div className="w-12 h-12 rounded-full border-4 border-zinc-800 border-t-green-500 animate-spin"></div>
+       <Spinner />
       </div>
     )
   }
 
   if (!profileData) {
     return (
-      <div className="min-h-screen bg-[#111111] flex items-center justify-center text-white">No profile data found</div>
+      <div className="min-h-screen bg-[#111111] flex items-center justify-center text-white light:bg-light light:text-black/80">No profile data found</div>
     )
   }
 
   return (
-    <div className="min-h-screen bg-[#111111] text-white">
+    <div className="min-h-screen bg-[#111111] text-white light:bg-light light:text-black/80">
       <Navbar />
       <div className="flex">
         <Sidebar />
         <div className="flex-1 p-4 max-w-7xl mx-auto">
           {/* Banner area */}
           <div className="relative mb-20">
-            <div className="h-64 rounded-lg overflow-hidden border-2 border-zinc-800">
+            <div className="h-64 rounded-lg overflow-hidden ">
               {editing ? (
                 <ImageUploader
                   onUpload={(url) => handleFieldChange("banner", url)}
@@ -143,12 +144,12 @@ const UserProfilePage = () => {
             </div>
 
             {/* Edit/save buttons */}
-            <div className="absolute right-4 top-4 z-10">
+            <div className="absolute right-4 top-4 z-10 light:text-black/80">
               {editing ? (
                 <div className="flex gap-2">
                   <button
                     onClick={handleSaveProfile}
-                    className="bg-green-500 p-2 rounded-full hover:bg-green-600 transition-colors border border-zinc-700"
+                    className="bg-green-500 p-2 rounded-full hover:bg-green-600 transition-colors border border-zinc-700 light:bg-zinc-200 light:text-black/80 light:hover:bg-zinc-300"
                     title="Save changes"
                   >
                     <svg
@@ -166,7 +167,7 @@ const UserProfilePage = () => {
                       setEditing(false)
                       setEditedUser(profileData)
                     }}
-                    className="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700 transition-colors border border-zinc-700"
+                    className="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700 transition-colors border border-zinc-700 light:bg-zinc-200 light:text-black/80 light:hover:bg-zinc-300"
                     title="Cancel"
                   >
                     <svg
@@ -183,7 +184,7 @@ const UserProfilePage = () => {
               ) : (
                 <button
                   onClick={() => setEditing(true)}
-                  className="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700 transition-colors border border-zinc-700"
+                  className="bg-zinc-800 p-2 rounded-full hover:bg-zinc-700 transition-colors border border-zinc-700 light:bg-zinc-200 light:text-black/80 light:hover:bg-zinc-300"
                   title="Edit profile"
                 >
                   <svg
@@ -214,7 +215,7 @@ const UserProfilePage = () => {
                     type="avatar"
                   />
                 ) : (
-                  <div className="w-28 h-28 rounded-full border-4 border-[#111111] overflow-hidden bg-zinc-800 shadow-lg">
+                  <div className="w-28 h-28 rounded-full border-4 border-[#111111] overflow-hidden bg-zinc-800 shadow-lg light:bg-zinc-200 light:border-zinc-700">
                     {profileData.avatar ? (
                       <img
                         src={profileData.avatar || "/placeholder.svg"}
@@ -222,15 +223,15 @@ const UserProfilePage = () => {
                         className="w-full h-full object-cover"
                       />
                     ) : (
-                      <div className="w-full h-full bg-green-500 flex items-center justify-center">
-                        <span className="text-3xl font-bold">
+                      <div className="w-full h-full bg-green-500 flex items-center justify-center light:bg-zinc-200">
+                        <span className="text-3xl font-bold text-white light:text-black/80 ">
                           {profileData.username?.charAt(0).toUpperCase() || "?"}
                         </span>
                       </div>
                     )}
                   </div>
                 )}
-                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2 border-2 border-[#111111] shadow-lg">
+                <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2 border-2 border-[#111111] shadow-lg light:bg-zinc-200 light:border-zinc-700">
                   <div className="text-xs font-bold">LVL {profileData.level || 1}</div>
                 </div>
               </div>
@@ -241,11 +242,12 @@ const UserProfilePage = () => {
                     type="text"
                     value={editedUser?.username || ""}
                     onChange={(e) => handleFieldChange("username", e.target.value)}
-                    className="bg-zinc-800 border-2 border-zinc-700 px-3 py-2 rounded text-white text-xl font-bold mb-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    className="bg-zinc-800 border-2 border-zinc-700 px-3 py-2 rounded
+                     text-white text-xl font-bold mb-2 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent light:bg-zinc-200 light:text-black/80 light:border-zinc-500"
                     placeholder="Username"
                   />
                 ) : (
-                  <h1 className="text-2xl font-bold text-white">{profileData.username || "Anonymous Player"}</h1>
+                  <h1 className="text-2xl font-bold text-white light:text-black/80">{profileData.username || "Anonymous Player"}</h1>
                 )}
                 <div className="flex text-zinc-400 text-sm">
                   {editing ? (
@@ -255,23 +257,23 @@ const UserProfilePage = () => {
                         value={editedUser?.location || ""}
                         onChange={(e) => handleFieldChange("location", e.target.value)}
                         placeholder="Location"
-                        className="bg-zinc-800 border-2 border-zinc-700 px-3 py-1 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="bg-zinc-800 border-2 border-zinc-700 px-3 py-1 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent light:bg-zinc-200 light:text-black/80 light:border-zinc-500"
                       />
                       <input
                         type="text"
                         value={editedUser?.country || ""}
                         onChange={(e) => handleFieldChange("country", e.target.value)}
                         placeholder="Country"
-                        className="bg-zinc-800 border-2 border-zinc-700 px-3 py-1 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                        className="bg-zinc-800 border-2 border-zinc-700 px-3 py-1 rounded text-white text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent light:bg-zinc-200 light:text-black/80 light:border-zinc-500"
                       />
                     </div>
                   ) : (
                     <div className="flex items-center">
-                      {profileData.location && <span className="mr-3">{profileData.location}</span>}
+                      {profileData.location && <span className="mr-3 text-white light:text-black/80">{profileData.location}</span>}
                       {profileData.country && (
                         <>
-                          <span className="w-1 h-1 rounded-full bg-zinc-600 mr-3"></span>
-                          <span>{profileData.country}</span>
+                          <span className="w-1 h-1 rounded-full bg-zinc-600 mr-3 light:bg-zinc-400  "></span>
+                          <span className="text-white light:text-black/80">{profileData.country}</span>
                         </>
                       )}
                     </div>

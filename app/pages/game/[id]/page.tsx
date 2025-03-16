@@ -87,7 +87,7 @@ export default function GamePage() {
     }
 
     return (
-        <div className="flex flex-col h-screen bg-[#111111] text-white">
+        <div className="flex flex-col h-screen bg-[#111111] light:bg-zinc-100 text-white">
             <Navbar />
             <div className="flex flex-1 overflow-hidden">
                 <div className="border-r border-white/5">
@@ -99,7 +99,7 @@ export default function GamePage() {
                         {/* Main Content */}
                         <div className="flex-1 p-6">
                             {/* Main Image */}
-                            <h1 className="text-5xl font-bold mb-4">{game.name}</h1>
+                            <h1 className="text-3xl font-bold mb-4 light:text-black/80">{game.name}</h1>
                             <div className="flex items-center gap-4 mb-6">
 
                                 <div className="flex items-center">
@@ -116,20 +116,20 @@ export default function GamePage() {
                                             <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z" />
                                         </svg>
                                     ))}
-                                    <span className="ml-2 text-white/80 font-bold">{game.rating ? game.rating.toFixed(1) : 'N/A'}</span>
+                                    <span className="ml-2 text-white/80 font-bold light:text-black/80">{game.rating ? game.rating.toFixed(1) : 'N/A'}</span>
                                 </div>
                                 <div className="flex gap-2">
                                     {game.genres?.slice(0, 3).map((genre) => (
                                         <span
                                             key={genre.name}
-                                            className="px-3 py-1 bg-zinc-800 rounded-full text-sm text-gray-300"
+                                            className="px-3 py-1 bg-zinc-800 light:bg-zinc-300 font-semibold rounded-full text-sm text-gray-300 light:text-black/80"
                                         >
                                             {genre.name}
                                         </span>
                                     ))}
                                 </div>
                             </div>
-                            <div className="relative aspect-video rounded-xl  overflow-hidden mb-8 w-full max-w-5xl">
+                            <div className="relative aspect-video rounded-xl  overflow-hidden mb-8 w-full max-w-3xl">
                                 <Image
                                     src={activeImage || game.background_image}
                                     alt={game.name}
@@ -140,9 +140,9 @@ export default function GamePage() {
                             </div>
 
                             {/* Screenshots Gallery */}
-                            <div className="flex gap-3 mb-10 overflow-x-auto pb-4 max-w-4xl">
+                            <div className="flex gap-3 mb-10 overflow-x-auto pb-4 max-w-2xl">
                                 <div
-                                    className={`relative w-32 mt-1  aspect-video rounded-lg overflow-hidden cursor-pointer ${activeImage === game.background_image ? 'ring-2 ring-blue-500' : ''
+                                    className={`relative w-32 mt-1  aspect-video rounded-lg overflow-hidden cursor-pointer ${activeImage === game.background_image ? '' : ''
                                         }`}
                                     onClick={() => setActiveImage(game.background_image)}
                                 >
@@ -171,14 +171,14 @@ export default function GamePage() {
                             </div>
 
                             {/* Game Info */}
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10">
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-10 light:text-black/80" >
                                 <div className="lg:col-span-2">
 
 
                                     {/* Purchase Section */}
 
 
-                                    <p className="text-gray-400 mb-8 leading-relaxed ">
+                                    <p className="text-gray-400 mb-8 leading-relaxed light:text-black/80">
                                         {game.description_raw
                                             ? `${game.description_raw.split(" ").slice(0, 60).join(" ")}...`
                                             : 'No description available'}
@@ -188,15 +188,15 @@ export default function GamePage() {
                                     <div className="grid grid-cols-2 gap-8">
                                         <div>
                                             <h3 className="text-xl font-semibold mb-3">Release Date</h3>
-                                            <p className="text-gray-400">{game.released}</p>
+                                            <p className="text-gray-400 light:text-black/80">{game.released}</p>
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold mb-3">Rating</h3>
-                                            <p className="text-gray-400">{game.rating}/5</p>
+                                            <p className="text-gray-400 light:text-black/80">{game.rating}/5</p>
                                         </div>
                                         <div>
                                             <h3 className="text-xl font-semibold mb-3">Metacritic</h3>
-                                            <p className="text-gray-400">{game.metacritic || 'N/A'}</p>
+                                            <p className="text-gray-400 light:text-black/80">{game.metacritic || 'N/A'}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -208,17 +208,17 @@ export default function GamePage() {
 
                             {/* Price and Buttons Section */}
                             <div className="space-y-4">
-                                <p className="text-xl font-bold">${59.99}</p>
-                                <p className="text-xl font-bold">Base Game</p>
-                                <p className="text-sm text-gray-400">May include In-app purchases</p>
+                                <p className="text-xl font-bold light:text-black/80">${59.99}</p>
+                                <p className="text-xl font-bold light:text-black/80">Base Game</p>
+                                <p className="text-sm text-gray-400 light:text-black/80">May include In-app purchases</p>
                                 <div className="space-y-3">
-                                    <button className="w-full bg-[#00A8E8] hover:bg-[#0096D1] text-white font-semibold py-4 rounded transition-colors">
+                                    <button className="w-full bg-green-500 hover:bg-[#0096D1] text-white font-semibold py-4 rounded transition-colors">
                                         Get
                                     </button>
-                                    <button className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors">
+                                    <button className="w-full bg-zinc-800 light:bg-zinc-300 light:text-black/80 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors">
                                         Add To Cart
                                     </button>
-                                    <button className="w-full bg-zinc-800 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors">
+                                    <button className="w-full bg-zinc-800 light:bg-zinc-300 light:text-black/80 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors">
                                         Add to Wishlist
                                     </button>
                                 </div>
@@ -226,18 +226,18 @@ export default function GamePage() {
 
                             <div className="space-y-6">
                                 <div>
-                                    <h3 className="text-sm text-gray-400 mb-1">Developer</h3>
-                                    <p className="font-semibold">{game.developers?.[0]?.name}</p>
+                                    <h3 className="text-sm text-gray-400 mb-1 light:text-black/80">Developer</h3>
+                                    <p className="font-semibold light:text-black/80">{game.developers?.[0]?.name}</p>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-sm text-gray-400 mb-1">Publisher</h3>
-                                    <p className="font-semibold">{game.publishers?.[0]?.name}</p>
+                                    <h3 className="text-sm text-gray-400 mb-1 light:text-black/80">Publisher</h3>
+                                    <p className="font-semibold light:text-black/80">{game.publishers?.[0]?.name}</p>
                                 </div>
 
                                 <div>
-                                    <h3 className="text-sm text-gray-400 mb-1">Release Date</h3>
-                                    <p className="font-semibold">
+                                    <h3 className="text-sm text-gray-400 mb-1 light:text-black/80">Release Date</h3>
+                                    <p className="font-semibold light:text-black/80">
                                         {new Date(game.released).toLocaleDateString('en-US', {
                                             month: '2-digit',
                                             day: '2-digit',
@@ -247,8 +247,8 @@ export default function GamePage() {
                                 </div>
 
                                 <div>
-                                    <h3 className="text-sm text-gray-400 mb-1">Platform</h3>
-                                    <div className="flex items-center">
+                                    <h3 className="text-sm text-gray-400 mb-1 light:text-black/80">Platform</h3>
+                                    <div className="flex items-center light:text-black/80">
                                         {game.platforms?.some(p => p.platform.name.includes('Windows')) && (
                                             <svg className="w-6 h-6" viewBox="0 0 24 24" fill="currentColor">
                                                 <path d="M0 3.449L9.75 2.1v9.451H0m10.949-9.602L24 0v11.4H10.949M0 12.6h9.75v9.451L0 20.699M10.949 12.6H24V24l-12.9-1.801" />
@@ -261,9 +261,9 @@ export default function GamePage() {
                             {/* ESRB Rating if available */}
                             {game.esrb_rating && (
                                 <div>
-                                    <h3 className="text-sm text-gray-400 mb-2">ESRB Rating</h3>
+                                    <h3 className="text-sm text-gray-400 mb-2 light:text-black/80">ESRB Rating</h3>
                                     <div className="flex items-center gap-2">
-                                        <span className="px-3 py-1.5 bg-zinc-800 rounded text-xs">
+                                        <span className="px-3 py-1.5 bg-zinc-800 light:bg-zinc-300 rounded text-xs light:text-black/80">
                                             {game.esrb_rating.name}
                                         </span>
                                     </div>
@@ -272,12 +272,12 @@ export default function GamePage() {
 
                             {/* Genres */}
                             <div>
-                                <h3 className="text-lg font-semibold mb-3">Genres</h3>
-                                <div className="flex flex-wrap gap-2">
+                                <h3 className="text-lg font-semibold mb-3 light:text-black/80 ">Genres</h3>
+                                <div className="flex flex-wrap gap-2 light:text-black/80">
                                     {game.genres?.map((genre) => (
                                         <span
                                             key={genre.name}
-                                            className="px-4 py-1.5 bg-zinc-800 rounded-full text-sm"
+                                            className="px-4 py-1.5 bg-zinc-800 light:bg-zinc-300 rounded-full text-sm light:text-black/80"
                                         >
                                             {genre.name}
                                         </span>
@@ -287,12 +287,12 @@ export default function GamePage() {
 
                             {/* Platforms */}
                             <div>
-                                <h3 className="text-lg font-semibold mb-3">Platforms</h3>
+                                <h3 className="text-lg font-semibold mb-3 light:text-black/80">Platforms</h3>
                                 <div className="flex flex-wrap gap-2">
                                     {game.platforms?.map((platform) => (
                                         <span
                                             key={platform.platform.name}
-                                            className="px-4 py-1.5 bg-zinc-800 rounded-full text-sm"
+                                            className="px-4 py-1.5 bg-zinc-800 light:bg-zinc-300 rounded-full text-sm light:text-black/80"
                                         >
                                             {platform.platform.name}
                                         </span>
@@ -302,16 +302,16 @@ export default function GamePage() {
 
                             {/* Developers */}
                             <div>
-                                <h3 className="text-lg font-semibold mb-2">Developers</h3>
-                                <p className="text-gray-400">
+                                <h3 className="text-lg font-semibold mb-2 light:text-black/80">Developers</h3>
+                                <p className="text-gray-400 light:text-black/80 ">
                                     {game.developers?.map((dev) => dev.name).join(', ')}
                                 </p>
                             </div>
 
                             {/* Publishers */}
                             <div>
-                                <h3 className="text-lg font-semibold mb-2">Publishers</h3>
-                                <p className="text-gray-400">
+                                <h3 className="text-lg font-semibold mb-2 light:text-black/80">Publishers</h3>
+                                <p className="text-gray-400 light:text-black/80 ">
                                     {game.publishers?.map((pub) => pub.name).join(', ')}
                                 </p>
                             </div>

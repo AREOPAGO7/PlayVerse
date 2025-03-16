@@ -10,7 +10,6 @@
   },
   "dependencies": {
     "@types/firebase": "^2.4.32",
-    "axios": "^1.8.3",
     "boxicons": "^2.1.4",
     "cloudinary": "^2.5.1",
     "date-fns": "^4.1.0",

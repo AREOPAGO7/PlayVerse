@@ -33,10 +33,10 @@ export default function ChatArea({ messages, users, currentUser, activeChat, onS
   }
 
   return (
-    <div className="flex-1 flex flex-col h-full">
+    <div className="flex-1 flex flex-col h-full light:bg-light">
       {/* Chat Header */}
-      <div className="p-4 border-b border-zinc-800 flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full overflow-hidden">
+      <div className="p-4 border-b border-zinc-800 flex items-center gap-3 light:border-zinc-400  light:border-black/10">
+        <div className="w-10 h-10 rounded-full overflow-hidden light:border-zinc-400">
           <Image
             src={getOtherUser(activeChat).avatar || "/placeholder.svg"}
             alt={getOtherUser(activeChat).username}
@@ -46,8 +46,8 @@ export default function ChatArea({ messages, users, currentUser, activeChat, onS
           />
         </div>
         <div>
-          <h2 className="font-medium">{getOtherUser(activeChat).username}</h2>
-          <p className="text-sm text-zinc-400">
+          <h2 className="font-medium light:text-zinc-800">{getOtherUser(activeChat).username}</h2>
+          <p className="text-sm text-zinc-400 light:text-zinc-800">
             {getOtherUser(activeChat).status === "online"
               ? "Online"
               : getOtherUser(activeChat).status === "away"
@@ -58,7 +58,7 @@ export default function ChatArea({ messages, users, currentUser, activeChat, onS
       </div>
 
       {/* Messages */}
-      <div className="flex-1 overflow-y-auto p-4">
+      <div className="flex-1 overflow-y-auto p-4 light:bg-light">
         {messages.map((message, index) => {
           const user = getUserById(message.userId)
           const isCurrentUser = message.userId === currentUser.id

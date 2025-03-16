@@ -197,7 +197,7 @@ const Browse = () => {
                 <li key="first">
                     <button
                         onClick={() => paginate(1)}
-                        className="px-3 py-1 mx-1 rounded bg-zinc-700 text-zinc-300 hover:bg-zinc-600"
+                        className="px-3 py-1 mx-1 rounded bg-zinc-700 text-zinc-300 hover:bg-zinc-600 light:bg-zinc-300 light:text-black/80"
                     >
                         1
                     </button>
@@ -215,7 +215,7 @@ const Browse = () => {
                 <li key={i}>
                     <button
                         onClick={() => paginate(i)}
-                        className={`px-3 py-1 mx-1 rounded ${currentPage === i ? 'bg-zinc-800 text-white' : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'}`}
+                        className={`px-3 py-1 mx-1 rounded ${currentPage === i ? 'bg-zinc-800 text-white light:bg-zinc-400 light:text-black/80' : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600 light:bg-zinc-300 light:text-black/80'}`}
                     >
                         {i}
                     </button>
@@ -226,14 +226,14 @@ const Browse = () => {
         // Last page
         if (endPage < totalPages) {
             if (endPage < totalPages - 1) {
-                pageButtons.push(<li key="ellipsis2" className="px-3 py-1 mx-1 text-zinc-400">...</li>)
+                pageButtons.push(<li key="ellipsis2" className="px-3 py-1 mx-1 text-zinc-400 light:text-black/80">...</li>)
             }
             
             pageButtons.push(
                 <li key="last">
                     <button
                         onClick={() => paginate(totalPages)}
-                        className="px-3 py-1 mx-1 rounded bg-zinc-700 text-zinc-300 hover:bg-zinc-600"
+                        className="px-3 py-1 mx-1 rounded bg-zinc-700 text-zinc-300 hover:bg-zinc-600 light:bg-zinc-300 light:text-black/80"
                     >
                         {totalPages}
                     </button>
@@ -245,7 +245,7 @@ const Browse = () => {
     }
 
     return (
-        <div className="font-medium bg-[#111111] h-screen flex flex-col fixed inset-0">
+        <div className="font-medium bg-[#111111] light:bg-light h-screen flex flex-col fixed inset-0">
             {/* Fixed Navbar at the Top */}
             <Navbar />
 
@@ -261,9 +261,9 @@ const Browse = () => {
                         <div className="text-white p-6">
                             <header className="flex justify-between items-center mb-6">
                                 <div className="flex items-center gap-2">
-                                    <h1 className="text-4xl font-bold">Browse Games</h1>
+                                    <h1 className="text-4xl font-bold light:text-black/80 ">Browse Games</h1>
                                     {isLoading && (
-                                        <div className="animate-spin ml-4 h-5 w-5 text-white">
+                                        <div className="animate-spin ml-4 h-5 w-5 text-white light:text-black">
                                             <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                                 <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                                 <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
@@ -271,7 +271,7 @@ const Browse = () => {
                                         </div>
                                     )}
                                 </div>
-                                <div className="text-sm text-zinc-400">
+                                <div className="text-sm text-zinc-400 light:text-black/80">
                                     {totalGames > 0 && !isLoading && (
                                         <span>Showing {(currentPage - 1) * itemsPerPage + 1}-{Math.min(currentPage * itemsPerPage, totalGames)} of {totalGames.toLocaleString()} games</span>
                                     )}
@@ -282,13 +282,13 @@ const Browse = () => {
                                 <div className="flex-1">
                                     <div className="flex flex-col gap-6">
                                         {/* Sort and View Options */}
-                                        <div className="flex justify-between items-center h-12 sticky top-0 z-50 bg-[#111111]">
-                                            <div className="flex items-center gap-2">
-                                                <span className="text-sm text-zinc-400">Sort by:</span>
+                                        <div className="flex justify-between items-center h-12 sticky top-0 z-50 bg-[#111111] light:bg-light">
+                                            <div className="flex items-center gap-2 light:text-black/80">
+                                                <span className="text-sm text-zinc-400 light:text-black/80 ">Sort by:</span>
                                                 <div className="relative group">
                                                     <button 
                                                         onClick={() => setSortDropdownVisible(!sortDropdownVisible)}
-                                                        className="flex items-center gap-1 text-sm px-2 py-1 hover:bg-zinc-800 rounded transition-colors"
+                                                        className="flex items-center gap-1 text-sm px-2 py-1 hover:bg-zinc-800 light:hover:bg-zinc-300 rounded transition-colors"
                                                     >
                                                         {sortOrder === "-metacritic" ? "Top Rated" :
                                                          sortOrder === "-released" ? "Newest" :
@@ -300,14 +300,14 @@ const Browse = () => {
                                                         </svg>
                                                     </button>
                                                     {sortDropdownVisible && (
-                                                        <div className="absolute left-0 top-full mt-1 w-40 rounded-md bg-zinc-800 shadow-lg z-50">
-                                                            <div className="py-1">
+                                                        <div className="absolute left-0 top-full mt-1 w-40 rounded-md bg-zinc-800 shadow-lg z-50 light:bg-light light:text-black">
+                                                            <div className="py-1 ">
                                                                 <button 
                                                                     onClick={() => {
                                                                         handleSortChange("-added");
                                                                         setSortDropdownVisible(false);
                                                                     }} 
-                                                                    className={`block px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 w-full text-left ${sortOrder === "-added" ? "bg-zinc-700" : ""}`}
+                                                                    className={`block px-4 py-2 text-sm text-zinc-300 light:text-black hover:bg-zinc-700 light:hover:bg-zinc-300  w-full text-left ${sortOrder === "-added" ? "bg-zinc-700 light:bg-zinc-300" : ""}`}
                                                                 >
                                                                     Popular
                                                                 </button>
@@ -316,7 +316,7 @@ const Browse = () => {
                                                                         handleSortChange("-released");
                                                                         setSortDropdownVisible(false);
                                                                     }} 
-                                                                    className={`block px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 w-full text-left ${sortOrder === "-released" ? "bg-zinc-700" : ""}`}
+                                                                    className={`block px-4 py-2 text-sm text-zinc-300 light:text-black hover:bg-zinc-700 light:hover:bg-zinc-300  w-full text-left ${sortOrder === "-released" ? "bg-zinc-700 light:bg-zinc-300" : ""}`}
                                                                 >
                                                                     Newest
                                                                 </button>
@@ -325,7 +325,7 @@ const Browse = () => {
                                                                         handleSortChange("-metacritic");
                                                                         setSortDropdownVisible(false);
                                                                     }} 
-                                                                    className={`block px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 w-full text-left ${sortOrder === "-metacritic" ? "bg-zinc-700" : ""}`}
+                                                                    className={`block px-4 py-2 text-sm text-zinc-300 light:text-black hover:bg-zinc-700 light:hover:bg-zinc-300  w-full text-left ${sortOrder === "-metacritic" ? "bg-zinc-700 light:bg-zinc-300" : ""}`}
                                                                 >
                                                                     Top Rated
                                                                 </button>
@@ -336,7 +336,7 @@ const Browse = () => {
                                                                         setSortOrder("-price");
                                                                         setSortDropdownVisible(false);
                                                                     }} 
-                                                                    className={`block px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 w-full text-left ${sortOrder === "-price" ? "bg-zinc-700" : ""}`}
+                                                                    className={`block px-4 py-2 text-sm text-zinc-300 light:text-black hover:bg-zinc-700 light:hover:bg-zinc-300  w-full text-left ${sortOrder === "-price" ? "bg-zinc-700 light:bg-zinc-300" : ""}`}
                                                                 >
                                                                     Price: High to Low
                                                                 </button>
@@ -347,7 +347,7 @@ const Browse = () => {
                                                                         setSortOrder("price");
                                                                         setSortDropdownVisible(false);
                                                                     }} 
-                                                                    className={`block px-4 py-2 text-sm text-zinc-300 hover:bg-zinc-700 w-full text-left ${sortOrder === "price" ? "bg-zinc-700" : ""}`}
+                                                                    className={`block px-4 py-2 text-sm text-zinc-300 light:text-black hover:bg-zinc-700 light:hover:bg-zinc-300  w-full text-left ${sortOrder === "price" ? "bg-zinc-700 light:bg-zinc-300" : ""}`}
                                                                 >
                                                                     Price: Low to High
                                                                 </button>
@@ -359,7 +359,7 @@ const Browse = () => {
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => setGridView(true)}
-                                                    className={`p-2 rounded-md ${gridView ? "bg-zinc-800" : "hover:bg-zinc-800"} transition-colors`}
+                                                    className={`p-2 rounded-md ${gridView ? "bg-zinc-800 light:bg-zinc-300 light:text-black/80" : "hover:bg-zinc-800 light:hover:bg-zinc-300 light:text-black/80"} transition-colors`}
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                         <rect width="7" height="7" x="3" y="3" rx="1" /><rect width="7" height="7" x="14" y="3" rx="1" /><rect width="7" height="7" x="14" y="14" rx="1" /><rect width="7" height="7" x="3" y="14" rx="1" />
@@ -367,7 +367,7 @@ const Browse = () => {
                                                 </button>
                                                 <button 
                                                     onClick={() => setGridView(false)}
-                                                    className={`p-2 rounded-md ${!gridView ? "bg-zinc-800" : "hover:bg-zinc-800"} transition-colors`}
+                                                    className={`p-2 rounded-md ${!gridView ? "bg-zinc-800 light:bg-zinc-300 light:text-black/80" : "hover:bg-zinc-800 light:hover:bg-zinc-300 light:text-black/80"} transition-colors`}
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
                                                         <line x1="3" x2="21" y1="6" y2="6" /><line x1="3" x2="21" y1="12" y2="12" /><line x1="3" x2="21" y1="18" y2="18" />
@@ -378,7 +378,7 @@ const Browse = () => {
 
                                         {/* Error Message */}
                                         {error && (
-                                            <div className="p-4 mb-4 text-sm text-red-500 bg-red-100/10 rounded-md">
+                                            <div className="p-4 mb-4 text-sm text-red-500 bg-red-100/10 rounded-md light:text-red-500 light:bg-red-100/10">
                                                 {error}
                                             </div>
                                         )}
@@ -399,7 +399,7 @@ const Browse = () => {
                                                 {games.map((game) => (
                                                     <div
                                                         key={game.id}
-                                                        className={`relative group ${!gridView && "flex items-center gap-4 p-2 hover:bg-zinc-800 rounded"}`}
+                                                        className={`relative group ${!gridView && "flex items-center gap-4 p-2 hover:bg-zinc-800 rounded light:hover:bg-zinc-300"}`}
                                                     >
                                                         <div className={`relative overflow-hidden rounded-lg ${!gridView && "w-16"}`}>
                                                             <Image 
@@ -419,7 +419,7 @@ const Browse = () => {
                                                         </div>
                                                         <div className={gridView ? "mt-2" : "flex-1"}>
                                                             <div className="flex justify-between items-start">
-                                                                <h3 className="font-medium text-sm truncate">{game.name}</h3>
+                                                                <h3 className="font-medium text-sm truncate light:text-black/80">{game.name}</h3>
                                                                
                                                             </div>
                                                             <div className="flex items-center gap-2 mt-1">
@@ -427,29 +427,29 @@ const Browse = () => {
                                                                     <span className={`text-xs px-1.5 py-0.5 rounded ${
                                                                         game.metacritic >= 75 ? 'bg-green-500/20 text-green-400' : 
                                                                         game.metacritic >= 50 ? 'bg-yellow-500/20 text-yellow-400' : 
-                                                                        'bg-red-500/20 text-red-400'
+                                                                        'bg-red-500/20 text-red-400 light:text-red-400'
                                                                     }`}>
                                                                         {game.metacritic}
                                                                     </span>
                                                                 )}
                                                                 {game.released && (
-                                                                    <p className="text-xs text-white/70 font-medium">
+                                                                    <p className="text-xs text-white/70 font-medium light:text-black/80">
                                                                         {new Date(game.released).getFullYear()}
                                                                     </p>
                                                                 )}
                                                             </div>
                                                             {game.genres && game.genres.length > 0 && (
-                                                                <p className="text-xs text-white/70 font-medium mt-1 truncate">
+                                                                <p className="text-xs text-white/70 font-medium mt-1 truncate light:text-black/80">
                                                                     {game.genres.slice(0, 2).map(g => g.name).join(', ')}
                                                                 </p>
                                                             )}
                                                             {/* Add price display */}
-                                                            <div className="flex items-center justify-between mt-1">
+                                                            <div className="flex items-center justify-between mt-1 light:text-black/80">
                                                                 <p className="text-sm font-semibold ">
                                                                     ${game.price?.toFixed(2)}
                                                                 </p>
                                                                 {game.priceTag && (
-                                                                    <span className="text-xs px-1.5 py-0.5 bg-zinc-700 text-zinc-300 rounded">
+                                                                    <span className="text-xs px-1.5 py-0.5 bg-zinc-700 light:bg-zinc-300 light:text-black/40 text-zinc-300 rounded    ">
                                                                         {game.priceTag}
                                                                     </span>
                                                                 )}
@@ -476,7 +476,7 @@ const Browse = () => {
                                                                 onClick={() => currentPage > 1 && paginate(currentPage - 1)}
                                                                 disabled={currentPage === 1}
                                                                 className={`px-3 py-1 mx-1 rounded ${
-                                                                    currentPage === 1 ? 'bg-zinc-900 text-zinc-500 cursor-not-allowed' : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                                                                    currentPage === 1 ? 'bg-zinc-900 light:bg-zinc-300 text-zinc-500 cursor-not-allowed light:text-zinc-500' : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600 light:hover:bg-zinc-300'
                                                                 }`}
                                                             >
                                                                 &laquo;
@@ -491,8 +491,8 @@ const Browse = () => {
                                                             <button
                                                                 onClick={() => currentPage < Math.ceil(totalGames / itemsPerPage) && paginate(currentPage + 1)}
                                                                 disabled={currentPage === Math.ceil(totalGames / itemsPerPage)}
-                                                                className={`px-3 py-1 mx-1 rounded ${
-                                                                    currentPage === Math.ceil(totalGames / itemsPerPage) ? 'bg-zinc-900 text-zinc-500 cursor-not-allowed' : 'bg-zinc-700 text-zinc-300 hover:bg-zinc-600'
+                                                                className={`px-3 py-1 mx-1 rounded light:bg-zinc-300 ${
+                                                                    currentPage === Math.ceil(totalGames / itemsPerPage) ? 'bg-zinc-900 light:bg-zinc-800 text-zinc-500 cursor-not-allowed light:text-zinc-500' : 'bg-zinc-700 text-zinc-600 hover:bg-zinc-600 light:hover:bg-zinc-300'
                                                                 }`}
                                                             >
                                                                 &raquo;
@@ -516,15 +516,15 @@ const Browse = () => {
                                             value={searchQuery}
                                             onChange={(e) => handleSearch(e.target.value)}
                                             placeholder="Search games..."
-                                            className="w-full pl-10 py-2 bg-zinc-800 border-none rounded-md text-white focus:outline-none focus:ring-1 focus:ring-zinc-600"
+                                            className="w-full pl-10 py-2 bg-zinc-800 border-none rounded-md text-white focus:outline-none focus:ring-1 focus:ring-zinc-600 light:bg-zinc-300 light:text-black/80"
                                         />
                                     </div>
 
                                     {/* Genres Filter */}
-                                    <div className="border-b border-zinc-800 pb-2">
+                                    <div className="border-b border-zinc-800 pb-2 light:border-zinc-300">
                                         <button
                                             onClick={() => toggleFilter("Genre")}
-                                            className="flex w-full items-center justify-between py-2 text-left font-medium"
+                                            className="flex w-full items-center justify-between py-2 text-left font-medium light:text-black/80"
                                         >
                                             Genre
                                             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={`transition-transform duration-200 ${openFilters["Genre"] ? "rotate-180" : ""}`}>
@@ -532,10 +532,10 @@ const Browse = () => {
                                             </svg>
                                         </button>
                                         {openFilters["Genre"] && (
-                                            <div className="pt-1 pb-2 max-h-64 overflow-y-auto">
+                                            <div className="pt-1 pb-2 max-h-64 overflow-y-auto light:text-black/80 ">
                                                 <div className="space-y-1">
                                                     <div 
-                                                        className={`px-2 py-1 text-sm hover:bg-zinc-800 rounded cursor-pointer ${selectedGenre === "" ? "bg-zinc-700" : ""}`}
+                                                        className={`px-2 py-1 text-sm hover:bg-zinc-800 rounded cursor-pointer ${selectedGenre === "" ? "bg-zinc-700 light:bg-zinc-300" : ""}`}
                                                         onClick={() => handleGenreChange("")}
                                                     >
                                                         All Genres
@@ -543,7 +543,7 @@ const Browse = () => {
                                                     {genres.map(genre => (
                                                         <div 
                                                             key={genre.id}
-                                                            className={`px-2 py-1 text-sm hover:bg-zinc-800 rounded cursor-pointer ${selectedGenre === genre.id.toString() ? "bg-zinc-700" : ""}`}
+                                                            className={`px-2 py-1 text-sm hover:bg-zinc-800 light:hover:bg-zinc-300 rounded cursor-pointer light:text-black/80  ${selectedGenre === genre.id.toString() ? "bg-zinc-700 light:bg-zinc-300" : ""}`}
                                                             onClick={() => handleGenreChange(genre.id.toString())}
                                                         >
                                                             {genre.name}

@@ -16,15 +16,15 @@ const FavoriteGame: React.FC<FavoriteGameProps> = ({
   onFavoriteGameChange,
 }) => {
   return (
-    <div className="bg-zinc-900 rounded-lg p-6 shadow-lg border border-zinc-800">
-      <h2 className="text-lg font-bold mb-4 border-b border-zinc-800 pb-2">Favorite Game</h2>
+      <div className="bg-zinc-900 rounded-lg p-6 shadow-lg border border-zinc-800 light:bg-zinc-200 light:border-zinc-300">
+      <h2 className="text-lg font-bold mb-4 border-b border-zinc-800 light:border-zinc-400 pb-2 light:text-zinc-800">Favorite Game</h2>
       {editing ? (
         <input
           type="text"
           value={editedFavoriteGame || ""}
           onChange={(e) => onFavoriteGameChange(e.target.value)}
           placeholder="What's your favorite game?"
-          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+          className="w-full bg-zinc-800 border border-zinc-700 rounded-lg p-3 text-white focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent light:bg-zinc-200 light:text-zinc-800 light:border-zinc-300"
         />
       ) : (
         <div className="flex items-center">

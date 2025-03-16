@@ -50,7 +50,7 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, currentImage, t
             <p className="text-zinc-400">No {type} uploaded</p>
           </div>
         )}
-        <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity">
+        <div className={`absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity ${type === "avatar" ? "rounded-full" : "rounded-lg"}`}>
           <label className="cursor-pointer flex flex-col items-center">
             <svg
               xmlns="http://www.w3.org/2000/svg"

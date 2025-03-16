@@ -163,7 +163,7 @@ const Library = () => {
     }, [openDropdown]);
 
     return (
-        <div className="font-medium bg-[#111111] h-screen flex flex-col fixed inset-0">
+        <div className="font-medium bg-[#111111] light:bg-light h-screen flex flex-col fixed inset-0">
             {/* Fixed Navbar at the Top */}
             <Navbar />
 
@@ -183,8 +183,8 @@ const Library = () => {
                             <header className="flex justify-between items-center mb-6">
                                
                                 <div className="flex items-center gap-2">
-                                    <h1 className="text-4xl font-bold">Library</h1>
-                                    <button className="p-2 pt-5 rounded-full hover:bg-zinc-700 transition-colors">
+                                    <h1 className="text-4xl font-bold light:text-black">Library</h1>
+                                    <button className="p-2 pt-5 rounded-full light:text-zinc-800 transition-colors">
                                         <svg
                                             xmlns="http://www.w3.org/2000/svg"
                                             width="20"
@@ -210,17 +210,17 @@ const Library = () => {
                                     <div className="flex flex-col gap-6">
                                         {/* Tabs */}
                                         <div className="w-full">
-                                            <div className="flex items-center justify-between">
+                                            <div className="flex items-center justify-between text-white light:text-black">
                                                 <div className="flex">
                                                     <button
                                                         onClick={() => setActiveTab("all")}
-                                                        className={`px-4 py-2 ${activeTab === "all" ? "border-b-2 border-white font-medium" : "text-zinc-400"}`}
+                                                        className={`px-4 py-2 ${activeTab === "all" ? "border-b-2 border-white light:border-black font-medium" : "text-zinc-400"}`}
                                                     >
                                                         All
                                                     </button>
                                                     <button
                                                         onClick={() => setActiveTab("favorites")}
-                                                        className={`px-4 py-2 ${activeTab === "favorites" ? "border-b-2 border-white font-medium" : "text-zinc-400"}`}
+                                                        className={`px-4 py-2 ${activeTab === "favorites" ? "border-b-2 border-white light:border-black font-medium" : "text-zinc-400"}`}
                                                     >
                                                         Favorites
                                                     </button>
@@ -230,10 +230,10 @@ const Library = () => {
                                         </div>
 
                                         {/* Sort and View Options */}
-                                        <div className="flex justify-between items-center h-12 sticky top-0 z-50 bg-[#111111]">
+                                        <div className="flex justify-between items-center h-12 sticky top-0 z-50 bg-[#111111] light:bg-light">
                                             <div className="flex items-center gap-2">
-                                                <span className="text-sm text-zinc-400">Sort by:</span>
-                                                <button className="flex items-center gap-1 text-sm px-2 py-1 hover:bg-gray-800 rounded transition-colors">
+                                                <span className="text-sm text-zinc-400 light:text-black">Sort by:</span>
+                                                <button className="flex items-center gap-1 text-sm px-2 py-1 hover:bg-gray-800 light:hover:bg-zinc-300 text-white light:text-black rounded transition-colors">
                                                     Alphabetical A-Z
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -253,7 +253,7 @@ const Library = () => {
                                             <div className="flex items-center gap-2">
                                                 <button
                                                     onClick={() => setGridView(true)}
-                                                    className={`p-2 rounded-md ${gridView ? "bg-zinc-800" : "hover:bg-zinc-800"} transition-colors`}
+                                                    className={`p-2 rounded-md ${gridView ? "bg-zinc-800 light:bg-zinc-400" : "hover:bg-zinc-800 light:hover:bg-zinc-500"} transition-colors`}
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -274,7 +274,7 @@ const Library = () => {
                                                 </button>
                                                 <button
                                                     onClick={() => setGridView(false)}
-                                                    className={`p-2 rounded-md ${!gridView ? "bg-zinc-800" : "hover:bg-zinc-800"} transition-colors`}
+                                                    className={`p-2 rounded-md ${!gridView ? "bg-zinc-800 light:bg-zinc-400" : "hover:bg-zinc-800 light:hover:bg-zinc-500"} transition-colors`}
                                                 >
                                                     <svg
                                                         xmlns="http://www.w3.org/2000/svg"
@@ -292,7 +292,7 @@ const Library = () => {
                                                         <line x1="3" x2="21" y1="18" y2="18" />
                                                     </svg>
                                                 </button>
-                                                <span className="text-lg font-medium ml-2">Filters</span>
+                                                <span className="text-lg font-medium ml-2 light:text-black/80">Filters</span>
                                             </div>
                                         </div>
 
@@ -305,7 +305,7 @@ const Library = () => {
                                             {games.map((game) => (
                                                 <div
                                                     key={game.id}
-                                                    className={`relative group ${!gridView && "flex items-center gap-4 p-2 hover:bg-zinc-800 rounded"}`}
+                                                    className={`relative group ${!gridView && "flex items-center gap-4 p-2 hover:bg-zinc-800 light:hover:bg-zinc-300 rounded"}`}
                                                 >
                                                     <div className={`relative overflow-hidden rounded-lg ${!gridView && "w-16"}`}>
                                                         <Image
@@ -325,10 +325,10 @@ const Library = () => {
                                                     </div>
                                                     <div className={gridView ? "mt-2" : "flex-1"}>
                                                         <div className="flex justify-between items-start">
-                                                            <h3 className="font-medium text-sm truncate">{game.title}</h3>
+                                                            <h3 className="font-medium  text-sm truncate light:text-black">{game.title}</h3>
                                                             <button 
                                                                 onClick={() => setOpenDropdown(openDropdown === game.id ? null : game.id)}
-                                                                className="h-6 w-6 pt-3 flex items-center justify-center hover:bg-gray-700 rounded-full relative"
+                                                                className="h-6 w-6 pt-3 flex items-center justify-center -mr-2 text-white light:text-black rounded-full relative"
                                                             >
                                                                 <svg
                                                                     xmlns="http://www.w3.org/2000/svg"
@@ -348,12 +348,12 @@ const Library = () => {
                                                                 
                                                                 {/* Dropdown Menu */}
                                                                 {openDropdown === game.id && (
-                                                                    <div className="absolute right-0 left-6 top-full mt-1 w-48 rounded-xl bg-zinc-800 shadow-lg  z-50">
+                                                                    <div className="absolute right-0 left-6 top-full mt-1 w-48 rounded-xl bg-zinc-800 light:bg-zinc-300 shadow-lg  z-50">
                                                                         <div className="py-1">
-                                                                            <div className="border-b border-white/10 mx-auto  w-[90%] pt-1">
+                                                                            <div className="border-b border-white/10 light:border-black/30 mx-auto  w-[90%] pt-1">
                                                                             <div 
                                                                                 onClick={() => {/* Add favorite handler */}} 
-                                                                                className="flex items-center  px-4 rounded-lg py-2 text-sm  text-gray-300 hover:bg-zinc-600 cursor-pointer"
+                                                                                className="flex items-center  px-4 rounded-lg py-2 text-sm  text-gray-300 light:text-black hover:bg-zinc-600  light:hover:bg-zinc-400 cursor-pointer"
                                                                             >
                                                                                 <svg className="mr-3 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                     <path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
@@ -361,10 +361,10 @@ const Library = () => {
                                                                                 Add to Favorites
                                                                             </div>
                                                                             </div>
-                                                                           <div className="border-b border-white/10 mx-auto  w-[90%]">
+                                                                           <div className="border-b border-white/10 light:border-black/30 mx-auto  w-[90%]">
                                                                            <div 
                                                                                 onClick={() => {/* Add install handler */}}
-                                                                                className="flex items-center  px-4  rounded-lg py-2 text-sm  text-gray-300 hover:bg-zinc-600 cursor-pointer"
+                                                                                className="flex items-center  px-4  rounded-lg py-2 text-sm  text-gray-300 light:text-black hover:bg-zinc-600  light:hover:bg-zinc-400 cursor-pointer"
                                                                             >
                                                                                 <svg className="mr-3 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                     <path d="M13 10V3L4 14h7v7l9-11h-7z" />
@@ -374,7 +374,7 @@ const Library = () => {
                                                                            </div>
                                                                             <div 
                                                                                 onClick={() => {/* Add uninstall handler */}}
-                                                                                className="flex items-center pb-2 mx-auto px-4 w-[90%] rounded-lg py-2 text-sm  text-gray-300 hover:bg-zinc-600 cursor-pointer"
+                                                                                className="flex items-center pb-2 mx-auto px-4 w-[90%] rounded-lg py-2 text-sm  text-gray-300 light:text-black hover:bg-zinc-600  light:hover:bg-zinc-400 cursor-pointer"
                                                                             >
                                                                                 <svg className="mr-3 h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor">
                                                                                     <path d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
@@ -387,7 +387,7 @@ const Library = () => {
                                                             </button>
                                                         </div>
                                                         {game.achievements && (
-                                                            <p className="text-xs text-white/70 font-medium">
+                                                            <p className="text-xs text-white/70 light:text-black/70 font-medium">
                                                                 {game.achievements.completed}/{game.achievements.total} Achievements
                                                             </p>
                                                         )}
@@ -405,7 +405,7 @@ const Library = () => {
                                 </div>
 
                                 {/* Filters Sidebar */}
-                                <div className="w-full ml-6 lg:w-60 space-y-4">
+                                <div className="w-full ml-6 lg:w-60 space-y-4 light:text-black">
                                     <div className="relative">
                                         <svg
                                             className="absolute left-3 top-1/2 transform -translate-y-1/2 h-4 w-4 text-gray-400"
@@ -425,7 +425,7 @@ const Library = () => {
                                         <input
                                             type="text"
                                             placeholder="Title"
-                                            className="w-full pl-10 py-2 bg-zinc-800 border-none rounded-md text-white focus:outline-none focus:ring-1 focus:ring-gray-600"
+                                            className="w-full pl-10 py-2 bg-zinc-800 light:bg-zinc-300  border-none rounded-md text-white light:text-black focus:outline-none focus:ring-1 focus:ring-gray-600"
                                         />
                                     </div>
 

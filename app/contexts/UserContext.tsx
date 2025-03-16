@@ -6,12 +6,18 @@ import { auth, db } from "../firebase/config";
 
 // Define User type for context
 interface UserData {
-    uid: string;
-    username: string
-    avatar: string
-    joinDate: string
-    postCount: number
-    level?: number
+  [x: string]: string;
+  uid: string;
+  username: string;
+  email: string;
+  profilePictureUrl: string;
+  bio: string;
+  followers: string[];
+  following: string[];
+  createdAt: any;
+  lastOnlineAt: any;
+  status: string;
+  notificationsEnabled: boolean;
 }
 
 interface UserContextType {

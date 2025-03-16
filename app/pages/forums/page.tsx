@@ -197,7 +197,7 @@ export default function ForumsPage() {
   
     // Keep the button that's already inside the return statement (around line 350)
     return (
-        <div className="font-medium bg-[#111111] min-h-screen">
+        <div className="font-medium bg-[#111111] light:bg-light min-h-screen">
             <div className="fixed top-0 w-full z-50">
                 <Navbar />
             </div>
@@ -209,16 +209,17 @@ export default function ForumsPage() {
                     <div className="max-w-[90%] mx-auto">
                         {/* This is the working button section */}
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
-                            <h1 className="text-2xl md:text-3xl font-bold text-white">Forums</h1>
-                            <div className="flex flex-wrap gap-2 md:gap-4">
+                            <h1 className="text-2xl md:text-3xl font-bold text-white light:text-black/80">Forums</h1>
+                            <div className="flex flex-wrap gap-2 md:gap-4 ">
                                 <button
                                     onClick={() => setShowNewTopicForm(true)}
-                                    className="hover:bg-green-700 border border-white/10 text-white/80 px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors text-sm md:text-base flex items-center gap-2"
+                                    className="hover:bg-green-700  light:hover:bg-zinc-200 border border-white/10 light:border-black/10 text-white/80 light:text-black/80 px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors
+                                     text-sm md:text-base flex items-center gap-2  "
                                     disabled={isUploading}
                                 >
                                     <svg
                                         xmlns="http://www.w3.org/2000/svg"
-                                        className="h-4 w-4 text-white/60 mr-1"
+                                        className="h-4 w-4 text-white/60 light:text-black/80 mr-1"
                                         fill="none"
                                         viewBox="0 0 24 24"
                                         stroke="currentColor"
@@ -244,14 +245,14 @@ export default function ForumsPage() {
 
                         {/* New Topic Form */}
                         {showNewTopicForm && (
-                            <div className="mb-8 border border-white/10 p-6 rounded-lg">
+                            <div className="mb-8 border border-white/10 light:border-black/10 p-6 rounded-lg">
                                 <div className="flex justify-between items-start gap-4 mb-4">
-                                    <h2 className="text-xl font-semibold text-white">Create New Topic</h2>
+                                    <h2 className="text-xl font-semibold text-white light:text-black/80">Create New Topic</h2>
                                     <div className="relative">
                                         <select
                                             value={selectedCategory1}
                                             onChange={(e) => setSelectedCategory1(e.target.value)}
-                                            className="p-2 pr-8 rounded-lg border bg-[#111] border-white/10 text-white/80 text-sm appearance-none text-center w-28"
+                                            className="p-2 pr-8 rounded-lg border bg-[#111] light:bg-zinc-200 border-white/10 text-white/80 light:focus:outline-zinc-400 text-sm appearance-none text-center w-28 light:text-black/80"
                                         >
                                             <option value="general">General</option>
                                             <option value="gaming">Gaming</option>
@@ -259,7 +260,7 @@ export default function ForumsPage() {
                                             <option value="offtopic">Off Topic</option>
                                         </select>
                                         <svg
-                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/20 pointer-events-none"
+                                            className="absolute right-2 top-1/2 transform -translate-y-1/2 w-4 h-4 text-white/20 light:text-black/80 pointer-events-none"
                                             fill="none"
                                             stroke="currentColor"
                                             viewBox="0 0 24 24"
@@ -278,13 +279,13 @@ export default function ForumsPage() {
                                     value={newTopicTitle}
                                     onChange={(e) => setNewTopicTitle(e.target.value)}
                                     placeholder="Topic Title"
-                                    className="w-full p-3 mb-4 rounded-lg border bg-[#111] border-white/10 text-white placeholder:text-zinc-400"
+                                    className="w-full p-3 mb-4 rounded-lg border bg-[#111] light:bg-light light:outline-zinc-300 border-white/10 light:border-black/10 text-white light:text-black/80 placeholder:text-zinc-400"
                                 />
                                 <textarea
                                     value={newTopicDescription}
                                     onChange={(e) => setNewTopicDescription(e.target.value)}
                                     placeholder="Topic Description"
-                                    className="w-full p-3 mb-4 rounded-lg border bg-[#111] border-white/10 text-white placeholder:text-zinc-400 min-h-[100px]"
+                                    className="w-full p-3 mb-4 rounded-lg border bg-[#111] light:bg-light light:outline-zinc-300 border-white/10 light:border-black/10 text-white light:text-black/80 placeholder:text-zinc-400 min-h-[100px]"
                                 />
                                
                                 <div className="mb-4">
@@ -297,7 +298,7 @@ export default function ForumsPage() {
                                     />
                                     <button
                                         onClick={() => fileInputRef.current?.click()}
-                                        className="px-4 py-2 border border-white/10 text-white rounded-lg hover:bg-zinc-600 transition-colors flex items-center gap-2"
+                                        className="px-4 py-2 border border-white/10 light:border-black/10 text-white rounded-lg hover:bg-zinc-600 light:hover:bg-zinc-200 transition-colors flex items-center gap-2"
                                     >
                                         <IoIosAttach className="text-2xl text-zinc-400"/>
                                         <span className="text-zinc-400">Attach Media</span>
@@ -338,7 +339,7 @@ export default function ForumsPage() {
                                 <div className="flex justify-end gap-4">
                                     <button
                                         onClick={() => setShowNewTopicForm(false)}
-                                        className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600"
+                                        className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 light:bg-zinc-200 light:text-black/80 light:hover:bg-zinc-300"
                                     >
                                         Cancel
                                     </button>
@@ -357,10 +358,10 @@ export default function ForumsPage() {
                         <div className="mb-6 flex flex-wrap items-center gap-2">
                             <button
                                 onClick={() => setSelectedCategory('all')}
-                                className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors whitespace-nowrap text-sm md:text-base ${
+                                className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors whitespace-nowrap text-sm md:text-base  ${
                                     selectedCategory === 'all'
-                                        ? 'bg-green-600 text-white'
-                                        : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                                        ? 'bg-green-600 text-white '
+                                        : 'bg-zinc-200 text-zinc-900 hover:bg-zinc-700 light:hover:bg-zinc-300'
                                     }`}
                             >
                                 All Topics
@@ -371,8 +372,8 @@ export default function ForumsPage() {
                                     onClick={() => setSelectedCategory(cat.id)}
                                     className={`px-3 py-1.5 md:px-4 md:py-2 rounded-lg transition-colors whitespace-nowrap text-sm md:text-base ${
                                         selectedCategory === cat.id
-                                            ? 'bg-green-600 text-white'
-                                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700'
+                                            ? 'bg-green-600 text-white  '
+                                            : 'bg-zinc-800 text-zinc-400 hover:bg-zinc-700 light:bg-zinc-200 light:hover:bg-zinc-300 light:text-black/80'
                                         }`}
                                 >
                                     {cat.name}
@@ -384,12 +385,12 @@ export default function ForumsPage() {
                       
                         <div className="grid gap-4 md:gap-6">
                             {loading ? (
-                              <div className="mx-auto mt-20">
+                              <div className="mx-auto mt-20 ">
                                 <Spinner />
                               </div>
                               
                             ) : error ? (
-                                <div className="text-red-500 text-center py-8">{error}</div>
+                                <div className="text-red-500 text-center py-8 light:text-black/80">{error}</div>
                             ) : (
                                 topics
                                     .filter(topic => selectedCategory === 'all' || topic.category === selectedCategory)

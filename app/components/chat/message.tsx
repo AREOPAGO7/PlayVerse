@@ -16,10 +16,10 @@ export default function Message({ message, user, isCurrentUser, showHeader }: Me
   }
 
   return (
-    <div className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} mb-4`}>
+    <div className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} mb-4 light:bg-light`}>
       <div className={`max-w-[70%] ${isCurrentUser ? "order-2" : "order-1"}`}>
         {showHeader && !isCurrentUser && (
-          <div className="flex items-center gap-2 mb-1">
+          <div className="flex items-center gap-2 mb-1 light:bg-light">
             <div className="w-8 h-8 rounded-full overflow-hidden">
               <Image
                 src={user?.avatar || "/placeholder.svg"}
@@ -29,13 +29,13 @@ export default function Message({ message, user, isCurrentUser, showHeader }: Me
                 className="object-cover"
               />
             </div>
-            <span className="font-medium text-sm">{user?.username}</span>
+            <span className="font-medium text-sm light:text-black/90" >{user?.username}</span>
           </div>
         )}
 
         <div
           className={`rounded-lg p-3 ${
-            isCurrentUser ? "bg-green-600 text-white rounded-tr-none text-sm" : "bg-zinc-800 text-white/90 text-sm rounded-tl-none"
+            isCurrentUser ? "bg-green-600 text-white rounded-tr-none text-sm" : "bg-zinc-800 text-white/90 text-sm rounded-tl-none light:bg-zinc-200 light:text-zinc-800"
           }`}
         >
           <p className="whitespace-pre-wrap font-medium ">{message.content}</p>

@@ -41,6 +41,7 @@ const SignUpForm = ({  }: SignInProps) => {
             "Lover of tech and coffee."
           );
           console.log("User successfully created in Firestore");
+          window.location.href = '/';
         } catch (firestoreError) {
           console.error("Failed to create user in Firestore:", firestoreError);
           // Optionally set an error state here to show to the user

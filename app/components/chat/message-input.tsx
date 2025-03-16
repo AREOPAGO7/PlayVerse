@@ -36,17 +36,18 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
   }
 
   return (
-    <div className="p-4 border-t border-zinc-800">
+    <div className="p-4 border-t border-zinc-800 light:border-zinc-400">
       {attachments.length > 0 && (
         <div className="mb-2 flex flex-wrap gap-2">
           {attachments.map((file, index) => (
-            <div key={index} className="bg-zinc-800 rounded-lg px-3 py-1 flex items-center gap-2">
+            <div key={index} className="bg-zinc-800 rounded-lg px-3 py-1 flex items-center gap-2 light:bg-zinc-200">
               <span className="text-sm truncate max-w-[150px]">{file.name}</span>
               <button
                 onClick={() => setAttachments(attachments.filter((_, i) => i !== index))}
-                className="text-zinc-400 hover:text-white"
+                className="text-zinc-400 hover:text-white light:text-zinc-800 light:hover:text-zinc-100"
               >
                 <svg
+
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
                   height="16"
@@ -69,7 +70,7 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
       <div className="flex items-end gap-2">
         <button
           onClick={() => fileInputRef.current?.click()}
-          className="p-2 rounded-full hover:bg-zinc-800 transition-colors"
+          className="p-2 rounded-full hover:bg-zinc-800 transition-colors light:hover:bg-zinc-200 light:text-zinc-800"
         >
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -102,7 +103,7 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
             onChange={(e) => setMessage(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type a message..."
-            className="w-full bg-zinc-800 rounded-lg pl-4 -mb-3 pr-10 py-3 text-white focus:outline-none resize-none"
+            className="w-full bg-zinc-800 rounded-lg pl-4 -mb-3 pr-10 py-3 text-white focus:outline-none resize-none light:bg-zinc-200 light:text-zinc-800"
             rows={1}
           />
         </div>
@@ -112,8 +113,8 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
           disabled={!message.trim() && attachments.length === 0}
           className={`p-3  rounded-full -mb-1 ${
             !message.trim() && attachments.length === 0
-              ? "bg-zinc-800 text-zinc-500 cursor-not-allowed"
-              : "bg-green-600 text-white hover:bg-green-500"
+              ? "bg-zinc-800 text-zinc-500 cursor-not-allowed light:bg-zinc-200 light:text-zinc-800"
+              : "bg-green-600 text-white hover:bg-green-500 light:bg-green-600 light:text-white light:hover:bg-green-500"
           } transition-colors`}
         >
           <svg

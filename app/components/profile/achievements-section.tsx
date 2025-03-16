@@ -23,10 +23,10 @@ const AchievementsSection: React.FC<AchievementsSectionProps> = ({
   onTotalPlaytimeChange,
 }) => {
   return (
-    <div className="bg-zinc-900 rounded-lg p-6 shadow-lg border border-zinc-800">
-      <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2">
-        <h2 className="text-lg font-bold text-white">Achievements</h2>
-        <button className="text-green-500 text-sm flex items-center hover:underline">
+    <div className="bg-zinc-900 rounded-lg p-6 shadow-lg border border-zinc-800 light:bg-zinc-200 light:border-zinc-300">
+      <div className="flex justify-between items-center mb-4 border-b border-zinc-800 pb-2 light:border-zinc-400">
+        <h2 className="text-lg font-bold text-white light:text-zinc-800">Achievements</h2>
+        <button className="text-green-500 text-sm flex items-center hover:underline light:text-zinc-800">
           View All
           <svg
             xmlns="http://www.w3.org/2000/svg"
@@ -65,16 +65,16 @@ const AchievementsSection: React.FC<AchievementsSectionProps> = ({
       />
 
       {editing && (
-        <div className="mt-6 bg-zinc-800 p-4 rounded-lg border border-zinc-700">
-          <h3 className="text-sm font-bold text-zinc-300 mb-3 border-b border-zinc-700 pb-2">Edit Stats</h3>
+        <div className="mt-6 bg-zinc-800 p-4 rounded-lg border border-zinc-700 light:bg-zinc-200 light:border-zinc-300">
+          <h3 className="text-sm font-bold text-zinc-300 mb-3 border-b border-zinc-700 pb-2 light:text-zinc-800">Edit Stats</h3>
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <label className="text-xs text-zinc-400 block mb-1">Friends</label>
+              <label className="text-xs text-zinc-400 block mb-1 light:text-zinc-800">Friends</label>
               <input
                 type="number"
                 value={editedFriendCount || 0}
                 onChange={(e) => onFriendCountChange(Number.parseInt(e.target.value) || 0)}
-                className="bg-zinc-700 border border-zinc-600 rounded p-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="bg-zinc-700 border border-zinc-600  rounded p-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent light:bg-zinc-200 light:text-zinc-800 light:border-zinc-300"
               />
             </div>
             <div>
@@ -83,7 +83,7 @@ const AchievementsSection: React.FC<AchievementsSectionProps> = ({
                 type="number"
                 value={editedTotalPlaytime || 0}
                 onChange={(e) => onTotalPlaytimeChange(Number.parseInt(e.target.value) || 0)}
-                className="bg-zinc-700 border border-zinc-600 rounded p-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="bg-zinc-700 border border-zinc-600 rounded p-2 text-white w-full focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent light:bg-zinc-200 light:text-zinc-800 light:border-zinc-300"
               />
             </div>
           </div>

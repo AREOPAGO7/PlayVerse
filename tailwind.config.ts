@@ -1,6 +1,6 @@
 import type { Config } from "tailwindcss";
 
-export default {
+const config: Config = {
   content: [
     "./pages/**/*.{js,ts,jsx,tsx,mdx}",
     "./components/**/*.{js,ts,jsx,tsx,mdx}",
@@ -12,8 +12,16 @@ export default {
         background: "var(--background)",
         foreground: "var(--foreground)",
         primary: "#FF8C00",
+        light: "#F5F5F5",
       },
     },
   },
-  plugins: [],
-} satisfies Config;
+  plugins: [
+    ({ addVariant }: { addVariant: (name: string, definition: string) => void }) => {
+      // Add a custom 'light' variant
+      addVariant('light', '.light &');
+    }
+  ],
+};
+
+export default config;

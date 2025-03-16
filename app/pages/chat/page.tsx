@@ -254,7 +254,7 @@ const ChatPage = () => {
   }
 
   return (
-    <div className="h-screen flex flex-col bg-[#111111]">
+    <div className="h-screen flex flex-col bg-[#111111] light:bg-zinc-200">
       <Navbar />
       
       <div className="flex flex-1 overflow-hidden">
@@ -270,7 +270,7 @@ const ChatPage = () => {
             />
 
             {/* Chat Area */}
-            <div className="flex-1 flex flex-col">
+            <div className="flex-1 flex flex-col light:bg-zinc-200">
               <ChatArea
                 messages={messages[activeChat] || []}
                 users={users}

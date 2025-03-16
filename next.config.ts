@@ -9,7 +9,13 @@ const nextConfig: NextConfig = {
       'lh3.googleusercontent.com',
       'avatars.githubusercontent.com',
       'media.rawg.io',
-      'shared.akamai.steamstatic.com'
+      'shared.akamai.steamstatic.com',
+      'cdn.akamai.steamstatic.com',
+      'cdn.cloudflare.steamstatic.com',
+      'cdn.cloudflare.steamstatic.com',
+      'cdn.cloudflare.steamstatic.com',
+      'cdn.cloudflare.steamstatic.com',
+      'cdn.cloudflare.steamstatic.com',
     ],
   },
 };

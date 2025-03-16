@@ -47,15 +47,15 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect }
   }
 
   return (
-    <div className="w-80 h-full bg-[#111] border-r border-zinc-800 flex flex-col">
-      <div className="p-4 border-b border-zinc-800">
+    <div className="w-80 h-full bg-[#111] border-r border-zinc-800 light:border-zinc-400 flex flex-col light:bg-light">
+      <div className="p-4 border-b border-zinc-800 light:border-zinc-400">
         <div className="relative">
           <input
             type="text"
             placeholder="Search chats"
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="w-full bg-zinc-800 rounded-lg pl-10 pr-4 py-2 text-white/70 focus:outline-none"
+            className="w-full bg-zinc-800 rounded-lg pl-10 pr-4 py-2 text-white/70 focus:outline-none light:bg-zinc-200 light:text-zinc-800"
           />
           <svg
             className="absolute left-3 top-2.5 h-5 w-5 text-zinc-400"
@@ -80,8 +80,8 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect }
             <button
               key={chat.id}
               onClick={() => onChatSelect(chat.id)}
-              className={`w-full p-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors ${
-                activeChat === chat.id ? "bg-zinc-800" : ""
+              className={`w-full p-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors light:hover:bg-zinc-200 light:text-zinc-800 ${
+                activeChat === chat.id ? "bg-zinc-800 light:bg-zinc-200" : ""
               }`}
             >
               <div className="relative">
@@ -100,13 +100,13 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect }
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex justify-between">
-                  <p className="font-medium truncate text-white/80">{otherUser.username}</p>
-                  <span className="text-xs text-zinc-400">{formatTime(chat.lastMessageTime)}</span>
+                  <p className="font-medium truncate text-white/80 light:text-zinc-800">{otherUser.username}</p>
+                  <span className="text-xs text-zinc-400 light:text-zinc-800">{formatTime(chat.lastMessageTime)}</span>
                 </div>
-                <p className="text-sm text-zinc-500 truncate text-start w-full">{chat.lastMessage}</p>
+                <p className="text-sm text-zinc-500 truncate text-start w-full light:text-zinc-800">{chat.lastMessage}</p>
               </div>
               {chat.unread > 0 && (
-                <div className="bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
+                <div className="bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center light:bg-green-600 light:text-white">
                   {chat.unread}
                 </div>
               )}
@@ -115,7 +115,7 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect }
         })}
       </div>
 
-      <div className="p-4 border-t border-zinc-800">
+      <div className="p-4 border-t border-zinc-800 light:border-zinc-400">
         {showNewChat ? (
           <div className="space-y-2">
             <input
@@ -123,18 +123,18 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect }
               placeholder="Enter username"
               value={newChatName}
               onChange={(e) => setNewChatName(e.target.value)}
-              className="w-full bg-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none"
+              className="w-full bg-zinc-800 rounded-lg px-4 py-2 text-white focus:outline-none light:bg-zinc-200 light:text-zinc-800"
             />
             <div className="flex gap-2">
               <button
                 onClick={() => setShowNewChat(false)}
-                className="flex-1 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors"
+                className="flex-1 py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors light:bg-zinc-200 light:text-zinc-800 light:hover:bg-zinc-300"
               >
                 Cancel
               </button>
               <button
                 onClick={handleCreateChat}
-                className="flex-1 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors"
+                className="flex-1 py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors light:bg-green-600 light:text-white light:hover:bg-green-500"
               >
                 Create
               </button>

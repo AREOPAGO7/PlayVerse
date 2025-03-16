@@ -21,8 +21,9 @@ export async function middleware(request: NextRequest) {
       return NextResponse.next({
         headers: requestHeaders,
       });
-    } catch {
-      // Handle error without declaring unused variable
+    } catch (error) {
+      // If token is invalid, redirect to login
+      return NextResponse.redirect(new URL('/', request.url));
     }
   }
 

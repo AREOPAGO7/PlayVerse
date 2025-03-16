@@ -323,7 +323,7 @@ export default function Store() {
         <meta name="description" content="PlayVerse Games Store " />
       </Head>
 
-      <div className="flex flex-col h-screen bg-[#111111] text-white overflow-hidden font-sans">
+      <div className="flex flex-col h-screen bg-[#111111] light:bg-light text-white  overflow-hidden font-sans">
        <Navbar/>
         <div className="flex flex-1 overflow-hidden ">
        <div className='border-r border-white/5'>
@@ -336,7 +336,7 @@ export default function Store() {
               {/* Featured game banner with right sidebar */}
               <div className="relative px-6 py-4 flex gap-4">
                 {/* Main banner - REDUCED WIDTH BY 20% using w-4/5 */}
-                <div className="relative h-[400px] md:h-[625px] overflow-hidden xl:w-3/4 w-full rounded-xl">
+                <div className="relative h-[400px] md:h-[480px] overflow-hidden xl:w-3/4 w-full rounded-xl">
                   {/* Previous image */}
                   <div
                     className={`absolute inset-0 transition-all duration-500 ease-in-out transform  
@@ -377,27 +377,27 @@ export default function Store() {
                     <div className={`transition-all duration-500 transform
                       ${isTransitioning ? 'translate-x-12 opacity-0' : 'translate-x-0 opacity-100'}`}>
                       <div className="mb-2">
-                        <span className="text-xs font-bold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
+                        <span className="text-[8px] font-bold bg-white/20 backdrop-blur-sm px-3 py-1 rounded-full">
                           {games[activeGameIndex]?.status || 'FEATURED'}
                         </span>
                       </div>
                       <div className="mb-4">
-                        <h1 className="text-5xl text-white/90 font-bold tracking-wide mb-2">
+                        <h1 className="text-3xl text-white/90 font-bold tracking-wide mb-1">
                           {games[activeGameIndex]?.title || 'Game Title'}
                         </h1>
-                        <p className="text-base text-gray-200 leading-relaxed">
+                        <p className="text-[13px] text-gray-200 leading-relaxed">
                           {games[activeGameIndex]?.bannerDescription || 'Game description not available.'}
                         </p>
                       </div>
-                      <div className="mb-6">
-                        <span className="text-2xl font-bold">{games[activeGameIndex]?.price || '$49.99'}</span>
+                      <div className="mb-2">
+                        <span className="text-xl font-bold">{games[activeGameIndex]?.price || '$49.99'}</span>
                       </div>
                       <div className="flex items-center space-x-4">
                         
-                        <Link href={`/pages/game/${games[activeGameIndex]?.id}`} className="bg-white/95 hover:bg-white  text-black font-semibold px-8 py-3 rounded-lg transition-colors">
+                        <Link href={`/pages/game/${games[activeGameIndex]?.id}`} className="bg-white/95 hover:bg-white  text-black font-semibold px-6 py-2 rounded-lg transition-colors">
                           Buy Now
                         </Link>
-                        <button className="bg-black/30 backdrop-blur-sm border border-white/20 font-semibold px-6 py-3 rounded hover:bg-white/10 transition-colors">
+                        <button className="bg-black/30 backdrop-blur-sm text-[14px] border border-white/20 font-semibold px-4 py-2 rounded hover:bg-white/10 transition-colors">
                           Add to Wishlist
                         </button>
                       </div>
@@ -406,14 +406,14 @@ export default function Store() {
                 </div>
 
                 {/* Right sidebar with game thumbnails */}
-                <div className="w-[350px] bg-[#111111] hidden xl:block font-medium">
+                <div className="w-[350px] bg-[#111111] hidden xl:block font-medium light:bg-light light:text-black ">
                   <div className="h-full overflow-auto">
                     <div className="p-4">
                       {games.map((game, index) => (
                         <div
                           key={game.id}
-                          className={`relative flex items-center p-2 rounded-lg mb-2 cursor-pointer transition-colors overflow-hidden
-                            ${activeGameIndex === index ? "bg-[#303030]" : "hover:bg-[#252525]"}`}
+                          className={`relative flex items-center p-2 rounded-lg mb-2 cursor-pointer transition-colors overflow-hidden border border-black/10
+                            ${activeGameIndex === index ? "bg-[#303030] light:bg-zinc-300"  : "hover:bg-[#252525] light:hover:bg-zinc-300"}`}
                           onClick={() => {
                             setPrevGameIndex(activeGameIndex);
                             setIsTransitioning(true);
@@ -424,7 +424,7 @@ export default function Store() {
                           {/* Loading indicator overlay */}
                           {activeGameIndex === index && (
                             <div 
-                              className="absolute inset-0 bg-white/10 transition-all duration-100"
+                              className="absolute inset-0 bg-white/10 light:bg-black/20 transition-all duration-100"
                               style={{ 
                                 width: `${progress}%`,
                               }}
@@ -432,7 +432,7 @@ export default function Store() {
                           )}
 
                           {/* Game thumbnail */}
-                          <div className="w-16 h-20 relative flex-shrink-0">
+                          <div className="w-12  h-[54px] relative flex-shrink-0">
                             <Image
                               src={game.img || '/games/placeholder.jpg'}
                               alt={game.title}
@@ -458,10 +458,10 @@ export default function Store() {
               {/* Discover Something New section */}
               <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-xl font-bold">Discover Something New</h2>
+                  <h2 className="text-xl font-bold light:text-black">Discover Something New</h2>
                   <div className="flex space-x-2">
                     <button
-                      className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
+                      className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors light:bg-zinc-300 light:hover:bg-zinc-300"
                       onClick={() => scrollCarousel("left", discoverCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -469,7 +469,7 @@ export default function Store() {
                       </svg>
                     </button>
                     <button
-                      className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors"
+                      className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors light:bg-zinc-300 light:hover:bg-zinc-300"
                       onClick={() => scrollCarousel("right", discoverCarouselRef)}
                     >
                       <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
@@ -487,11 +487,11 @@ export default function Store() {
                   {discoverGames.map((game, index) => (
                     <div
                       key={`discover-${game.id}-${index}`}
-                      className="flex-shrink-0 w-[240px] rounded-lg overflow-hidden group cursor-pointer"
+                      className="flex-shrink-0 w-[240px] rounded-lg overflow-hidden group cursor-pointer "
                     >
                       <div className="relative aspect-[4/4] h-[300px]">
                         {game.tag && (
-                          <div className="absolute top-2 left-2 bg-white text-black text-[10px] px-1.5 py-0.5 font-bold rounded">
+                          <div className="absolute top-2 left-2 bg-white text-black text-[10px] px-1.5 py-0.5 font-bold rounded light:text-black">
                             {game.tag}
                           </div>
                         )}
@@ -505,9 +505,9 @@ export default function Store() {
                           
                         </div>
                       </div>
-                      <div className="mt-2">
-                        <h3 className={`text-sm ${poppins.className} text-white h-10`}>{game.title}</h3>
-                        <p className="text-xs text-gray-400 mt-1">Base Game</p>
+                      <div className="mt-2 ">
+                        <h3 className={`text-sm ${poppins.className} text-white h-10 light:text-black`}>{game.title}</h3>
+                        <p className="text-xs text-gray-400 mt-1 light:text-black">Base Game</p>
                         <div className="mt-2 flex items-center gap-2">
                           {game.discount && (
                             <span className="bg-green-500 text-white text-xs px-1.5 py-0.5 font-bold rounded">
@@ -516,11 +516,11 @@ export default function Store() {
                           )}
                           <div className="flex items-center gap-2 ">
                             {game.discount && (
-                              <span className="text-xs text-gray-400 line-through">
+                              <span className="text-xs text-gray-400 line-through light:text-black">
                                 ${game.price.toFixed(2)}
                               </span>
                             )}
-                            <span className="text-sm text-white font-medium">
+                            <span className="text-sm text-white font-medium light:text-black">
                               ${((game.price * (100 - (game.discount || 0))) / 100).toFixed(2)}
                             </span>
                           </div>
