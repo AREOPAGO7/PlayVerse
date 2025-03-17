@@ -1,7 +1,5 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useRef } from "react"
 
 interface MessageInputProps {
@@ -47,7 +45,6 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
                 className="text-zinc-400 hover:text-white light:text-zinc-800 light:hover:text-zinc-100"
               >
                 <svg
-
                   xmlns="http://www.w3.org/2000/svg"
                   width="16"
                   height="16"
@@ -111,7 +108,7 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
         <button
           onClick={handleSend}
           disabled={!message.trim() && attachments.length === 0}
-          className={`p-3  rounded-full -mb-1 ${
+          className={`p-3 rounded-full -mb-1 ${
             !message.trim() && attachments.length === 0
               ? "bg-zinc-800 text-zinc-500 cursor-not-allowed light:bg-zinc-200 light:text-zinc-800"
               : "bg-green-600 text-white hover:bg-green-500 light:bg-green-600 light:text-white light:hover:bg-green-500"
@@ -136,4 +133,3 @@ export default function MessageInput({ onSendMessage }: MessageInputProps) {
     </div>
   )
 }
-

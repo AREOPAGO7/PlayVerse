@@ -7,7 +7,7 @@ import { useUser } from "./contexts/UserContext";
 import { Poppins } from 'next/font/google';
 import Sidebar from './components/navigation/Sidebar';
 import Spinner from './components/spinners/Spinner';
-import {Game , DiscoverGame, RAWGGame} from './types/games'
+import {Game , DiscoverGame, RAWGGame ,NewGame} from './types/games'
 import Link from 'next/link';
 const poppins = Poppins({
   subsets: ['latin'],
@@ -34,6 +34,7 @@ export default function Store() {
 
   // State for storing API data
   const [featuredGames, setFeaturedGames] = useState<Game[]>([])
+  const [NewGames, setNewGames] = useState<NewGame[]>([])
   const [discoverGames, setDiscoverGames] = useState<DiscoverGame[]>([])
   const [loading, setLoading] = useState<boolean>(true)
   const [error, setError] = useState<string | null>(null)
@@ -145,7 +146,7 @@ export default function Store() {
           .then(res => res.ok ? res.json() : null)
           .then(data => data && data.results && data.results.length > 0 ? data.results[0] : null)
           .catch(err => {
-            console.error(`Error fetching ${gameName}:`, err);
+            console.log(`Error fetching ${gameName}:`, err);
             return null;
           })
       );
@@ -191,7 +192,7 @@ export default function Store() {
       
       setFeaturedGames(transformedGames);
     } catch (error: any) {
-      console.error("Error fetching featured games:", error);
+      console.log("Error fetching featured games:", error);
       setError(error.message);
       
       // Fallback to default games if API fails
@@ -207,7 +208,7 @@ export default function Store() {
       );
       
       if (!response.ok) {
-        throw new Error('Failed to fetch discover games');
+        // throw new Error('Failed to fetch discover games');
       }
       
       const data = await response.json();
@@ -243,7 +244,49 @@ export default function Store() {
       setLoading(false);
     }
   };
-
+  const fetchNewGames = async (): Promise<void> => {
+    try {
+      const response = await fetch(
+        `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&dates=2025-01-01,2025-12-31&ordering=-added&page_size=20`
+      );
+      
+      if (!response.ok) {
+        // throw new Error('Failed to fetch discover games');
+      }
+      
+      const data = await response.json();
+      
+      // Transform the data into our app's format
+      const transformedGames = data.results.map((game: RAWGGame, index: number) => {
+        // Randomly set some games to have discounts and tags
+        const hasDiscount = Math.random() > 0.5;
+        const discount = hasDiscount ? [25, 33, 40, 50][Math.floor(Math.random() * 4)] : undefined;
+        const basePrice = [39.99, 49.99, 59.99, 69.99][Math.floor(Math.random() * 4)];
+        
+        const tags = ["NEW", "WINDOWS 10+ PRE-RELEASE", "", ""];
+        const randomTag = tags[Math.floor(Math.random() * tags.length)];
+        
+        return {
+          id: game.id,
+          title: game.name,
+          tag: randomTag,
+          img: game.background_image,
+          price: basePrice,
+          discount: discount,
+        };
+      });
+      
+      setNewGames(transformedGames);
+    } catch (error: any) {
+      console.error("Error fetching discover games:", error);
+      setError(error.message);
+      
+      // Fallback to default discover games if API fails
+      setNewGames(defaultDiscoverGames);
+    } finally {
+      setLoading(false);
+    }
+  };
   const scrollCarousel = (direction: "left" | "right", carouselRef: React.RefObject<HTMLDivElement>): void => {
     if (carouselRef.current) {
       const scrollAmount = 300
@@ -261,6 +304,7 @@ export default function Store() {
     // Fetch games data from RAWG API when component mounts
     fetchFeaturedGames();
     fetchDiscoverGames();
+    fetchNewGames(); // Add this line to fetch new games
   }, []);
 
   useEffect(() => {
@@ -480,12 +524,14 @@ export default function Store() {
                 </div>
 
                 <div
+               
                   ref={discoverCarouselRef}
                   className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
                   style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
                 >
                   {discoverGames.map((game, index) => (
-                    <div
+                    <Link
+                    href={`/pages/game/${game.id}`}
                       key={`discover-${game.id}-${index}`}
                       className="flex-shrink-0 w-[240px] rounded-lg overflow-hidden group cursor-pointer "
                     >
@@ -526,11 +572,88 @@ export default function Store() {
                           </div>
                         </div>
                       </div>
-                    </div>
+                    </Link>
                   ))}
                 </div>
               </div>
+              
 
+
+              <div className="p-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-xl font-bold light:text-black">New Releases</h2>
+                  <div className="flex space-x-2">
+                    <button
+                      className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors light:bg-zinc-300 light:hover:bg-zinc-300"
+                      onClick={() => scrollCarousel("left", newReleasesCarouselRef)}
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="15 18 9 12 15 6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                    <button
+                      className="p-2 rounded-full bg-[#303030] hover:bg-[#404040] transition-colors light:bg-zinc-300 light:hover:bg-zinc-300"
+                      onClick={() => scrollCarousel("right", newReleasesCarouselRef)}
+                    >
+                      <svg className="h-4 w-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <polyline points="9 18 15 12 9 6" strokeLinecap="round" strokeLinejoin="round" />
+                      </svg>
+                    </button>
+                  </div>
+                </div>
+
+                <div
+                  ref={newReleasesCarouselRef}
+                  className="flex space-x-4 overflow-x-auto pb-4 scrollbar-hide"
+                  style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+                >
+                  {NewGames.map((game, index) => (
+                    <Link
+                      href={`/pages/game/${game.id}`}
+                      key={`discover-${game.id}-${index}`}
+                      className="flex-shrink-0 w-[240px] rounded-lg overflow-hidden group cursor-pointer "
+                     >
+                      <div className="relative aspect-[4/4] h-[300px]">
+                        {game.tag && (
+                          <div className="absolute top-2 left-2 bg-white text-black text-[10px] px-1.5 py-0.5 font-bold rounded light:text-black">
+                            {game.tag}
+                          </div>
+                        )}
+                        <Image 
+                          src={game.img || '/games/placeholder.jpg'}
+                          fill
+                          alt={game.title} 
+                          className='rounded-lg object-cover'
+                        /> 
+                        <div className="absolute inset-0 w-[80%] flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity bg-white/10">
+                          
+                        </div>
+                      </div>
+                      <div className="mt-2 ">
+                        <h3 className={`text-sm ${poppins.className} text-white h-10 light:text-black`}>{game.title}</h3>
+                        <p className="text-xs text-gray-400 mt-1 light:text-black">Base Game</p>
+                        <div className="mt-2 flex items-center gap-2">
+                          {game.discount && (
+                            <span className="bg-green-500 text-white text-xs px-1.5 py-0.5 font-bold rounded">
+                              -{game.discount}%
+                            </span>
+                          )}
+                          <div className="flex items-center gap-2 ">
+                            {game.discount && (
+                              <span className="text-xs text-gray-400 line-through light:text-black">
+                                ${game.price.toFixed(2)}
+                              </span>
+                            )}
+                            <span className="text-sm text-white font-medium light:text-black">
+                              ${((game.price * (100 - (game.discount || 0))) / 100).toFixed(2)}
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </Link>
+                  ))}
+                </div>
+              </div>
             </div>
           </div>
         </div>

@@ -36,9 +36,7 @@ const SignUpForm = ({  }: SignInProps) => {
           await createUserInFirestore(
             userId,
             name || "Anonymous",
-            email,
-            "https://example.com/path/to/profile-picture.jpg",
-            "Lover of tech and coffee."
+            email
           );
           console.log("User successfully created in Firestore");
           window.location.href = '/';

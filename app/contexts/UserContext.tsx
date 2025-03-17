@@ -12,12 +12,12 @@ interface UserData {
   email: string;
   profilePictureUrl: string;
   bio: string;
-  followers: string[];
-  following: string[];
+  // followers: string[];
+  // following: string[];
   createdAt: any;
   lastOnlineAt: any;
   status: string;
-  notificationsEnabled: boolean;
+  // notificationsEnabled: boolean;
 }
 
 interface UserContextType {

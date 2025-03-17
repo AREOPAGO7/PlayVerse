@@ -18,10 +18,12 @@ import Spinner from "@/app/components/spinners/Spinner"
 // Types
 interface User {
   uid: string
+  email: string
   username: string
   avatar: string
   banner: string
   joinDate: string
+  status : string
   bio: string
   location: string
   country: string

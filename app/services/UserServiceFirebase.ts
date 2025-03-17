@@ -3,16 +3,22 @@ import { db } from "../firebase/config";
 
 // User type definition
 interface UserData {
-  username: string;
-  email: string;
-  profilePictureUrl: string;
-  bio: string;
-  followers: string[];
-  following: string[];
-  createdAt: any; // Firestore timestamp
-  lastOnlineAt: any;
-  status: string;
-  notificationsEnabled: boolean;
+  uid: string
+  email: string
+  username: string
+  avatar: string
+  banner: string
+  joinDate: string
+  status : string
+  bio: string
+  location: string
+  country: string
+  level: number
+  xp: number
+  totalPlaytime: number
+  favoriteGame: string
+  friendCount: number
+  rank: string
 }
 
 /**
@@ -22,7 +28,7 @@ export async function createUserInFirestore(
   userId: string,
   username: string = "Anonymous",
   email: string = "unknown@example.com",
-  profilePictureUrl: string = "https://example.com/default-profile.jpg",
+  avatar: string = "https://github.com/shadcn.png",
   bio: string = "No bio available"
 ): Promise<void> {
   try {
@@ -31,14 +37,21 @@ export async function createUserInFirestore(
     const userData: UserData = {
       username,
       email,
-      profilePictureUrl,
+      avatar,
       bio,
-      followers: [],
-      following: [],
-      createdAt: serverTimestamp(),
-      lastOnlineAt: serverTimestamp(),
+      joinDate: new Date().toLocaleDateString(),
       status: "offline",
-      notificationsEnabled: true,
+      banner: "",
+      location: "",
+      country: "",
+      level: 0,
+      xp: 0,
+      totalPlaytime: 0,
+      favoriteGame: "",
+      friendCount: 0,
+      rank: "Rookie",
+      uid: userId
+
     };
 
     await setDoc(userRef, userData);

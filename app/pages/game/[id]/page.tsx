@@ -5,35 +5,11 @@ import { useParams } from 'next/navigation';
 import Navbar from '@/app/components/navigation/Navbar';
 import Sidebar from '@/app/components/navigation/Sidebar';
 import Spinner from '@/app/components/spinners/Spinner';
+import { GameDetails } from '../../../types/games'
 
-interface Screenshot {
-    id: number;
-    image: string;
-}
 
 // Update the GameDetails interface
-interface GameDetails {
-    id: number;
-    name: string;
-    background_image: string;
-    description_raw: string;
-    released: string;
-    rating: number;
-    metacritic: number;
-    genres: Array<{ name: string }>;
-    platforms: Array<{ platform: { name: string } }>;
-    screenshots: Screenshot[];
-    developers: Array<{ name: string }>;
-    publishers: Array<{ name: string }>;
-    esrb_rating: { name: string };
-    tags: Array<{ name: string }>;
-    ratings: Array<{ title: string; percent: number }>;
-    added_by_status: {
-        playing: number;
-        owned: number;
-        beaten: number;
-    };
-}
+
 
 export default function GamePage() {
     const params = useParams();

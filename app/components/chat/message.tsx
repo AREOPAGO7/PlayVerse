@@ -1,19 +1,52 @@
 'use client'
 
 import Image from "next/image"
-import type { Message as MessageType, User } from "../../types/chat"
+import type { Message as MessageType } from "@/app/types/chat"
 
 interface MessageProps {
   message: MessageType
-  user: User | undefined
+  user: any
   isCurrentUser: boolean
   showHeader: boolean
 }
 
+interface FirestoreTimestamp {
+  seconds: number;
+  nanoseconds: number;
+}
+
 export default function Message({ message, user, isCurrentUser, showHeader }: MessageProps) {
-  const formatTime = (timestamp: string) => {
-    return timestamp;
-  }
+  const formatTime = (timestamp: string | number | Date | FirestoreTimestamp) => {
+    if (!timestamp) return "";
+    
+    try {
+      // Handle Firestore Timestamp objects
+      if (typeof timestamp === 'object' && 'seconds' in timestamp) {
+        const firestoreTimestamp = timestamp as FirestoreTimestamp;
+        return new Date(firestoreTimestamp.seconds * 1000).toLocaleTimeString('en-US', { 
+          hour: 'numeric', 
+          minute: '2-digit',
+          hour12: true 
+        });
+      }
+      
+      // Rest of the function remains the same
+      // Handle regular dates, timestamps, and strings
+      const date = new Date(timestamp);
+      if (isNaN(date.getTime())) {
+        return "Invalid time";
+      }
+      
+      return date.toLocaleTimeString('en-US', { 
+        hour: 'numeric', 
+        minute: '2-digit',
+        hour12: true 
+      });
+    } catch (error) {
+      console.error("Error formatting timestamp:", error);
+      return "Invalid time";
+    }
+  };
 
   return (
     <div className={`flex ${isCurrentUser ? "justify-end" : "justify-start"} mb-4 light:bg-light`}>
@@ -22,14 +55,14 @@ export default function Message({ message, user, isCurrentUser, showHeader }: Me
           <div className="flex items-center gap-2 mb-1 light:bg-light">
             <div className="w-8 h-8 rounded-full overflow-hidden">
               <Image
-                src={user?.avatar || "/placeholder.svg"}
+                src={user?.profilePictureUrl || "/placeholder.svg?height=32&width=32"}
                 alt={user?.username || "User"}
                 width={32}
                 height={32}
                 className="object-cover"
               />
             </div>
-            <span className="font-medium text-sm light:text-black/90" >{user?.username}</span>
+            <span className="font-medium text-sm light:text-black/90">{user?.username}</span>
           </div>
         )}
 
@@ -38,7 +71,7 @@ export default function Message({ message, user, isCurrentUser, showHeader }: Me
             isCurrentUser ? "bg-green-600 text-white rounded-tr-none text-sm" : "bg-zinc-800 text-white/90 text-sm rounded-tl-none light:bg-zinc-200 light:text-zinc-800"
           }`}
         >
-          <p className="whitespace-pre-wrap font-medium ">{message.content}</p>
+          <p className="whitespace-pre-wrap font-medium">{message.content}</p>
 
           {message.attachments && message.attachments.length > 0 && (
             <div className="mt-2 space-y-2">
@@ -84,4 +117,3 @@ export default function Message({ message, user, isCurrentUser, showHeader }: Me
     </div>
   )
 }
-

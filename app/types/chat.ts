@@ -1,52 +1,27 @@
 export interface User {
-    id: string
-    username: string
-    avatar: string
-    status: "online" | "away" | "offline" | "playing"
-    game?: string
-  }
-  
-  export interface Chat {
-    id: string
-    name: string
-    lastMessage?: string
-    lastMessageTime?: string  // Changed from Date to string
-    unread: number
-    users: User[]
-    type?: "channel" | "direct"
-    icon?: string
-    members?: User[]
-  }
-  
-  export interface Attachment {
-    type: "image" | "video" | "clip"
+  uid: string
+  username: string
+  profilePictureUrl?: string
+  status?: "online" | "offline" | "away"
+  bio?: string
+}
+
+export interface Message {
+  id: string
+  content: string
+  userId: string
+  timestamp: string
+  attachments?: Array<{
     url: string
+    type: "image" | "video"
     thumbnail?: string
-    title?: string
-  }
-  
-  export interface Message {
-    id: string
-    userId: string
-    content: string
-    // to be fixed  111
-    timestamp: string
-    attachments?: Attachment[]
-  }
-  
-  export interface Channel {
-    id: string
-    name: string
-    type: "channel" | "direct"
-    icon?: string
-    members?: User[]
-    unread: number
-  }
-  
-  export interface Reaction {
-    emoji: string
-    count: number
-    userIds: string[]
-  }
-  
-  
+  }>
+}
+
+export interface Chat {
+  id: string
+  participants: User[]
+  lastMessage?: string
+  lastMessageTime?: string
+  unread?: number
+}
