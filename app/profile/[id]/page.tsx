@@ -5,6 +5,7 @@ import { db } from "../../firebase/config"
 import { useUser } from "../../contexts/UserContext"
 import Sidebar from "@/app/components/navigation/Sidebar"
 import Navbar from "../../components/navigation/Navbar"
+import Image from "next/image";
 
 // Import components
 import ImageUploader from "../../components/profile/image-uploader"
@@ -98,9 +99,9 @@ const UserProfilePage = () => {
   }
 
   // Handle field changes
-  const handleFieldChange = (field: keyof User, value: any) => {
-    setEditedUser((prev) => (prev ? { ...prev, [field]: value } : null))
-  }
+const handleFieldChange = (field: keyof User, value: string | number) => {
+  setEditedUser((prev) => (prev ? { ...prev, [field]: value } : null))
+}
 
   if (loading) {
     return (
@@ -118,13 +119,26 @@ const UserProfilePage = () => {
 
   return (
     <div className="min-h-screen bg-[#111111] text-white light:bg-light light:text-black/80">
+    {/* Fixed Navbar - spans the entire width */}
+    <div className="fixed top-0 left-0 right-0 z-20 bg-[#111111] border-b border-white/5">
       <Navbar />
-      <div className="flex">
-        <Sidebar />
-        <div className="flex-1 p-4 max-w-7xl mx-auto">
+    </div>
+    
+    {/* Main container with sidebar and content */}
+    <div className="flex pt-16"> {/* Adjust based on actual navbar height */}
+      {/* Fixed Sidebar - extends from below navbar to bottom */}
+      <div className="fixed top-16 w-72 left-0 bottom-0 bg-[#111111]  z-10 hidden xl:block">
+     
+       <Sidebar />
+      
+      </div>
+      
+      {/* Main content area - pushed right to make room for sidebar */}
+      <div className="flex-1 xl:ml-64 min-h-screen">
+        <div className="p-4 max-w-7xl mx-auto">
           {/* Banner area */}
           <div className="relative mb-20">
-            <div className="h-64 rounded-lg overflow-hidden ">
+            <div className="h-64 rounded-lg overflow-hidden">
               {editing ? (
                 <ImageUploader
                   onUpload={(url) => handleFieldChange("banner", url)}
@@ -134,17 +148,18 @@ const UserProfilePage = () => {
               ) : (
                 <div className="w-full h-full bg-gradient-to-r from-zinc-900 to-zinc-800 relative">
                   {profileData?.banner && (
-                    <img
+                    <Image
                       src={profileData.banner || "/placeholder.svg"}
                       alt="Profile Banner"
-                      className="w-full h-full object-cover"
+                      fill={true}
+                      className="object-cover"
                     />
                   )}
                   <div className="absolute inset-0 bg-gradient-to-t from-[#111111] to-transparent opacity-70"></div>
                 </div>
               )}
             </div>
-
+  
             {/* Edit/save buttons */}
             <div className="absolute right-4 top-4 z-10 light:text-black/80">
               {editing ? (
@@ -206,7 +221,7 @@ const UserProfilePage = () => {
                 </button>
               )}
             </div>
-
+  
             {/* Avatar and basic info */}
             <div className="absolute -bottom-16 left-8 flex items-end">
               <div className="relative">
@@ -217,16 +232,18 @@ const UserProfilePage = () => {
                     type="avatar"
                   />
                 ) : (
-                  <div className="w-28 h-28 rounded-full border-4 border-[#111111] overflow-hidden bg-zinc-800 shadow-lg light:bg-zinc-200 light:border-zinc-700">
+                  <div className="rounded-full border-4 border-[#111111] overflow-hidden bg-zinc-800 shadow-lg light:bg-zinc-200 light:border-zinc-700">
                     {profileData.avatar ? (
-                      <img
+                      <Image
                         src={profileData.avatar || "/placeholder.svg"}
                         alt="Profile Avatar"
                         className="w-full h-full object-cover"
+                        width={112}
+                        height={112}
                       />
                     ) : (
-                      <div className="w-full h-full bg-green-500 flex items-center justify-center light:bg-zinc-200">
-                        <span className="text-3xl font-bold text-white light:text-black/80 ">
+                      <div className="w-28 h-28 bg-green-500 flex items-center justify-center light:bg-zinc-200">
+                        <span className="text-3xl font-bold text-white light:text-black/80">
                           {profileData.username?.charAt(0).toUpperCase() || "?"}
                         </span>
                       </div>
@@ -237,7 +254,7 @@ const UserProfilePage = () => {
                   <div className="text-xs font-bold">LVL {profileData.level || 1}</div>
                 </div>
               </div>
-
+  
               <div className="ml-6 pb-2">
                 {editing ? (
                   <input
@@ -274,7 +291,7 @@ const UserProfilePage = () => {
                       {profileData.location && <span className="mr-3 text-white light:text-black/80">{profileData.location}</span>}
                       {profileData.country && (
                         <>
-                          <span className="w-1 h-1 rounded-full bg-zinc-600 mr-3 light:bg-zinc-400  "></span>
+                          <span className="w-1 h-1 rounded-full bg-zinc-600 mr-3 light:bg-zinc-400"></span>
                           <span className="text-white light:text-black/80">{profileData.country}</span>
                         </>
                       )}
@@ -284,7 +301,7 @@ const UserProfilePage = () => {
               </div>
             </div>
           </div>
-
+  
           {/* Main content */}
           <div className="mt-10">
             <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -297,7 +314,7 @@ const UserProfilePage = () => {
                   editedBio={editedUser?.bio || ""}
                   onBioChange={(bio) => handleFieldChange("bio", bio)}
                 />
-
+  
                 {/* Level progress */}
                 <LevelProgress
                   level={profileData.level || 1}
@@ -308,7 +325,7 @@ const UserProfilePage = () => {
                   onLevelChange={(level) => handleFieldChange("level", level)}
                   onXpChange={(xp) => handleFieldChange("xp", xp)}
                 />
-
+  
                 {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-4">
                   <StatsCard
@@ -392,7 +409,7 @@ const UserProfilePage = () => {
                     }
                   />
                 </div>
-
+  
                 {/* Favorite Game */}
                 <FavoriteGame
                   favoriteGame={profileData.favoriteGame || ""}
@@ -401,7 +418,7 @@ const UserProfilePage = () => {
                   onFavoriteGameChange={(game) => handleFieldChange("favoriteGame", game)}
                 />
               </div>
-
+  
               {/* Right column - Achievements */}
               <div>
                 <AchievementsSection
@@ -419,6 +436,7 @@ const UserProfilePage = () => {
         </div>
       </div>
     </div>
+  </div>
   )
 }
 

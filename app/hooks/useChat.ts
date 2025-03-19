@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useEffect, useRef } from "react"
+import { useState, useEffect, useRef, useCallback } from "react"
 import { db } from "@/app/firebase/config"
 import {
   collection,
@@ -13,18 +13,49 @@ import {
   serverTimestamp,
   getDoc,
   getDocs,
-  increment,
+  DocumentData,
   Timestamp,
-  setDoc,
+  QuerySnapshot
 } from "firebase/firestore"
 import { useUser } from "@/app/contexts/UserContext"
 
+// First, update the ChatMessage interface
+interface ChatMessage {
+  id: string;
+  content: string;
+  userId: string;
+  timestamp: Timestamp;
+  attachments: Array<{
+    url: string;
+    type: string;
+    name: string;
+    size: number;
+  }>;
+}
+
+interface ChatData {
+  id: string;
+  participantIds: string[];
+  participants: { 
+    uid: string;
+    username: string;
+    profilePictureUrl?: string;
+    avatar?: string;
+    status?: string;
+  }[];
+  lastMessage?: string;
+  lastMessageTime?: Timestamp;
+  lastMessageUserId?: string;
+  unreadCounts?: Record<string, number>;
+  unread?: number;
+  createdAt?: Timestamp;
+}
+
 export function useChat(activeChatId: string) {
-  const [messages, setMessages] = useState<any[]>([])
-  const [chats, setChats] = useState<any[]>([])
+  const [messages, setMessages] = useState<ChatMessage[]>([])
+  const [chats, setChats] = useState<ChatData[]>([])
   const [loading, setLoading] = useState(true)
   const { user } = useUser()
-  // Use a ref instead of state to avoid triggering re-renders
   const processedMessagesRef = useRef<Record<string, boolean>>({})
 
   // Fetch user's chats
@@ -36,24 +67,22 @@ export function useChat(activeChatId: string) {
 
     const unsubscribe = onSnapshot(
       q,
-      (snapshot) => {
-        const chatData: any[] = []
+      (snapshot: QuerySnapshot<DocumentData>) => {
+        const chatData: ChatData[] = []
 
         snapshot.forEach((doc) => {
-          const data = doc.data()
+          const data = doc.data() as DocumentData
           
-          // Transform unreadCounts object to unread count for current user
           let unreadCount = 0;
           if (data.unreadCounts && data.unreadCounts[user.uid]) {
-            // Only show unread count if this is not the active chat
             unreadCount = doc.id === activeChatId ? 0 : data.unreadCounts[user.uid];
           }
           
           chatData.push({
             id: doc.id,
             ...data,
-            unread: unreadCount // Override with user-specific unread count, zeroed if active
-          })
+            unread: unreadCount
+          } as ChatData)
         })
 
         console.log("Chats from Firestore:", chatData)
@@ -67,7 +96,7 @@ export function useChat(activeChatId: string) {
     )
 
     return () => unsubscribe()
-  }, [user, activeChatId]) // Added activeChatId as dependency to re-fetch when active chat changes
+  }, [user, activeChatId])
 
   // Fetch messages for active chat
   useEffect(() => {
@@ -80,16 +109,15 @@ export function useChat(activeChatId: string) {
     const q = query(messagesRef)
 
     const unsubscribe = onSnapshot(q, (snapshot) => {
-      const messageData: any[] = []
+      const messageData: ChatMessage[] = []
 
       snapshot.forEach((doc) => {
         messageData.push({
           id: doc.id,
           ...doc.data(),
-        })
+        } as ChatMessage)
       })
 
-      // Sort messages by timestamp
       messageData.sort((a, b) => {
         if (!a.timestamp) return 1
         if (!b.timestamp) return -1
@@ -108,9 +136,8 @@ export function useChat(activeChatId: string) {
     
     const unsubscribes: (() => void)[] = []
     
-    // Process each chat separately
     chats.forEach(chat => {
-      if (chat.id === activeChatId) return // Skip active chat
+      if (chat.id === activeChatId) return
       
       const messagesRef = collection(db, "chats", chat.id, "messages")
       const q = query(messagesRef)
@@ -118,41 +145,34 @@ export function useChat(activeChatId: string) {
       const unsubscribe = onSnapshot(q, async (snapshot) => {
         let newMessageCount = 0
         
-        // Only process added messages that we haven't seen before
         snapshot.docChanges().forEach(change => {
           if (change.type === "added") {
             const messageData = change.doc.data()
             const messageId = change.doc.id
             
-            // Skip messages from the current user - don't count these as unread
             if (messageData.userId === user.uid) {
               processedMessagesRef.current[messageId] = true
               return
             }
             
-            // Skip already processed messages using the message ID
             if (processedMessagesRef.current[messageId]) return
             
-            // Skip old messages (those created more than 10 seconds ago)
             if (messageData.timestamp) {
               const messageTime = messageData.timestamp.toDate?.() || new Date()
               const now = new Date()
               const messageAge = (now.getTime() - messageTime.getTime()) / 1000
               
               if (messageAge > 10) {
-                // Still mark as processed even if it's old
                 processedMessagesRef.current[messageId] = true
                 return
               }
             }
             
-            // This is a new message that needs to be counted
             newMessageCount++
             processedMessagesRef.current[messageId] = true
           }
         })
         
-        // Update the unread count in Firestore only if we have new messages
         if (newMessageCount > 0) {
           try {
             const chatRef = doc(db, "chats", chat.id)
@@ -160,7 +180,6 @@ export function useChat(activeChatId: string) {
             
             if (chatSnap.exists()) {
               const chatData = chatSnap.data();
-              // Initialize or update the unreadCounts field
               const unreadCounts = chatData.unreadCounts || {};
               unreadCounts[user.uid] = (unreadCounts[user.uid] || 0) + newMessageCount;
               
@@ -183,16 +202,7 @@ export function useChat(activeChatId: string) {
   }, [chats, user?.uid, activeChatId])
   
   // Reset unread count when a chat becomes active
-  useEffect(() => {
-    if (activeChatId && user?.uid) {
-      markChatAsRead(activeChatId).catch(error => 
-        console.error("Error marking chat as read on activation:", error)
-      )
-    }
-  }, [activeChatId, user?.uid])
-
-  // Function to mark a chat as read
-  const markChatAsRead = async (chatId: string) => {
+  const markChatAsRead = useCallback(async (chatId: string) => {
     if (!chatId || !user?.uid) return
     
     try {
@@ -201,10 +211,8 @@ export function useChat(activeChatId: string) {
       
       if (chatSnap.exists()) {
         const chatData = chatSnap.data();
-        // Initialize or update the unreadCounts field
         const unreadCounts = chatData.unreadCounts || {};
         
-        // Only update if there are unread messages
         if (unreadCounts[user.uid]) {
           unreadCounts[user.uid] = 0;
           await updateDoc(chatRef, {
@@ -216,17 +224,23 @@ export function useChat(activeChatId: string) {
       console.error("Error marking chat as read:", error)
       throw error
     }
-  }
+  }, [user?.uid])
+
+  useEffect(() => {
+    if (activeChatId && user?.uid) {
+      markChatAsRead(activeChatId).catch(error => 
+        console.error("Error marking chat as read on activation:", error)
+      )
+    }
+  }, [activeChatId, user?.uid, markChatAsRead]) // Add markChatAsRead to the dependency array
 
   // Function to send a message
   const sendMessage = async (content: string, files: File[] = []) => {
     if (!activeChatId || !user?.uid || (!content.trim() && files.length === 0)) return
 
     try {
-      // Upload files if any
       const attachments: never[] = []
       
-      // Get the chat document first to find the other participant
       const chatRef = doc(db, "chats", activeChatId)
       const chatSnap = await getDoc(chatRef)
       
@@ -238,13 +252,11 @@ export function useChat(activeChatId: string) {
       const chatData = chatSnap.data()
       const otherParticipantId = chatData.participantIds.find((id: string) => id !== user.uid)
       
-      // Prepare unread counts update - only increment for the receiver
       const unreadCounts = chatData.unreadCounts || {};
       if (otherParticipantId) {
         unreadCounts[otherParticipantId] = (unreadCounts[otherParticipantId] || 0) + 1;
       }
       
-      // Update the chat document
       await updateDoc(chatRef, {
         lastMessage: content || "Sent an attachment",
         lastMessageTime: serverTimestamp(),
@@ -252,7 +264,6 @@ export function useChat(activeChatId: string) {
         unreadCounts: unreadCounts
       })
 
-      // Then add the message
       const messagesRef = collection(db, "chats", activeChatId, "messages")
       await addDoc(messagesRef, {
         content,
@@ -270,7 +281,6 @@ export function useChat(activeChatId: string) {
     if (!user?.uid || !otherUserId) return ""
 
     try {
-      // Check if chat already exists
       const chatsRef = collection(db, "chats")
       const q = query(chatsRef, where("participantIds", "array-contains", user.uid))
 
@@ -288,7 +298,6 @@ export function useChat(activeChatId: string) {
         return existingChatId
       }
 
-      // Get other user data
       const otherUserRef = doc(db, "users", otherUserId)
       const otherUserSnap = await getDoc(otherUserRef)
 
@@ -298,7 +307,6 @@ export function useChat(activeChatId: string) {
 
       const otherUserData = otherUserSnap.data()
 
-      // Create new chat with user-specific unread counters
       const unreadCounts: Record<string, number> = {};
       unreadCounts[user.uid] = 0;
       unreadCounts[otherUserId] = 0;
@@ -321,7 +329,7 @@ export function useChat(activeChatId: string) {
         ],
         createdAt: serverTimestamp(),
         lastMessageTime: serverTimestamp(),
-        unreadCounts: unreadCounts  // Initialize unread counts per user
+        unreadCounts: unreadCounts
       })
 
       return newChatRef.id

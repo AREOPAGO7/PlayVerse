@@ -39,7 +39,7 @@ const FavoriteGame: React.FC<FavoriteGameProps> = ({
               </div>
             </>
           ) : (
-            <p className="text-zinc-400">This player hasn't selected a favorite game yet.</p>
+            <p className="text-zinc-400">This player hasn&apos;t selected a favorite game yet.</p>
           )}
         </div>
       )}

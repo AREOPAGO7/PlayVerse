@@ -23,6 +23,7 @@ export async function middleware(request: NextRequest) {
       });
     } catch (error) {
       // If token is invalid, redirect to login
+      console.log(error)
       return NextResponse.redirect(new URL('/', request.url));
     }
   }

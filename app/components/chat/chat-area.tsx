@@ -4,7 +4,7 @@ import Image from 'next/image'
 import { useRef, useEffect } from "react"
 import Message from "./message"
 import MessageInput from "./message-input"
-import type { Message as MessageType, User, Chat } from "@/app/types/chat"
+import { Message as MessageType, User, Chat, ChatParticipant } from "@/app/types/chat"
 
 interface ChatAreaProps {
   messages: MessageType[]
@@ -15,16 +15,16 @@ interface ChatAreaProps {
 
 export default function ChatArea({ messages, currentUser, activeChat, onSendMessage }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
-
+  
   useEffect(() => {
     scrollToBottom()
   }, [messages])
-
+  
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
   }
-
-  const getUserById = (id: string) => {
+  
+  const getUserById = (id: string): ChatParticipant => {
     return activeChat?.participants?.find((user: { uid: string }) => user.uid === id) || {
       uid: id,
       username: 'Unknown User',
@@ -32,8 +32,8 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
       status: 'offline'
     }
   }
-
-  const getOtherUser = () => {
+  
+  const getOtherUser = (): { username: string; profilePictureUrl: string; status: string } => {
     if (!activeChat?.participants) {
       return {
         username: 'Unknown User',
@@ -52,9 +52,9 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
       status: otherParticipant?.status || 'offline'
     }
   }
-
+  
   const otherUser = getOtherUser()
-
+  
   return (
     <div className="flex-1 flex flex-col h-full light:bg-light">
       <div className="p-4 border-b border-zinc-800 flex items-center gap-3 light:border-zinc-400">
@@ -78,7 +78,7 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
           </p>
         </div>
       </div>
-
+      
       {/* Messages */}
       <div className="flex-1 overflow-y-auto p-4 light:bg-light">
         {messages.map((message, index) => {
@@ -86,7 +86,7 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
           const isCurrentUser = message.userId === currentUser.uid
           const prevMessage = index > 0 ? messages[index - 1] : null
           const showHeader = !prevMessage || prevMessage.userId !== message.userId
-
+          
           return (
             <Message
               key={message.id}
@@ -99,7 +99,7 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
         })}
         <div ref={messagesEndRef}></div>
       </div>
-
+      
       {/* Message Input */}
       <MessageInput onSendMessage={onSendMessage} />
     </div>

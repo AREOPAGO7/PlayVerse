@@ -1,13 +1,68 @@
 "use client"
 
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Image from "next/image"
 import { db } from "@/app/firebase/config"
-import { collection, query, where, getDocs } from "firebase/firestore"
+import { collection, getDocs } from "firebase/firestore"
+import { Timestamp } from "firebase/firestore"
+
+// Define proper interfaces for our data structures
+interface User {
+  uid: string
+  username: string
+  profilePictureUrl?: string
+  avatar?: string
+  status?: string
+  bio?: string
+  // Replace [key: string]: any with specific optional properties
+  id?: string
+  email?: string
+  createdAt?: string | Date
+  updatedAt?: string | Date
+  displayName?: string
+  phoneNumber?: string
+  lastSeen?: string | Date
+  preferences?: {
+    notifications?: boolean
+    theme?: string
+    language?: string
+    [key: string]: boolean | string | undefined
+  }
+}
+
+interface ChatParticipant {
+  uid: string
+  username: string
+  profilePictureUrl?: string
+  status?: string
+}
+
+interface Chat {
+  profilePictureUrl?: string
+  id: string
+  participants?: ChatParticipant[]
+  users?: User[]
+  lastMessage?: string
+  lastMessageTime?: Timestamp | Date | string
+  unread?: number
+  username?: string
+  uid?: string
+  bio?: string
+  avatar?: string
+  status?: string
+  createdAt?: Timestamp | Date | string
+  updatedAt?: Timestamp | Date | string
+  metadata?: {
+    type?: string
+    isGroupChat?: boolean
+    customData?: Record<string, string | number | boolean>
+  }
+  participantIds?: string[]
+}
 
 interface SidebarProps {
-  chats: any[]
-  currentUser: any
+  chats: Chat[]
+  currentUser: User
   activeChat: string
   onChatSelect: (chatId: string) => void
   onCreateChat: (userId: string) => Promise<string>
@@ -17,24 +72,15 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
   const [searchQuery, setSearchQuery] = useState("")
   const [showNewChat, setShowNewChat] = useState(false)
   const [newChatName, setNewChatName] = useState("")
-  const [searchResults, setSearchResults] = useState<any[]>([])
+  const [searchResults, setSearchResults] = useState<User[]>([])
 
-  useEffect(() => {
-    if (showNewChat && newChatName) {
-      searchUsers(newChatName)
-    } else {
-      setSearchResults([])
-    }
-  }, [newChatName, showNewChat])
-
-  const searchUsers = async (searchTerm: string) => {
+  const searchUsers = useCallback(async (searchTerm: string) => {
     if (!searchTerm) {
       setSearchResults([])
       return
     }
 
     const usersRef = collection(db, "users")
-    // Convert search term to lowercase for case-insensitive comparison
     const searchTermLower = searchTerm.toLowerCase()
 
     try {
@@ -47,7 +93,7 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
           status: doc.data().status || "offline",
           bio: doc.data().bio,
           ...doc.data(),
-        }))
+        } as User))
         .filter(user => 
           user.uid !== currentUser.uid && 
           user.username.toLowerCase().includes(searchTermLower)
@@ -57,12 +103,21 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
       console.error("Error searching users:", error)
       setSearchResults([])
     }
-  }
+  }, [currentUser.uid])
 
-  const getOtherUser = (chat: any) => {
+  useEffect(() => {
+    if (showNewChat && newChatName) {
+      searchUsers(newChatName)
+    } else {
+      setSearchResults([])
+    }
+  }, [newChatName, showNewChat, searchUsers])
+
+  const getOtherUser = (chat: Chat): ChatParticipant => {
     // Check if chat exists
     if (!chat)
       return {
+        uid: "",
         username: "Unknown User",
         profilePictureUrl: "/placeholder.svg?height=48&width=48",
         status: "offline",
@@ -70,20 +125,22 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
 
     // Handle different data structures that might come from Firestore
     if (chat.participants) {
-      const otherParticipant = chat.participants.find((participant: any) => participant.uid !== currentUser.uid)
+      const otherParticipant = chat.participants.find((participant) => participant.uid !== currentUser.uid)
 
       return (
         otherParticipant || {
+          uid: "",
           username: "Unknown User",
           profilePictureUrl: "/placeholder.svg?height=48&width=48",
           status: "offline",
         }
       )
     } else if (chat.users) {
-      const otherUser = chat.users.find((user: any) => user.uid !== currentUser.uid || user.id !== currentUser.uid)
+      const otherUser = chat.users.find((user) => user.uid !== currentUser.uid || user.id !== currentUser.uid)
 
       return (
         otherUser || {
+          uid: "",
           username: "Unknown User",
           profilePictureUrl: "/placeholder.svg?height=48&width=48",
           status: "offline",
@@ -93,11 +150,17 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
 
     // If no participants or users array is found, try to use direct properties
     if (chat.username && chat.uid !== currentUser.uid) {
-      return chat
+      return {
+        uid: chat.uid || "",
+        username: chat.username,
+        profilePictureUrl: chat.profilePictureUrl,
+        status: chat.status || "offline"
+      }
     }
 
     // Default fallback
     return {
+      uid: "",
       username: "Unknown User",
       profilePictureUrl: "/placeholder.svg?height=48&width=48",
       status: "offline",
@@ -113,12 +176,12 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
     return otherUser?.username?.toLowerCase().includes(searchQuery.toLowerCase()) || false
   })
 
-  const formatTime = (date?: any) => {
+  const formatTime = (date?: Timestamp | Date | string): string => {
     if (!date) return "";
 
     try {
       // Handle Firestore Timestamp
-      if (date && typeof date.toDate === 'function') {
+      if (date && typeof date === 'object' && 'toDate' in date && typeof date.toDate === 'function') {
         return date.toDate().toLocaleTimeString("en-US", {
           hour: "numeric",
           minute: "2-digit",
@@ -126,7 +189,7 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
         });
       }
       // Handle regular date strings
-      return new Date(date).toLocaleTimeString("en-US", {
+      return new Date(date as string | number).toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
         hour12: true,
@@ -136,6 +199,7 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
       return "";
     }
   };
+
   const handleChatSelect = (chatId: string) => {
     // First trigger the parent's onChatSelect
     onChatSelect(chatId);
@@ -155,7 +219,7 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
     }
   }
 
-  const getStatusColor = (status: string) => {
+  const getStatusColor = (status: string): string => {
     switch (status) {
       case "online":
         return "bg-green-500"
@@ -205,18 +269,17 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
             filteredChats.map((chat) => {
               const otherUser = getOtherUser(chat)
               return (
-                // In the filteredChats.map section:
                 <button
-                key={chat.id}
-                onClick={() => handleChatSelect(chat.id)}
-                className={`w-full p-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors ${
-                  activeChat === chat.id 
-                    ? "bg-zinc-800 light:bg-zinc-200" 
-                    : chat.unread && chat.unread > 0
-                      ? "bg-green-900/30 border-l-4 border-green-500" // Enhanced highlight with border
-                      : ""
-                }`}
-              >
+                  key={chat.id}
+                  onClick={() => handleChatSelect(chat.id)}
+                  className={`w-full p-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors ${
+                    activeChat === chat.id 
+                      ? "bg-zinc-800 light:bg-zinc-200" 
+                      : chat.unread && chat.unread > 0
+                        ? "bg-green-900/30 border-l-4 border-green-500" // Enhanced highlight with border
+                        : ""
+                  }`}
+                >
                   <div className="relative">
                     <div className="w-12 h-12 rounded-full overflow-hidden">
                       <Image
@@ -228,20 +291,20 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
                       />
                     </div>
                     <div
-                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-zinc-900 ${getStatusColor(otherUser.status)}`}
+                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-zinc-900 ${getStatusColor(otherUser.status || "offline")}`}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex justify-between">
                       <p className={`font-medium truncate ${
-                        chat.unread > 0 
+                        chat.unread && chat.unread > 0 
                           ? 'text-green-400 font-bold' 
                           : 'text-white/80 light:text-zinc-800'
                       }`}>
                         {otherUser.username}
                       </p>
                       <span className={`text-xs ${
-                        chat.unread > 0 
+                        chat.unread && chat.unread > 0 
                           ? 'text-green-400' 
                           : 'text-zinc-400 light:text-zinc-800'
                       }`}>
@@ -249,14 +312,14 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
                       </span>
                     </div>
                     <p className={`text-sm truncate text-start w-full ${
-                      chat.unread > 0 
+                      chat.unread && chat.unread > 0 
                         ? 'text-green-400' 
                         : 'text-zinc-500 light:text-zinc-800'
                     }`}>
                       {chat.lastMessage}
                     </p>
                   </div>
-                  {chat.unread > 0 && (
+                  {chat.unread && chat.unread > 0 && (
                     <div className="bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
                       {chat.unread}
                     </div>
@@ -285,7 +348,7 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
                   />
                 </div>
                 <div
-                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-zinc-900 ${getStatusColor(user.status)}`}
+                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-zinc-900 ${getStatusColor(user.status || "offline")}`}
                 />
               </div>
               <div className=" min-w-0">
@@ -342,4 +405,3 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
     </div>
   )
 }
-

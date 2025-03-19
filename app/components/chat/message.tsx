@@ -1,18 +1,16 @@
 'use client'
 
 import Image from "next/image"
-import type { Message as MessageType } from "@/app/types/chat"
+import { Message as MessageType, FirestoreTimestamp } from "@/app/types/chat"
 
 interface MessageProps {
   message: MessageType
-  user: any
+  user: {
+    profilePictureUrl?: string;
+    username?: string;
+  }
   isCurrentUser: boolean
   showHeader: boolean
-}
-
-interface FirestoreTimestamp {
-  seconds: number;
-  nanoseconds: number;
 }
 
 export default function Message({ message, user, isCurrentUser, showHeader }: MessageProps) {
@@ -30,9 +28,8 @@ export default function Message({ message, user, isCurrentUser, showHeader }: Me
         });
       }
       
-      // Rest of the function remains the same
       // Handle regular dates, timestamps, and strings
-      const date = new Date(timestamp);
+      const date = new Date(timestamp as string | number | Date);
       if (isNaN(date.getTime())) {
         return "Invalid time";
       }

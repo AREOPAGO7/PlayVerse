@@ -37,7 +37,7 @@ const GAME_PRICES = [
 ] as const;
 
 const Browse = () => {
-    const [activeTab, setActiveTab] = useState("all")
+    // const [activeTab, setActiveTab] = useState("all")
     const [gridView, setGridView] = useState(true)
     const [openFilters, setOpenFilters] = useState<Record<string, boolean>>({
         "Installed": false,

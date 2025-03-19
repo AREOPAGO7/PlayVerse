@@ -1,6 +1,7 @@
 "use client"
 import type React from "react"
 import { useState } from "react"
+import Image from "next/image"
 
 interface ImageUploaderProps {
   onUpload: (url: string) => void
@@ -44,7 +45,14 @@ const ImageUploader: React.FC<ImageUploaderProps> = ({ onUpload, currentImage, t
         className={`${type === "avatar" ? "rounded-full" : "rounded-lg"} overflow-hidden ${type === "avatar" ? "h-28 w-28" : "h-48"} mb-2 border-2 border-zinc-800`}
       >
         {currentImage ? (
-          <img src={currentImage || "/placeholder.svg"} alt={`User ${type}`} className="w-full h-full object-cover" />
+          <Image 
+            src={currentImage || "/placeholder.svg"} 
+            alt={`User ${type}`} 
+            className="w-full h-full object-cover"
+            width={type === "avatar" ? 112 : 192} // 28*4 for avatar, 48*4 for banner
+            height={type === "avatar" ? 112 : 192}
+            priority
+          />
         ) : (
           <div className="flex items-center justify-center h-full bg-zinc-800">
             <p className="text-zinc-400">No {type} uploaded</p>

@@ -4,14 +4,14 @@ import {
   signInWithEmailAndPassword, 
   signOut,
   updateProfile,
-  User,
+  
   sendPasswordResetEmail
 } from 'firebase/auth';
 
 import { GoogleAuthProvider, signInWithPopup ,GithubAuthProvider} from 'firebase/auth';
 
 export class AuthService {
-  static getUser(uid: string) {
+  static getUser() {
     throw new Error('Method not implemented.');
   }
   static async googleSignIn() {
@@ -100,35 +100,42 @@ export class AuthService {
     document.cookie = 'auth-token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 GMT';
   }
 
-  static getErrorMessage(error: any): string {
-    switch (error.code) {
-      case 'auth/email-already-in-use':
-        return 'This email is already registered. Please use a different email or log in.';
-      case 'auth/invalid-email':
-        return 'The email address format is invalid. Please enter a valid email.';
-      case 'auth/operation-not-allowed':
-        return 'This authentication method is not enabled. Please contact support.';
-      case 'auth/weak-password':
-        return 'The password is too weak. Please use at least 6 characters, including letters and numbers.';
-      case 'auth/user-disabled':
-        return 'This account has been disabled. Please contact support for assistance.';
-      case 'auth/user-not-found':
-        return 'No user found with this email address. Please check your input or sign up.';
-      case 'auth/wrong-password':
-        return 'The password is incorrect. Please try again or reset your password.';
-      case 'auth/network-request-failed':
-        return 'A network error occurred. Please check your internet connection and try again.';
-      case 'auth/too-many-requests':
-        return 'Too many login attempts. Please wait a moment before trying again.';
-      case 'auth/requires-recent-login':
-        return 'Please reauthenticate to complete this action.';
-      case 'auth/account-exists-with-different-credential':
-        return 'An account already exists with a different sign-in method.';
-      case 'auth/invalid-credential':
-        return 'invalid email or password.';
-      default:
-        return `An error occurred: ${error.message || 'Please try again later.'}`;
+  static getErrorMessage(error: unknown): string {
+    if (typeof error === "object" && error !== null && "code" in error) {
+      const errorCode = (error as { code: string }).code; // Type assertion
+  
+      switch (errorCode) {
+        case "auth/email-already-in-use":
+          return "This email is already registered. Please use a different email or log in.";
+        case "auth/invalid-email":
+          return "The email address format is invalid. Please enter a valid email.";
+        case "auth/operation-not-allowed":
+          return "This authentication method is not enabled. Please contact support.";
+        case "auth/weak-password":
+          return "The password is too weak. Please use at least 6 characters, including letters and numbers.";
+        case "auth/user-disabled":
+          return "This account has been disabled. Please contact support for assistance.";
+        case "auth/user-not-found":
+          return "No user found with this email address. Please check your input or sign up.";
+        case "auth/wrong-password":
+          return "The password is incorrect. Please try again or reset your password.";
+        case "auth/network-request-failed":
+          return "A network error occurred. Please check your internet connection and try again.";
+        case "auth/too-many-requests":
+          return "Too many login attempts. Please wait a moment before trying again.";
+        case "auth/requires-recent-login":
+          return "Please reauthenticate to complete this action.";
+        case "auth/account-exists-with-different-credential":
+          return "An account already exists with a different sign-in method.";
+        case "auth/invalid-credential":
+          return "Invalid email or password.";
+        default:
+          return `An error occurred: ${
+            (error as { message?: string }).message || "Please try again later."
+          }`;
+      }
     }
+    return "An unknown error occurred. Please try again.";
   }
   
 

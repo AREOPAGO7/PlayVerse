@@ -38,9 +38,9 @@ const ProfileModel: React.FC<ProfileModelProps> = ({ isOpen, onClose }) => {
           <Image
             src={user.avatar || "https://github.com/shadcn.png"}
             alt="Profile"
-            width={48}
-            height={48}
-            className="rounded-full m-2"
+            width={56}
+            height={56}
+            className="rounded-full m-2 w-14 h-14"
           />
           <div>
             <h2 className="font-bold text-white">{user.username}</h2>

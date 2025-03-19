@@ -1,4 +1,8 @@
+
+
 export interface Game {
+    discount: string | null;
+    originalPrice: string | null;
     id: number;
     title: string;
     subtitle?: string;
@@ -8,33 +12,35 @@ export interface Game {
     status: string;
     price: string;
     banner: string;
-  }
-  
+}
+
 export interface DiscoverGame {
+    [key: string]: string | number | undefined;
     id: number;
     title: string;
     tag: string;
     img: string;
     price: number;
     discount?: number;
-  }
-  export interface NewGame {
+}
+export interface NewGame {
     id: number;
     title: string;
     tag: string;
     img: string;
     price: number;
     discount?: number;
-  }
+}
 export interface RAWGGame {
+    discount: number;
     id: number;
     name: string;
     background_image: string;
     description_raw?: string;
     results?: RAWGGame[];
-  }
+}
 
-  interface Screenshot {
+interface Screenshot {
     id: number;
     image: string;
 }

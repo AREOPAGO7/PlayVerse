@@ -45,7 +45,7 @@ export default function Navbar() {
 
   return (  
 
-    <header className="flex items-center px-4 py-3 bg-[#111111] light:bg-light border-b border-white/10 light:border-gray-200">
+    <header className="flex items-center px-4 py-3 bg-[#111111] light:bg-light border-b border-white/10 light:border-gray-200 ">
       <div className="flex items-center">
         <Link href="/" className="mr-64">
           <div className="w-10 h-10 rounded flex items-center justify-center">

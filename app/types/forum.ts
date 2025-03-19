@@ -1,7 +1,7 @@
 
 
 export interface ForumTopic {
-  [x: string]: any;
+ 
   id: string;
   title: string;
   description: string;
@@ -20,7 +20,10 @@ export interface ForumTopic {
   lastPost?: {
     userId: string;
     username: string;
-    timestamp: any;
+    timestamp: {
+      seconds: number;
+      nanoseconds: number;
+    };
     content: string;
   };
 }

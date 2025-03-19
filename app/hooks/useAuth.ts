@@ -17,7 +17,7 @@ export const useAuth = () => {
     try {
       await AuthService.login(email, password);
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -31,7 +31,7 @@ export const useAuth = () => {
       const uid = await AuthService.signup(email, password, name);
       router.push('/');
       return uid;
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -55,7 +55,7 @@ export const useAuth = () => {
         );
      
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       console.error('Google Sign In error:', err);
       setError(AuthService.getErrorMessage(err));
     } finally {
@@ -71,7 +71,7 @@ export const useAuth = () => {
     try {
       await AuthService.githubSignIn(); // Call the new GitHub sign-in method
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -84,7 +84,7 @@ export const useAuth = () => {
     try {
       await AuthService.logout();
       router.push('/');
-    } catch (err: any) {
+    } catch (err) {
       setError(AuthService.getErrorMessage(err));
     } finally {
       setLoading(false);
@@ -96,7 +96,8 @@ export const useAuth = () => {
     setError('');
     try {
       const message = await AuthService.resetPassword(email); // Set success message as error to display it
-    } catch (err: any) {
+      console.log(message)
+    } catch (err) {
       setError(AuthService.getErrorMessage(err)); // Use the getErrorMessage method for specific error handling
     } finally {
       setLoading(false);

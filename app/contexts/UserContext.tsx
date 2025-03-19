@@ -14,8 +14,8 @@ interface UserData {
   bio: string;
   // followers: string[];
   // following: string[];
-  createdAt: any;
-  lastOnlineAt: any;
+  // createdAt: any;
+  // lastOnlineAt: any;
   status: string;
   // notificationsEnabled: boolean;
 }
