@@ -11,6 +11,7 @@ import { Poppins } from 'next/font/google';
 import Sidebar from './components/navigation/Sidebar';
 import Spinner from './components/spinners/Spinner';
 import { Game, DiscoverGame, RAWGGame, NewGame } from './types/games'
+import { FirestoreGame, RAWGSearchResponse, TransformedGame, } from './types/fetch'
 
 import Link from 'next/link';
 const poppins = Poppins({
@@ -18,6 +19,11 @@ const poppins = Poppins({
   weight: '600',
 });
 
+// interface LoadingStates {
+//   featured: boolean;
+//   discover: boolean;
+//   newGames: boolean;
+// }
 // RAWG API key from environment variables
 const RAWG_API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY;
 const RAWG_BASE_URL = 'https://api.rawg.io/api';
@@ -37,13 +43,7 @@ export default function Store() {
   const [featuredGames, setFeaturedGames] = useState<Game[]>([]);
   const [NewGames, setNewGames] = useState<NewGame[]>([]);
   const [discoverGames, setDiscoverGames] = useState<DiscoverGame[]>([]);
-  const [loading, setLoading] = useState<boolean>(true);
-  const [dataLoaded, setDataLoaded] = useState({
-    featured: false,
-    discover: false,
-    new: false,
-  });
-
+  const [, setLoading] = useState<boolean>(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_error, setError] = useState<string | null>(null);
 
@@ -149,6 +149,14 @@ export default function Store() {
   ], []);
 
   // Fetch featured games from RAWG API
+  // Add this near your other state declarations
+    const [loadingStates, setLoadingStates] = useState({
+      featured: true,
+      discover: true,
+      newGames: true
+    });
+  
+  // Update the fetch functions to manage loading states
   const fetchFeaturedGames = useCallback(async (): Promise<void> => {
     try {
       const specificGames = [
@@ -240,20 +248,120 @@ export default function Store() {
       setError(error.message);
       setFeaturedGames(defaultGames);
     } finally {
-      setDataLoaded(prev => ({ ...prev, featured: true }));
+      setLoadingStates(prev => ({ ...prev, featured: false }));
     }
   }, [defaultGames]);
 
   const fetchDiscoverGames = useCallback(async (): Promise<void> => {
     try {
-      // ... existing fetch code ...
+      setLoading(true);
+
+      // Fetch all games from Firestore collection
+      const gamesCollectionRef = collection(db, "games");
+      const gamesSnapshot = await getDocs(gamesCollectionRef);
+
+      if (gamesSnapshot.empty) {
+        console.log("No games found in Firestore");
+        setDiscoverGames(defaultDiscoverGames);
+        return;
+      }
+
+      // Create an array of game data from Firestore
+      const firestoreGames: FirestoreGame[] = gamesSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data() as Omit<FirestoreGame, 'id'>
+      }));
+
+      console.log("Games fetched from Firestore:", firestoreGames);
+
+      // Fetch additional details from RAWG API for each game
+      const transformedGames: TransformedGame[] = await Promise.all(
+        firestoreGames.map(async (firestoreGame) => {
+          try {
+            // Search for the game by name in RAWG API
+            const searchResponse = await fetch(
+              `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(firestoreGame.name)}&page_size=1`
+            );
+
+            if (!searchResponse.ok) {
+              throw new Error(`Failed to fetch details for game ${firestoreGame.name}`);
+            }
+
+            const searchData: RAWGSearchResponse = await searchResponse.json();
+            const rawgGame = searchData.results[0];
+
+            // Convert price and discount to numbers
+            const basePrice = Number(firestoreGame.price) || 39.99;
+            const discountValue = firestoreGame.discount ? Number(firestoreGame.discount) : 0;
+
+            // Calculate the discounted price
+            const discountAmount = (basePrice * discountValue) / 100;
+            const discountedPrice = basePrice - discountAmount;
+
+            // Assign random tags to games
+            const tags = ["NEW", "WINDOWS 10+ PRE-RELEASE", "", ""];
+            const randomTag = tags[Math.floor(Math.random() * tags.length)];
+
+            if (!rawgGame) {
+              console.log(`No RAWG data found for game: ${firestoreGame.name}`);
+              return {
+                id: firestoreGame.id,
+                title: firestoreGame.name,
+                tag: randomTag,
+                img: "https://via.placeholder.com/600x400?text=No+Image",
+                price: basePrice,
+                discountedPrice: discountedPrice,
+                discount: discountValue === 0 ? null : discountValue,
+              };
+            }
+
+            return {
+              id: rawgGame.id,
+              title: firestoreGame.name,
+              tag: randomTag,
+              img: rawgGame.background_image,
+              price: basePrice,
+              discountedPrice: discountedPrice,
+              discount: discountValue === 0 ? null : discountValue,
+            };
+          } catch (error) {
+            console.error(`Error fetching details for ${firestoreGame.name}:`, error);
+
+            const basePrice = Number(firestoreGame.price) || 39.99;
+            const discountValue = firestoreGame.discount ? Number(firestoreGame.discount) : 0;
+
+            const discountAmount = (basePrice * discountValue) / 100;
+            const discountedPrice = basePrice - discountAmount;
+
+            return {
+              id: firestoreGame.id,
+              title: firestoreGame.name,
+              tag: "NEW",
+              img: "https://via.placeholder.com/600x400?text=No+Image",
+              price: basePrice,
+              discountedPrice: discountedPrice,
+              discount: discountValue === 0 ? null : discountValue,
+            };
+          }
+        })
+      );
+
+      setDiscoverGames(transformedGames.map(game => ({
+        ...game,
+        id: typeof game.id === 'string' ? parseInt(game.id) : game.id,
+        title: game.title,
+        tag: game.tag,
+        img: game.img,
+        price: game.price,
+        discount: game.discount === null ? undefined : game.discount
+      })));
     } catch (error: unknown) {
       const err = error as RTCError;
       console.error("Error fetching discover games:", err);
       setError(err.message);
       setDiscoverGames(defaultDiscoverGames);
     } finally {
-      setDataLoaded(prev => ({ ...prev, discover: true }));
+      setLoadingStates(prev => ({ ...prev, discover: false }));
     }
   }, [defaultDiscoverGames]);
 
@@ -295,16 +403,9 @@ export default function Store() {
       setError(err.message);
       setNewGames(defaultDiscoverGames);
     } finally {
-      setDataLoaded(prev => ({ ...prev, new: true }));
+      setLoadingStates(prev => ({ ...prev, newGames: false }));
     }
   }, [defaultDiscoverGames]);
-
-  // Add effect to check if all data is loaded
-  useEffect(() => {
-    if (dataLoaded.featured && dataLoaded.discover && dataLoaded.new) {
-      setLoading(false);
-    }
-  }, [dataLoaded]);
 
   // Scroll carousel function
   const scrollCarousel = (direction: "left" | "right", carouselRef: React.RefObject<HTMLDivElement>): void => {
@@ -325,6 +426,25 @@ export default function Store() {
     fetchFeaturedGames();
     fetchDiscoverGames();
     fetchNewGames();
+  }, [fetchFeaturedGames, fetchDiscoverGames, fetchNewGames]);
+
+  useEffect(() => {
+    // Reset loading states before fetching
+    setLoadingStates({
+      featured: true,
+      discover: true,
+      newGames: true
+    });
+
+    // Fetch all data
+    Promise.all([
+      fetchFeaturedGames(),
+      fetchDiscoverGames(),
+      fetchNewGames()
+    ]).catch(error => {
+      console.error("Error fetching data:", error);
+      setError(error.message);
+    });
   }, [fetchFeaturedGames, fetchDiscoverGames, fetchNewGames]);
 
   // Handle game carousel progress
@@ -367,8 +487,13 @@ export default function Store() {
     }
   }, [isTransitioning]);
 
+  // Update the loading check to consider all loading states
+  const isLoading = useMemo(() => {
+    return Object.values(loadingStates).some(state => state === true);
+  }, [loadingStates]);
+
   // Handle loading state
-  if (loading) {
+  if (isLoading) {
     return (
       <div className="flex justify-center items-center h-screen bg-[#111111] text-white">
         <Spinner />
@@ -764,3 +889,4 @@ export default function Store() {
     </>
   )
 }
+
