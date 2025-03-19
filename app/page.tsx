@@ -11,7 +11,6 @@ import { Poppins } from 'next/font/google';
 import Sidebar from './components/navigation/Sidebar';
 import Spinner from './components/spinners/Spinner';
 import { Game, DiscoverGame, RAWGGame, NewGame } from './types/games'
-import { FirestoreGame, RAWGSearchResponse, TransformedGame, } from './types/fetch'
 
 import Link from 'next/link';
 const poppins = Poppins({
