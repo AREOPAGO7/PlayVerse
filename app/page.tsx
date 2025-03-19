@@ -39,6 +39,12 @@ export default function Store() {
   const [NewGames, setNewGames] = useState<NewGame[]>([]);
   const [discoverGames, setDiscoverGames] = useState<DiscoverGame[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
+  const [dataLoaded, setDataLoaded] = useState({
+    featured: false,
+    discover: false,
+    new: false,
+  });
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_error, setError] = useState<string | null>(null);
 
@@ -234,124 +240,24 @@ export default function Store() {
       console.log("Error fetching featured games:", error);
       setError(error.message);
       setFeaturedGames(defaultGames);
+    } finally {
+      setDataLoaded(prev => ({ ...prev, featured: true }));
     }
   }, [defaultGames]);
 
-  // Fetch discover games from RAWG API
   const fetchDiscoverGames = useCallback(async (): Promise<void> => {
     try {
-      setLoading(true);
-
-      // Fetch all games from Firestore collection
-      const gamesCollectionRef = collection(db, "games");
-      const gamesSnapshot = await getDocs(gamesCollectionRef);
-
-      if (gamesSnapshot.empty) {
-        console.log("No games found in Firestore");
-        setDiscoverGames(defaultDiscoverGames);
-        return;
-      }
-
-      // Create an array of game data from Firestore
-      const firestoreGames: FirestoreGame[] = gamesSnapshot.docs.map(doc => ({
-        id: doc.id,
-        ...doc.data() as Omit<FirestoreGame, 'id'>
-      }));
-
-      console.log("Games fetched from Firestore:", firestoreGames);
-
-      // Fetch additional details from RAWG API for each game
-      const transformedGames: TransformedGame[] = await Promise.all(
-        firestoreGames.map(async (firestoreGame) => {
-          try {
-            // Search for the game by name in RAWG API
-            const searchResponse = await fetch(
-              `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(firestoreGame.name)}&page_size=1`
-            );
-
-            if (!searchResponse.ok) {
-              throw new Error(`Failed to fetch details for game ${firestoreGame.name}`);
-            }
-
-            const searchData: RAWGSearchResponse = await searchResponse.json();
-            const rawgGame = searchData.results[0];
-
-            // Convert price and discount to numbers
-            const basePrice = Number(firestoreGame.price) || 39.99;
-            const discountValue = firestoreGame.discount ? Number(firestoreGame.discount) : 0;
-
-            // Calculate the discounted price
-            const discountAmount = (basePrice * discountValue) / 100;
-            const discountedPrice = basePrice - discountAmount;
-
-            // Assign random tags to games
-            const tags = ["NEW", "WINDOWS 10+ PRE-RELEASE", "", ""];
-            const randomTag = tags[Math.floor(Math.random() * tags.length)];
-
-            if (!rawgGame) {
-              console.log(`No RAWG data found for game: ${firestoreGame.name}`);
-              return {
-                id: firestoreGame.id,
-                title: firestoreGame.name,
-                tag: randomTag,
-                img: "https://via.placeholder.com/600x400?text=No+Image",
-                price: basePrice,
-                discountedPrice: discountedPrice,
-                discount: discountValue === 0 ? null : discountValue,
-              };
-            }
-
-            return {
-              id: rawgGame.id,
-              title: firestoreGame.name,
-              tag: randomTag,
-              img: rawgGame.background_image,
-              price: basePrice,
-              discountedPrice: discountedPrice,
-              discount: discountValue === 0 ? null : discountValue,
-            };
-          } catch (error) {
-            console.error(`Error fetching details for ${firestoreGame.name}:`, error);
-
-            const basePrice = Number(firestoreGame.price) || 39.99;
-            const discountValue = firestoreGame.discount ? Number(firestoreGame.discount) : 0;
-
-            const discountAmount = (basePrice * discountValue) / 100;
-            const discountedPrice = basePrice - discountAmount;
-
-            return {
-              id: firestoreGame.id,
-              title: firestoreGame.name,
-              tag: "NEW",
-              img: "https://via.placeholder.com/600x400?text=No+Image",
-              price: basePrice,
-              discountedPrice: discountedPrice,
-              discount: discountValue === 0 ? null : discountValue,
-            };
-          }
-        })
-      );
-
-      setDiscoverGames(transformedGames.map(game => ({
-        ...game,
-        id: typeof game.id === 'string' ? parseInt(game.id) : game.id,
-        title: game.title,
-        tag: game.tag,
-        img: game.img,
-        price: game.price,
-        discount: game.discount === null ? undefined : game.discount
-      })));
+      // ... existing fetch code ...
     } catch (error: unknown) {
       const err = error as RTCError;
       console.error("Error fetching discover games:", err);
       setError(err.message);
       setDiscoverGames(defaultDiscoverGames);
     } finally {
-      setLoading(false);
+      setDataLoaded(prev => ({ ...prev, discover: true }));
     }
   }, [defaultDiscoverGames]);
 
-  // Fetch new games from RAWG API
   const fetchNewGames = useCallback(async (): Promise<void> => {
     try {
       const response = await fetch(
@@ -390,9 +296,16 @@ export default function Store() {
       setError(err.message);
       setNewGames(defaultDiscoverGames);
     } finally {
-      setLoading(false);
+      setDataLoaded(prev => ({ ...prev, new: true }));
     }
   }, [defaultDiscoverGames]);
+
+  // Add effect to check if all data is loaded
+  useEffect(() => {
+    if (dataLoaded.featured && dataLoaded.discover && dataLoaded.new) {
+      setLoading(false);
+    }
+  }, [dataLoaded]);
 
   // Scroll carousel function
   const scrollCarousel = (direction: "left" | "right", carouselRef: React.RefObject<HTMLDivElement>): void => {

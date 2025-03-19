@@ -2,7 +2,7 @@
 import Spinner from "./components/spinners/Spinner";
 
 const Loading = () => (
-  <div className='font-bold text-xl  ' style={{
+  <div className='font-bold text-xl  light:bg-light' style={{
     width: '100vw',
     height: '100vh',
     display: 'flex',

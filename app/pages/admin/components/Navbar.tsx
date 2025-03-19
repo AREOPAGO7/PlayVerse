@@ -11,15 +11,15 @@ const Navbar: FC<NavbarProps> = ({ darkMode, toggleTheme, toggleSidebar }) => {
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-30 ${
-        darkMode ? "bg-[#111111] text-white" : "bg-white text-gray-800"
-      } border-b ${darkMode ? "border-gray-800" : "border-gray-200"} shadow-sm`}
+        darkMode ? "bg-[#111111] text-white" : "bg-white text-zinc-800"
+      } border-b ${darkMode ? "border-zinc-800" : "border-zinc-200"} shadow-sm`}
     >
       <div className="flex items-center justify-between px-4 h-16">
         <div className="flex items-center">
           <button
             onClick={toggleSidebar}
             className={`p-2 rounded-md ${
-              darkMode ? "hover:bg-gray-800" : "hover:bg-gray-100"
+              darkMode ? "hover:bg-zinc-800" : "hover:bg-zinc-100"
             } mr-2`}
           >
             <svg
@@ -46,7 +46,7 @@ const Navbar: FC<NavbarProps> = ({ darkMode, toggleTheme, toggleSidebar }) => {
         </div>
 
         <div className="flex items-center space-x-4">
-          <div className={`relative hidden md:block ${darkMode ? "text-gray-300" : "text-gray-600"}`}>
+          <div className={`relative hidden md:block ${darkMode ? "text-zinc-300" : "text-zinc-600"}`}>
             <span className="absolute inset-y-0 left-0 flex items-center pl-2">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
@@ -68,8 +68,8 @@ const Navbar: FC<NavbarProps> = ({ darkMode, toggleTheme, toggleSidebar }) => {
               placeholder="Search games..."
               className={`py-1.5 pl-8 pr-2 rounded-md ${
                 darkMode
-                  ? "bg-gray-800 border-gray-700 focus:bg-gray-700"
-                  : "bg-gray-100 border-gray-200 focus:bg-white"
+                  ? "bg-zinc-800 border-zinc-700 focus:bg-zinc-700"
+                  : "bg-zinc-100 border-zinc-200 focus:bg-white"
               } border focus:outline-none focus:ring-1 focus:ring-green-500 w-48 lg:w-64`}
             />
           </div>
@@ -77,7 +77,7 @@ const Navbar: FC<NavbarProps> = ({ darkMode, toggleTheme, toggleSidebar }) => {
           <button
             onClick={toggleTheme}
             className={`p-2 rounded-full ${
-              darkMode ? "bg-gray-800 text-yellow-300" : "bg-gray-100 text-gray-700"
+              darkMode ? "bg-zinc-800 text-yellow-300" : "bg-zinc-100 text-zinc-700"
             }`}
           >
             {darkMode ? (

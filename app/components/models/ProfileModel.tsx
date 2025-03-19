@@ -28,7 +28,7 @@ const ProfileModel: React.FC<ProfileModelProps> = ({ isOpen, onClose }) => {
   };
 
   return (
-    <div className="fixed inset-0 z-50" onClick={onClose}>
+    <div className="fixed inset-0 " style={{zIndex:100}} onClick={onClose}>
       <div 
         className="absolute right-4 top-16 w-96 bg-zinc-900 rounded-xl shadow-lg p-4"
         onClick={e => e.stopPropagation()}

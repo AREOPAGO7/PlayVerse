@@ -171,7 +171,7 @@ const AdminDashboard = () => {
       
       {/* Main content */}
       <main className={`transition-all duration-300 ${sidebarOpen ? "ml-64" : "ml-0"} pt-16`}>
-        <div className={`p-4 md:p-6 ${darkMode ? "bg-[#111111] text-white" : "bg-gray-50 text-gray-800"} min-h-screen`}>
+        <div className={`p-4 md:p-6 ${darkMode ? "bg-[#111111] text-white" : "bg-zinc-50 text-zinc-800"} min-h-screen`}>
           <h1 className="text-2xl md:text-3xl font-bold mb-6 flex items-center">
             <span className={`${darkMode ? "bg-green-600" : "bg-green-500"} w-2 h-6 mr-3 rounded-sm inline-block`}></span>
             Game Admin Dashboard
@@ -185,12 +185,12 @@ const AdminDashboard = () => {
             </div>
           ) : error ? (
             <div
-              className={`${darkMode ? "bg-red-500/10 border-red-500/20" : "bg-red-50 border-red-200"} border text-red-400 p-4 rounded-lg mb-6`}
+              className={`${darkMode ? "bg-zinc-500/10 border-zinc-500/20" : "bg-zinc-50 border-zinc-200"} border text-zinc-400 p-4 rounded-lg mb-6`}
             >
               <p>{error}</p>
               <button
                 onClick={fetchGamesFromFirestore}
-                className="mt-2 px-4 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+                className="mt-2 px-4 py-1 bg-zinc-500 text-white rounded hover:bg-zinc-600 transition-colors"
               >
                 Try Again
               </button>
@@ -201,13 +201,13 @@ const AdminDashboard = () => {
               {editingGame && (
                 <div className="fixed inset-0 bg-black/80 backdrop-blur-sm flex items-center justify-center z-50 p-4 animate-in fade-in duration-200">
                   <div
-                    className={`${darkMode ? "bg-[#1A1A1A] border-gray-800" : "bg-white border-gray-200"} p-5 rounded-xl w-full max-w-md border shadow-xl`}
+                    className={`${darkMode ? "bg-[#1A1A1A] border-zinc-800" : "bg-white border-zinc-200"} p-5 rounded-xl w-full max-w-md border shadow-xl`}
                   >
                     <div className="flex justify-between items-center mb-4">
                       <h2 className="text-xl font-semibold">Edit Game</h2>
                       <button
                         onClick={cancelEditing}
-                        className={`p-1 rounded-full ${darkMode ? "hover:bg-gray-700" : "hover:bg-gray-100"} transition-colors`}
+                        className={`p-1 rounded-full ${darkMode ? "hover:bg-zinc-700" : "hover:bg-zinc-100"} transition-colors`}
                       >
                         <svg
                           xmlns="http://www.w3.org/2000/svg"
@@ -229,7 +229,7 @@ const AdminDashboard = () => {
                     <div className="space-y-4">
                       <div>
                         <label
-                          className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                          className={`block text-sm font-medium mb-1 ${darkMode ? "text-zinc-400" : "text-zinc-600"}`}
                         >
                           Name
                         </label>
@@ -238,14 +238,14 @@ const AdminDashboard = () => {
                           name="name"
                           value={editingGame.name}
                           onChange={handleInputChange}
-                          className={`w-full ${darkMode ? "bg-[#222222] border-gray-700 text-white" : "bg-white border-gray-300 text-gray-800"} p-2 rounded-md border focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all`}
+                          className={`w-full ${darkMode ? "bg-[#222222] border-zinc-700 text-white" : "bg-white border-zinc-300 text-zinc-800"} p-2 rounded-md border focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all`}
                         />
                       </div>
 
                       <div className="grid grid-cols-2 gap-4">
                         <div>
                           <label
-                            className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                            className={`block text-sm font-medium mb-1 ${darkMode ? "text-zinc-400" : "text-zinc-600"}`}
                           >
                             Price ($)
                           </label>
@@ -255,13 +255,13 @@ const AdminDashboard = () => {
                             value={editingGame.price}
                             onChange={handleInputChange}
                             step="0.01"
-                            className={`w-full ${darkMode ? "bg-[#222222] border-gray-700 text-white" : "bg-white border-gray-300 text-gray-800"} p-2 rounded-md border focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all`}
+                            className={`w-full ${darkMode ? "bg-[#222222] border-zinc-700 text-white" : "bg-white border-zinc-300 text-zinc-800"} p-2 rounded-md border focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all`}
                           />
                         </div>
 
                         <div>
                           <label
-                            className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                            className={`block text-sm font-medium mb-1 ${darkMode ? "text-zinc-400" : "text-zinc-600"}`}
                           >
                             Discount (%)
                           </label>
@@ -272,14 +272,14 @@ const AdminDashboard = () => {
                             onChange={handleInputChange}
                             min="0"
                             max="100"
-                            className={`w-full ${darkMode ? "bg-[#222222] border-gray-700 text-white" : "bg-white border-gray-300 text-gray-800"} p-2 rounded-md border focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all`}
+                            className={`w-full ${darkMode ? "bg-[#222222] border-zinc-700 text-white" : "bg-white border-zinc-300 text-zinc-800"} p-2 rounded-md border focus:border-green-500 focus:ring-1 focus:ring-green-500 outline-none transition-all`}
                           />
                         </div>
                       </div>
 
                       <div>
                         <label
-                          className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                          className={`block text-sm font-medium mb-1 ${darkMode ? "text-zinc-400" : "text-zinc-600"}`}
                         >
                           Game ID
                         </label>
@@ -287,15 +287,15 @@ const AdminDashboard = () => {
                           type="text"
                           value={editingGame.id}
                           disabled
-                          className={`w-full ${darkMode ? "bg-[#222222] border-gray-700 text-gray-500" : "bg-gray-100 border-gray-300 text-gray-500"} p-2 rounded-md border`}
+                          className={`w-full ${darkMode ? "bg-[#222222] border-zinc-700 text-zinc-500" : "bg-zinc-100 border-zinc-300 text-zinc-500"} p-2 rounded-md border`}
                         />
-                        <p className="text-xs text-gray-500 mt-1">Used to fetch images from RAWG</p>
+                        <p className="text-xs text-zinc-500 mt-1">Used to fetch images from RAWG</p>
                       </div>
 
                       {editingGame.imageUrl ? (
                         <div>
                           <label
-                            className={`block text-sm font-medium mb-1 ${darkMode ? "text-gray-400" : "text-gray-600"}`}
+                            className={`block text-sm font-medium mb-1 ${darkMode ? "text-zinc-400" : "text-zinc-600"}`}
                           >
                             Preview
                           </label>
@@ -312,16 +312,16 @@ const AdminDashboard = () => {
                         </div>
                       ) : (
                         <div
-                          className={`h-36 rounded-md ${darkMode ? "bg-[#222222]" : "bg-gray-100"} flex flex-col items-center justify-center`}
+                          className={`h-36 rounded-md ${darkMode ? "bg-[#222222]" : "bg-zinc-100"} flex flex-col items-center justify-center`}
                         >
-                          <span className="text-gray-500 text-sm">No image available</span>
+                          <span className="text-zinc-500 text-sm">No image available</span>
                         </div>
                       )}
 
                       <div className="flex justify-end gap-3 mt-6">
                         <button
                           onClick={cancelEditing}
-                          className={`px-4 py-2 ${darkMode ? "bg-gray-800 hover:bg-gray-700" : "bg-gray-200 hover:bg-gray-300"} rounded-md transition-colors`}
+                          className={`px-4 py-2 ${darkMode ? "bg-zinc-800 hover:bg-zinc-700" : "bg-zinc-200 hover:bg-zinc-300"} rounded-md transition-colors`}
                         >
                           Cancel
                         </button>
@@ -342,21 +342,21 @@ const AdminDashboard = () => {
                 {games.map((game) => (
                   <div
                     key={game.id}
-                    className={`${darkMode ? "bg-[#1A1A1A] border-gray-800/50 hover:border-gray-700 group-hover:shadow-green-900/5" : "bg-white border-gray-200/50 hover:border-gray-300 group-hover:shadow-green-500/5"} rounded-lg overflow-hidden border hover:shadow-lg transition-all group`}
+                    className={`${darkMode ? "bg-[#1A1A1A] border-zinc-800/50 hover:border-zinc-700" : "bg-white border-zinc-200/50 hover:border-zinc-300"} rounded-lg overflow-hidden border hover:shadow-lg transition-all group h-[280px] flex flex-col`}
                   >
-                    <div className={`relative h-36 ${darkMode ? "bg-[#222222]" : "bg-gray-100"}`}>
+                    <div className={`relative h-40 ${darkMode ? "bg-[#222222]" : "bg-zinc-100"}`}>
                       {game.imageUrl ? (
                         <Image
                           src={game.imageUrl || "/placeholder.svg"}
                           alt={game.name}
-                          className="w-full h-full object-cover"
-                          width={300}
-                          height={200}
-                          layout="responsive"
+                          className="object-cover"
+                          fill={true}
+                          sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                          priority
                         />
                       ) : (
                         <div className="w-full h-full flex flex-col items-center justify-center">
-                          <span className="text-gray-500 text-xs mb-2">No image</span>
+                          <span className="text-zinc-500 text-xs mb-2">No image</span>
                           <button
                             onClick={() => refreshGameImage(game)}
                             className="px-2 py-1 bg-green-600/80 rounded text-xs hover:bg-green-600 transition-colors text-white"
@@ -367,48 +367,44 @@ const AdminDashboard = () => {
                       )}
 
                       {game.discount > 0 && (
-                        <div className="absolute top-2 right-2 bg-red-600 text-white text-xs font-bold px-1.5 py-0.5 rounded">
+                        <div className="absolute top-2 right-2 bg-zinc-600 text-white text-xs font-bold px-2 py-1 rounded">
                           -{game.discount}%
                         </div>
                       )}
                     </div>
 
-                    <div className="p-3">
-                      <h2
-                        className={`text-sm font-medium line-clamp-1 group-hover:text-green-400 transition-colors ${darkMode ? "" : "text-gray-800"}`}
-                      >
-                        {game.name}
-                      </h2>
+                    <div className="p-4 flex flex-col flex-1 justify-between">
+                      <div>
+                        <h2 className={`text-sm font-medium line-clamp-1 mb-2 ${darkMode ? "text-white" : "text-zinc-800"} group-hover:text-white/90 transition-colors`}>
+                          {game.name}
+                        </h2>
 
-                      <div
-                        className={`mt-1 ${darkMode ? "text-gray-300" : "text-gray-600"} flex items-baseline gap-1.5`}
-                      >
-                        {game.discount > 0 ? (
-                          <>
-                            <span
-                              className={`${darkMode ? "text-red-400/70" : "text-red-500/70"} line-through text-xs`}
-                            >
-                              ${game.price.toFixed(2)}
-                            </span>
-                            <span className="text-sm font-bold">
-                              ${(game.price * (1 - game.discount / 100)).toFixed(2)}
-                            </span>
-                          </>
-                        ) : (
-                          <span className="text-sm font-bold">${game.price.toFixed(2)}</span>
-                        )}
+                        <div className={`${darkMode ? "text-zinc-300" : "text-zinc-600"} flex items-baseline gap-2`}>
+                          {game.discount > 0 ? (
+                            <>
+                              <span className={`${darkMode ? "text-zinc-400/70" : "text-zinc-500/70"} line-through text-xs`}>
+                                ${game.price.toFixed(2)}
+                              </span>
+                              <span className="text-sm font-bold text-green-500">
+                                ${(game.price * (1 - game.discount / 100)).toFixed(2)}
+                              </span>
+                            </>
+                          ) : (
+                            <span className="text-sm font-bold text-green-500">${game.price.toFixed(2)}</span>
+                          )}
+                        </div>
                       </div>
 
-                      <div className="mt-3 flex justify-between items-center">
+                      <div className="flex justify-between items-center mt-4">
                         <button
                           onClick={() => refreshGameImage(game)}
-                          className={`p-1.5 ${darkMode ? "bg-[#222222] hover:bg-gray-700" : "bg-gray-100 hover:bg-gray-200"} rounded-md transition-colors`}
+                          className={`p-2 ${darkMode ? "bg-[#222222] hover:bg-zinc-700" : "bg-zinc-100 hover:bg-zinc-200"} rounded-md transition-colors`}
                           title="Refresh Image"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
+                            width="16"
+                            height="16"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
@@ -425,13 +421,13 @@ const AdminDashboard = () => {
 
                         <button
                           onClick={() => startEditing(game)}
-                          className="p-1.5 bg-green-600/80 hover:bg-green-600 rounded-md transition-colors text-white"
+                          className="p-2 bg-green-600 hover:bg-green-700 rounded-md transition-colors text-white"
                           title="Edit Game"
                         >
                           <svg
                             xmlns="http://www.w3.org/2000/svg"
-                            width="14"
-                            height="14"
+                            width="16"
+                            height="16"
                             viewBox="0 0 24 24"
                             fill="none"
                             stroke="currentColor"
