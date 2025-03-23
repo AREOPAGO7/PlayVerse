@@ -27,8 +27,8 @@ export async function middleware(request: NextRequest) {
       return NextResponse.redirect(new URL('/', request.url));
     }
   }
-
-  // Prevent authenticated users from accessing login/signup pages
+  
+  // Prevent authenti cated users from accessing login/signup pages
   if (authToken && (
     request.nextUrl.pathname.startsWith('/login') ||
     request.nextUrl.pathname.startsWith('/signup')
