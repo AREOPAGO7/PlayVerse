@@ -8,6 +8,7 @@ import Spinner from '@/app/components/spinners/Spinner';
 import { GameDetails } from '../../../types/games';
 import { doc, getDoc } from 'firebase/firestore';
 import { db } from '../../../firebase/config';
+import { useRouter } from "next/navigation";
 
 export default function GamePage() {
     const params = useParams();
@@ -16,7 +17,7 @@ export default function GamePage() {
     const [activeImage, setActiveImage] = useState<string | null>(null);
     const [price, setPrice] = useState<number | null>(null);
     const [discount, setDiscount] = useState<number | null>(null);
-
+    const router = useRouter();
     // Calculate discounted price
     const discountedPrice = discount !== null && price !== null ? price * (1 - discount / 100) : null;
 
@@ -212,7 +213,7 @@ export default function GamePage() {
                                 <p className="text-xl font-bold light:text-black/80">Base Game</p>
                                 <p className="text-sm text-gray-400 light:text-black/80">May include In-app purchases</p>
                                 <div className="space-y-3">
-                                    <button className="w-full bg-green-500 hover:bg-[#0096D1] text-white font-semibold py-4 rounded transition-colors">
+                                    <button onClick={() => router.push(`/pages/payment/${game.id}`)} className="w-full bg-green-500 hover:bg-[#0096D1] text-white font-semibold py-4 rounded transition-colors">
                                         Get
                                     </button>
                                     <button className="w-full bg-zinc-800 light:bg-zinc-300 light:text-black/80 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors">

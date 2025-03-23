@@ -47,7 +47,7 @@ const LoginForm = ({  }: SignInProps) => {
               width={20}
               height={20}
             />
-            <span className='text-black/80'>Github</span>
+            <span className='text-black/80'>Discord</span>
           </button>
           <button
             onClick={googleSignIn}

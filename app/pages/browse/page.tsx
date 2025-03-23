@@ -1,5 +1,5 @@
 "use client"
-import { useState, useEffect } from "react"
+import { useState, useEffect, useCallback } from "react"
 import Image from "next/image"
 import Navbar from "../../components/navigation/Navbar";
 import Sidebar from "../../components/navigation/Sidebar";
@@ -62,7 +62,7 @@ const Browse = () => {
 
     const API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY
 
-    const fetchGames = async (page: number, search?: string, genre?: string) => {
+    const fetchGames = useCallback(async (page: number, search?: string, genre?: string) => {
         setIsLoading(true)
         setError("")
         
@@ -101,9 +101,9 @@ const Browse = () => {
         } finally {
             setIsLoading(false)
         }
-    }
+    }, [API_KEY, itemsPerPage, sortOrder])
 
-    const fetchGenres = async () => {
+    const fetchGenres = useCallback(async () => {
         try {
             const response = await fetch(`https://api.rawg.io/api/genres?key=${API_KEY}`)
             
@@ -116,15 +116,15 @@ const Browse = () => {
         } catch (err) {
             console.error("Failed to fetch genres:", err)
         }
-    }
+    }, [API_KEY])
 
     useEffect(() => {
         fetchGames(currentPage, searchQuery, selectedGenre)
-    }, [currentPage, selectedGenre, sortOrder])
+    }, [currentPage, selectedGenre, sortOrder, fetchGames, searchQuery])
 
     useEffect(() => {
         fetchGenres()
-    }, [])
+    }, [fetchGenres])
 
     useEffect(() => {
         const handleClickOutside = (event: MouseEvent) => {

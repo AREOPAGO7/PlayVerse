@@ -12,6 +12,7 @@ interface UserData {
   email: string;
   profilePictureUrl: string;
   bio: string;
+  
   // followers: string[];
   // following: string[];
   // createdAt: any;
@@ -21,6 +22,9 @@ interface UserData {
 }
 
 interface UserContextType {
+  RAWG_API_KEY: unknown;
+  avatar: string;
+  uid: string;
   user: UserData | null;
   loading: boolean;
 }
@@ -53,7 +57,13 @@ export const UserProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   return (
-    <UserContext.Provider value={{ user, loading }}>
+    <UserContext.Provider value={{ 
+      user, 
+      loading,
+      RAWG_API_KEY: process.env.NEXT_PUBLIC_RAWG_API_KEY,
+      avatar: user?.profilePictureUrl || '',
+      uid: user?.uid || ''
+    }}>
       {children}
     </UserContext.Provider>
   );

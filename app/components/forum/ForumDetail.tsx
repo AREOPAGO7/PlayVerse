@@ -1,10 +1,11 @@
 "use client"
 import { useState, useEffect, useCallback } from 'react';
-import { collection, query, where, getDocs, addDoc, Timestamp, doc, updateDoc, increment } from 'firebase/firestore';
+import { collection, query, where, getDocs, addDoc, Timestamp, doc, updateDoc, increment, getDoc } from 'firebase/firestore';
 import { db } from '@/app/firebase/config';
 import { useUser } from '@/app/contexts/UserContext';
 import Image from 'next/image';
 import { Spinner } from '../../components/spinners/Spinner';
+import { createForumNotification } from '@/app/utils/forumNotifications';
 
 interface Post {
   id: string;
@@ -76,7 +77,8 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
         ...(replyingTo && {
           replyTo: {
             postId: replyingTo.id,
-            username: replyingTo.username
+            username: replyingTo.username,
+            userId: replyingTo.userId
           }
         })
       };
@@ -86,6 +88,9 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
 
       // Update the forum's post count
       const forumRef = doc(db, "forums", forumId);
+      const forumDoc = await getDoc(forumRef);
+      const forumData = forumDoc.data();
+      
       await updateDoc(forumRef, {
         postCount: increment(1),
         lastPost: {
@@ -95,6 +100,30 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
           content: newPost.substring(0, 100)
         }
       });
+
+      // Create notification for forum reply
+      if (replyingTo && replyingTo.userId !== user.uid) {
+        await createForumNotification({
+          type: 'forum_reply',
+          message: `${user.username || 'Anonymous'} replied to your comment: "${newPost.substring(0, 50)}${newPost.length > 50 ? '...' : ''}"`,
+          userId: replyingTo.userId,
+          senderId: user.uid,
+          senderName: user.username || 'Anonymous',
+          forumId,
+          forumTitle: forumData?.title
+        });
+      } else if (!replyingTo && forumData?.userId !== user.uid) {
+        // Create notification for new forum comment
+        await createForumNotification({
+          type: 'forum_comment',
+          message: `${user.username || 'Anonymous'} commented on the forum: "${newPost.substring(0, 50)}${newPost.length > 50 ? '...' : ''}"`,
+          userId: forumData?.userId,
+          senderId: user.uid,
+          senderName: user.username || 'Anonymous',
+          forumId,
+          forumTitle: forumData?.title
+        });
+      }
 
       setNewPost('');
       setReplyingTo(null);

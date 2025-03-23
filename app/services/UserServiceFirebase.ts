@@ -1,28 +1,29 @@
-import { doc, setDoc } from "firebase/firestore";
+import { doc, setDoc, getDoc } from "firebase/firestore";
 import { db } from "../firebase/config";
 
 // User type definition
 interface UserData {
-  uid: string
-  email: string
-  username: string
-  avatar: string
-  banner: string
-  joinDate: string
-  status : string
-  bio: string
-  location: string
-  country: string
-  level: number
-  xp: number
-  totalPlaytime: number
-  favoriteGame: string
-  friendCount: number
-  rank: string
+  uid: string;
+  email: string;
+  username: string;
+  avatar: string;
+  banner: string;
+  joinDate: string;
+  status: string;
+  bio: string;
+  location: string;
+  country: string;
+  level: number;
+  xp: number;
+  totalPlaytime: number;
+  favoriteGame: string;
+  friendCount: number;
+  rank: string;
 }
 
 /**
  * Creates a user in Firestore with optional default values.
+ * Checks if the user already exists to avoid overwriting data.
  */
 export async function createUserInFirestore(
   userId: string,
@@ -33,8 +34,17 @@ export async function createUserInFirestore(
 ): Promise<void> {
   try {
     const userRef = doc(db, "users", userId);
+    const userDoc = await getDoc(userRef);
 
+    // Check if the user already exists
+    if (userDoc.exists()) {
+      console.log("User already exists, skipping creation.");
+      return;
+    }
+
+    // If the user does not exist, create a new document
     const userData: UserData = {
+      uid: userId,
       username,
       email,
       avatar,
@@ -50,8 +60,6 @@ export async function createUserInFirestore(
       favoriteGame: "",
       friendCount: 0,
       rank: "Rookie",
-      uid: userId
-
     };
 
     await setDoc(userRef, userData);

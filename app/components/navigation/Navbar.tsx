@@ -5,6 +5,8 @@ import AuthPopup from '../Auth/AuthPopup';
 import ProfileModel from '@/app/components/models/ProfileModel';
 import { useUser } from "../../contexts/UserContext";
 import Link from 'next/link';
+import Image from 'next/image';
+import NotificationPopup from './NotificationPopup';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -18,7 +20,7 @@ export default function Navbar() {
   const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [isLight, setIsLight] = useState(false);
   const user = useUser();
-  
+
   // Initialize theme on component mount
   useEffect(() => {
     // Check if theme preference was saved
@@ -28,22 +30,22 @@ export default function Navbar() {
       document.documentElement.classList.add('light');
     }
   }, []);
-  
+
   // Toggle theme function
   const toggleTheme = () => {
     const newIsLight = !isLight;
     setIsLight(newIsLight);
-    
+
     document.documentElement.classList.toggle('light');
     localStorage.setItem('theme', newIsLight ? 'light' : 'dark');
   };
-  
+
   const toggleAuth = () => {
     setIsSignUp(!isSignUp);
 
   };
 
-  return (  
+  return (
 
     <header className="flex items-center px-4 py-3 bg-[#111111] light:bg-light border-b border-white/10 light:border-gray-200 ">
       <div className="flex items-center">
@@ -55,7 +57,7 @@ export default function Navbar() {
           </div>
         </Link>
         <button className="p-2 mr-2 rounded-full hover:bg-[#303030] lg:flex hidden">
-         
+
         </button>
         <div className="relative ">
           <div
@@ -89,8 +91,8 @@ export default function Navbar() {
           Forums
         </Link>
       </nav>
-      <button 
-        onClick={toggleTheme} 
+      <button
+        onClick={toggleTheme}
         className="p-2 mr-2 rounded-full hover:bg-[#404040] light:hover:bg-gray-200 ml-6"
         aria-label="Toggle theme"
       >
@@ -118,33 +120,29 @@ export default function Navbar() {
         </a>
         <div className="flex items-center">
           <div className="relative mr-2">
-            <button className="p-1 rounded-full bg-[#303030] light:bg-zinc-500 light:hover:bg-zinc-300 hover:bg-[#404040] w-10 h-10 flex items-center justify-center">
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
-                <rect x="3" y="3" width="7" height="7" />
-                <rect x="14" y="3" width="7" height="7" />
-                <rect x="3" y="14" width="7" height="7" />
-                <rect x="14" y="14" width="7" height="7" />
-              </svg>
-            </button>
-            <div className="absolute -top-1 -right-1 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-              2
-            </div>
+            
+          <div className="flex justify-end mb-2 pr-2">
+            <NotificationPopup />
+          </div>
           </div>
           {user.user !== null ? (
-            <>
-              <button 
-                className="p-1 rounded-full bg-[#303030] hover:bg-[#404040] light:bg-zinc-500 light:hover:bg-zinc-300 w-10 h-10 flex items-center justify-center"
-                onClick={() => setIsProfileOpen(true)}
-              >
-                <span className="font-bold">
-                  {user.user.username[0].toUpperCase()}
-                </span>
-              </button>
-              <ProfileModel 
+            <div>
+             
+                <Image
+                  onClick={() => setIsProfileOpen(true)}
+                  src={user.user.avatar || "https://github.com/shadcn.png"}
+                  alt="Profile"
+                  width={56}
+                  height={56}
+                  className="rounded-full m-2 w-8 h-8 cursor-pointer"
+                  priority
+                />
+             
+              <ProfileModel
                 isOpen={isProfileOpen}
                 onClose={() => setIsProfileOpen(false)}
               />
-            </>
+           </div>
           ) : (
             <nav className="flex justify-between items-center mx-auto">
               <button

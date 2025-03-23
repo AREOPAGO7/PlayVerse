@@ -11,7 +11,6 @@ import Image from "next/image";
 import ImageUploader from "../../components/profile/image-uploader"
 import StatsCard from "../../components/profile/stats-card"
 import UserBio from "../../components/profile/user-bio"
-import LevelProgress from "../../components/profile/level-progress"
 import FavoriteGame from "../../components/profile/favourite-game"
 import AchievementsSection from "../../components/profile/achievements-section"
 import Spinner from "@/app/components/spinners/Spinner"
@@ -27,6 +26,7 @@ interface User {
   status : string
   bio: string
   location: string
+  fidelityPoints : number
   country: string
   level: number
   xp: number
@@ -127,15 +127,17 @@ const handleFieldChange = (field: keyof User, value: string | number) => {
     {/* Main container with sidebar and content */}
     <div className="flex pt-16"> {/* Adjust based on actual navbar height */}
       {/* Fixed Sidebar - extends from below navbar to bottom */}
-      <div className="fixed top-16 w-72 left-0 bottom-0 bg-[#111111]  z-10 hidden xl:block">
+      <div className="fixed top-14 w-72 left-0 bottom-0 bg-[#111111]  z-10 hidden xl:block">
      
+       <div className="mt-4">
        <Sidebar />
+       </div>
       
       </div>
       
       {/* Main content area - pushed right to make room for sidebar */}
       <div className="flex-1 xl:ml-64 min-h-screen">
-        <div className="p-4 max-w-7xl mx-auto">
+        <div className="p-4 max-w-5xl mx-auto">
           {/* Banner area */}
           <div className="relative mb-20">
             <div className="h-64 rounded-lg overflow-hidden">
@@ -237,9 +239,9 @@ const handleFieldChange = (field: keyof User, value: string | number) => {
                       <Image
                         src={profileData.avatar || "/placeholder.svg"}
                         alt="Profile Avatar"
-                        className="w-full h-full object-cover"
                         width={112}
                         height={112}
+                        className="w-28 h-28 object-cover rounded-full"
                       />
                     ) : (
                       <div className="w-28 h-28 bg-green-500 flex items-center justify-center light:bg-zinc-200">
@@ -251,7 +253,7 @@ const handleFieldChange = (field: keyof User, value: string | number) => {
                   </div>
                 )}
                 <div className="absolute -bottom-2 -right-2 bg-green-500 rounded-full p-2 border-2 border-[#111111] shadow-lg light:bg-zinc-200 light:border-zinc-700">
-                  <div className="text-xs font-bold">LVL {profileData.level || 1}</div>
+                  <div className="text-xs font-bold">points {profileData.fidelityPoints || 1}</div>
                 </div>
               </div>
   
@@ -316,16 +318,7 @@ const handleFieldChange = (field: keyof User, value: string | number) => {
                 />
   
                 {/* Level progress */}
-                <LevelProgress
-                  level={profileData.level || 1}
-                  xp={profileData.xp || 0}
-                  editing={editing}
-                  editedLevel={editedUser?.level || 1}
-                  editedXp={editedUser?.xp || 0}
-                  onLevelChange={(level) => handleFieldChange("level", level)}
-                  onXpChange={(xp) => handleFieldChange("xp", xp)}
-                />
-  
+               
                 {/* Stats grid */}
                 <div className="grid grid-cols-2 gap-4">
                   <StatsCard

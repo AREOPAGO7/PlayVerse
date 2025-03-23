@@ -44,7 +44,7 @@ const ProfileModel: React.FC<ProfileModelProps> = ({ isOpen, onClose }) => {
           />
           <div>
             <h2 className="font-bold text-white">{user.username}</h2>
-            <p className="text-sm text-zinc-400">{user.level}</p>
+            <p className="text-sm text-zinc-400">{user.fidelityPoints}</p>
           </div>
         </div>
 

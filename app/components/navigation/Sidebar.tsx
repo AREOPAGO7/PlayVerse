@@ -13,6 +13,7 @@ const Sidebar = () => {
     <div className="w-[325px]  h-full bg-[#111111] hidden lg:block light:bg-light  border-r border-white/5 ">
       <div className=" flex flex-col mt-2">
         <nav className="p-2">
+        
           {/* Store link */}
           <Link
             href="/"

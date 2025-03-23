@@ -12,6 +12,7 @@ import { useUser } from '../../contexts/UserContext';
 import { doc, updateDoc, increment } from "firebase/firestore";
 import { IoIosAttach } from "react-icons/io";
 import Spinner from "../../components/spinners/Spinner";
+import { useSearchParams } from 'next/navigation'; // Import useSearchParams
 
 export default function ForumsPage() {
     const [topics, setTopics] = useState<ForumTopic[]>([]);
@@ -35,9 +36,17 @@ export default function ForumsPage() {
         { id: 'offtopic', name: 'Off Topic' }
     ]);
 
+    const searchParams = useSearchParams(); // Get search params from the URL
+
     useEffect(() => {
         fetchTopics();
-    }, []);
+
+        // Check if there's an `id` in the URL params
+        const idFromParams = searchParams.get('id');
+        if (idFromParams) {
+            setSelectedForumId(idFromParams);
+        }
+    }, [searchParams]); // Add searchParams as a dependency
 
     const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
@@ -162,10 +171,8 @@ export default function ForumsPage() {
         }
     };
 
-    // Add this near the top of your component with other state declarations
     const [isLoadingTopic, setIsLoadingTopic] = useState(false);
     
-    // Update the handleTopicClick function
     const handleTopicClick = async (topicId: string) => {
         try {
             setIsLoadingTopic(true);
@@ -190,12 +197,6 @@ export default function ForumsPage() {
         }
     };
     
-    
-    
-    // Remove these sections that are outside the return statement
-    // Delete from line 225-238:
-  
-    // Keep the button that's already inside the return statement (around line 350)
     return (
         <div className="font-medium bg-[#111111] light:bg-light min-h-screen">
             <div className="fixed top-0 w-full z-50">
@@ -207,7 +208,6 @@ export default function ForumsPage() {
                 </div>
                 <main className="flex-1 p-4 md:p-8 2xl:ml-64 pt-16 overflow-y-auto w-full mt-20">
                     <div className="max-w-[90%] mx-auto">
-                        {/* This is the working button section */}
                         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mb-8">
                             <h1 className="text-2xl md:text-3xl font-bold text-white light:text-black/80">Forums</h1>
                             <div className="flex flex-wrap gap-2 md:gap-4 ">
@@ -243,7 +243,6 @@ export default function ForumsPage() {
                             </div>
                         </div>
 
-                        {/* New Topic Form */}
                         {showNewTopicForm && (
                             <div className="mb-8 border border-white/10 light:border-black/10 p-6 rounded-lg">
                                 <div className="flex justify-between items-start gap-4 mb-4">
@@ -354,7 +353,6 @@ export default function ForumsPage() {
                             </div>
                         )}
 
-                        {/* Categories and Topics sections remain unchanged */}
                         <div className="mb-6 flex flex-wrap items-center gap-2">
                             <button
                                 onClick={() => setSelectedCategory('all')}
@@ -381,8 +379,6 @@ export default function ForumsPage() {
                             ))}
                         </div>
 
-                       
-                      
                         <div className="grid gap-4 md:gap-6">
                             {loading ? (
                               <div className="mx-auto mt-20 ">

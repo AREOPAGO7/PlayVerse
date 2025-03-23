@@ -1,5 +1,6 @@
 import { AuthProvider } from './contexts/AuthContext';
 import { UserProvider } from './contexts/UserContext';
+import { NotificationProvider } from './contexts/NotificationContext';
 import './globals.css';
 
 export default function RootLayout({
@@ -14,10 +15,12 @@ export default function RootLayout({
       </head>
       <body>
       <UserProvider>
-        <AuthProvider>
-          {children}
-        </AuthProvider>
-       </UserProvider>
+        <NotificationProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+        </NotificationProvider>
+      </UserProvider>
       </body>
     </html>
   );
