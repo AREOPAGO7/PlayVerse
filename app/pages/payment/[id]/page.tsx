@@ -364,12 +364,14 @@ const PaymentPage = () => {
 
         {gameDetails && (
           <div className="bg-zinc-800 light:bg-zinc-200 rounded-lg p-4 mb-6 flex items-center shadow-lg">
-            <div className="w-16 h-16 rounded overflow-hidden flex-shrink-0">
+            <div className="w-16 h-16 relative rounded overflow-hidden flex-shrink-0">
               <Image
                 src={gameDetails.image}
                 alt={gameDetails.name}
+                width={64}
+                height={64}
                 className="w-full h-full object-cover"
-                fill={true}
+                priority
               />
             </div>
             <div className="ml-4 flex-1">

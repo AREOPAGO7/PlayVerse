@@ -124,7 +124,7 @@ export default function GamePage() {
                                     src={activeImage || game.background_image}
                                     alt={game.name}
                                     fill
-                                    className="object-cover"
+                                    className="object-cover "
                                     priority
                                 />
                             </div>
