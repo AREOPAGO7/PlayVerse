@@ -1,7 +1,7 @@
 "use client"
 import { useState, useEffect, useRef } from "react";
 import Image from 'next/image';
-import { collection, getDocs, addDoc, Timestamp, query } from "firebase/firestore";
+import { collection, getDocs, addDoc, Timestamp } from "firebase/firestore";
 import { db } from "../../firebase/config";
 import TopicCard from "@/app/components/forum/TopicCard";
 import { ForumTopic } from "@/app/types/forum";
@@ -45,7 +45,7 @@ export default function ForumsPage() {
         const idFromParams = searchParams.get('id');
         if (idFromParams) {
             setSelectedForumId(idFromParams);
-        }else{ return null; }
+        }
     }, [searchParams]); // Add searchParams as a dependency
 
     const handleMediaSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -153,30 +153,8 @@ export default function ForumsPage() {
             };
     
             console.log('Creating topic:', newTopic);
-            const forumDoc = await addDoc(collection(db, "forums"), newTopic);
+            await addDoc(collection(db, "forums"), newTopic);
             console.log('Topic created successfully');
-
-            // Notify all users about the new forum
-            const usersQuery = query(collection(db, 'users'));
-            const usersSnapshot = await getDocs(usersQuery);
-            
-            const notificationPromises = usersSnapshot.docs
-                .filter(doc => doc.id !== user.uid) // Don't notify the creator
-                .map(doc => {
-                    return addDoc(collection(db, 'notifications'), {
-                        type: 'new_forum',
-                        message: `${user.username || 'Anonymous'} posetd a new tpic: "${newTopicTitle}"`,
-                        userId: doc.id,
-                        read: false,
-                        createdAt: Timestamp.now(),
-                        forumId: forumDoc.id,
-                        forumTitle: newTopicTitle,
-                        senderId: user.uid,
-                        senderName: user.username || 'Anonymous'
-                    });
-                });
-
-            await Promise.all(notificationPromises);
             
             setNewTopicTitle("");
             setNewTopicDescription("");
@@ -255,7 +233,7 @@ export default function ForumsPage() {
                                     </svg>
                                     {isUploading ? (
                                         <div className="flex items-center gap-2">
-                                           <Spinner size={20}/>
+                                            <div className="animate-spin h-4 w-4 border-t-2 border-b-2 border-white rounded-full"></div>
                                             <span>Creating...</span>
                                         </div>
                                     ) : (

@@ -7,24 +7,6 @@ import Image from 'next/image';
 import { Spinner } from '../../components/spinners/Spinner';
 import { createForumNotification } from '@/app/utils/forumNotifications';
 
-interface Forum {
-  id: string;
-  title: string;
-  description: string;
-  userId: string;
-  username: string;
-  userAvatar: string;
-  postCount: number;
-  viewCount: number;
-  createdAt: Timestamp;
-  lastPost?: {
-    userId: string;
-    username: string;
-    timestamp: Timestamp;
-    content: string;
-  };
-}
-
 interface Post {
   id: string;
   content: string;
@@ -35,7 +17,6 @@ interface Post {
   replyTo?: {
     postId: string;
     username: string;
-    userId: string;
   };
 }
 
@@ -50,14 +31,8 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
   const [replyingTo, setReplyingTo] = useState<Post | null>(null);
   const { user } = useUser();
   const [loading, setLoading] = useState(false);
-  const [forumExists, setForumExists] = useState(true);
-  const [forumData, setForumData] = useState<Forum | null>(null);
-  const [error, setError] = useState<string | null>(null);
 
   const fetchPosts = useCallback(async () => {
-    // Don't fetch posts if forum doesn't exist
-    if (!forumExists) return;
-    
     try {
       setLoading(true);
       const q = query(
@@ -79,64 +54,17 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
       setPosts(sortedPosts);
     } catch (error) {
       console.error("Error fetching posts:", error);
-      setError("Failed to load forum posts. Please try again later.");
-    } finally {
-      setLoading(false);
-    }
-  }, [forumId, forumExists]);
+    }finally{
+      setLoading(false)
+  }
+  }, [forumId]);
 
   useEffect(() => {
-    const checkForumExists = async () => {
-      try {
-        setLoading(true);
-        setError(null);
-        
-        // Check if forum exists
-        const forumRef = doc(db, "forums", forumId);
-        const forumSnapshot = await getDoc(forumRef);
-        
-        if (!forumSnapshot.exists()) {
-          setForumExists(false);
-          setError("Forum not found. It may have been deleted or you have an invalid link.");
-          return;
-        }
-        
-        // Forum exists, store its data
-        const data = forumSnapshot.data();
-        if (data) {
-          setForumData({
-            id: forumId,
-            title: data.title || '',
-            description: data.description || '',
-            userId: data.userId || '',
-            username: data.username || 'Anonymous',
-            userAvatar: data.userAvatar || '/default-avatar.png',
-            postCount: data.postCount || 0,
-            viewCount: data.viewCount || 0,
-            createdAt: data.createdAt || Timestamp.now(),
-            lastPost: data.lastPost || null
-          });
-        }
-        setForumExists(true);
-        
-        // Now fetch the posts
-        fetchPosts();
-      } catch (error) {
-        console.error("Error checking forum:", error);
-        setError("An error occurred while loading the forum. Please try again later.");
-      } finally {
-        setLoading(false);
-      }
-    };
-    
-    checkForumExists();
-  }, [forumId, fetchPosts]);
+    fetchPosts();
+  }, [fetchPosts]);
 
   const handleCreatePost = async () => {
-    if (!user || !newPost.trim() || !forumExists) return;
-    
-    // Clear any previous errors
-    setError(null);
+    if (!user || !newPost.trim()) return;
 
     try {
       const post = {
@@ -212,7 +140,7 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
       
           <>
             <div className="p-4 border-b border-zinc-800 flex justify-between items-center">
-              <h2 className="text-xl font-bold text-white">{forumData?.title || 'Forum Discussion'}</h2>
+              <h2 className="text-xl font-bold text-white">Forum Discussion</h2>
               <button onClick={onClose} className="text-zinc-400 hover:text-white">
                 <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -220,24 +148,8 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
               </button>
             </div>
             {loading ? (
-              <div className='mx-auto p-8'><Spinner /></div>
-            ) : error ? (
-              <div className="flex-1 p-8 flex flex-col items-center justify-center text-center">
-                <div className="bg-zinc-800/50 rounded-lg p-6 max-w-md">
-                  <svg className="w-16 h-16 text-red-500 mx-auto mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
-                  </svg>
-                  <h3 className="text-xl font-medium text-white mb-2">Error</h3>
-                  <p className="text-zinc-300 mb-4">{error}</p>
-                  <button
-                    onClick={onClose}
-                    className="px-4 py-2 bg-zinc-700 text-white rounded-lg hover:bg-zinc-600 transition-colors"
-                  >
-                    Go Back
-                  </button>
-                </div>
-              </div>
-            ) : (
+        <div className='mx-auto'>  <Spinner /></div>
+        ) : (
             <div className="flex-1 overflow-y-auto p-4 space-y-4">
               {posts.map((post) => (
                 <div key={post.id} className="bg-zinc-800 rounded-lg p-4">
@@ -247,7 +159,7 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
                       alt={post.username}
                       width={40}
                       height={40}
-                      className="rounded-full w-10 h-10"
+                      className="rounded-full"
                     />
                     <div>
                       <div className="font-medium text-white">{post.username}</div>
@@ -292,8 +204,8 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
                   )}
                 </div>
               ))}
-              </div>
-            )}
+            </div>
+        )}
             {user && (
               <div className="p-4 border-t border-zinc-800">
                 {replyingTo && (
@@ -316,13 +228,13 @@ export default function ForumDetail({ forumId, onClose }: ForumDetailProps) {
                   value={newPost}
                   onChange={(e) => setNewPost(e.target.value)}
                   placeholder="Write your reply..."
-                  className="w-full p-3 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[100px]"
+                  className="w-full p-3 rounded-lg bg-zinc-800 text-white placeholder:text-zinc-400 focus:outline-none focus:ring-2 focus:ring-blue-500 min-h-[100px]"
                 />
                 <div className="flex justify-end mt-3">
                   <button
                     onClick={handleCreatePost}
                     disabled={!newPost.trim()}
-                    className="px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                   >
                     {replyingTo ? 'Post Reply' : 'Post'}
                   </button>

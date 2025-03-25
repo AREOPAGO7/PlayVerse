@@ -37,7 +37,7 @@ export function NotificationProvider({ children }: { children: React.ReactNode }
     const q = query(
       notificationsRef,
       where('userId', '==', user.uid),
-      orderBy('createdAt', 'desc')  
+      orderBy('createdAt', 'desc')
     );
 
     const unsubscribe = onSnapshot(q, (snapshot) => {

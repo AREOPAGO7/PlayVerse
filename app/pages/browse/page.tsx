@@ -48,7 +48,7 @@ const Browse = () => {
     })
     const [openDropdown, setOpenDropdown] = useState<number | null>(null)
     const [currentPage, setCurrentPage] = useState(1)
-    const [itemsPerPage] = useState(20)
+    const [itemsPerPage] = useState(10)
     const [games, setGames] = useState<Game[]>([])
     const [totalGames, setTotalGames] = useState(0)
     const [isLoading, setIsLoading] = useState(false)
@@ -62,9 +62,28 @@ const Browse = () => {
 
     const API_KEY = process.env.NEXT_PUBLIC_RAWG_API_KEY
 
+    const CACHE_KEY_GAMES = 'gamesCache'
+    const CACHE_KEY_GENRES = 'genresCache'
+    const CACHE_EXPIRATION = 1000 * 60 * 60 // 1 hour
+
     const fetchGames = useCallback(async (page: number, search?: string, genre?: string) => {
         setIsLoading(true)
         setError("")
+        
+        // Generate cache key based on parameters
+        const cacheKey = `${CACHE_KEY_GAMES}_${page}_${search || ''}_${genre || ''}_${sortOrder}`
+        
+        // Check cache first
+        const cachedData = localStorage.getItem(cacheKey)
+        if (cachedData) {
+            const { data, timestamp } = JSON.parse(cachedData)
+            if (Date.now() - timestamp < CACHE_EXPIRATION) {
+                setGames(data)
+                setTotalGames(data.length)
+                setIsLoading(false)
+                return
+            }
+        }
         
         try {
             let url = `https://api.rawg.io/api/games?key=${API_KEY}&page=${page}&page_size=${itemsPerPage}&ordering=${sortOrder}`
@@ -93,6 +112,13 @@ const Browse = () => {
                     priceTag: tag
                 }
             })
+            
+            // Cache the transformed data
+            localStorage.setItem(cacheKey, JSON.stringify({
+                data: gamesWithPrices,
+                timestamp: Date.now()
+            }))
+            
             setGames(gamesWithPrices)
             setTotalGames(data.count)
         } catch (err) {
@@ -104,6 +130,16 @@ const Browse = () => {
     }, [API_KEY, itemsPerPage, sortOrder])
 
     const fetchGenres = useCallback(async () => {
+        // Check cache first
+        const cachedData = localStorage.getItem(CACHE_KEY_GENRES)
+        if (cachedData) {
+            const { data, timestamp } = JSON.parse(cachedData)
+            if (Date.now() - timestamp < CACHE_EXPIRATION) {
+                setGenres(data)
+                return
+            }
+        }
+        
         try {
             const response = await fetch(`https://api.rawg.io/api/genres?key=${API_KEY}`)
             
@@ -112,6 +148,13 @@ const Browse = () => {
             }
             
             const data = await response.json()
+            
+            // Cache the genres data
+            localStorage.setItem(CACHE_KEY_GENRES, JSON.stringify({
+                data: data.results,
+                timestamp: Date.now()
+            }))
+            
             setGenres(data.results)
         } catch (err) {
             console.error("Failed to fetch genres:", err)
