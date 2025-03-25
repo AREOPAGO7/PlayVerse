@@ -157,8 +157,22 @@ export default function Store() {
     });
   
   // Update the fetch functions to manage loading states
+  const CACHE_KEY = 'featuredGamesCache';
+  const CACHE_EXPIRATION = 1000 * 60 * 60; // 1 hour
+  
   const fetchFeaturedGames = useCallback(async (): Promise<void> => {
     try {
+      // Check cache first
+      const cachedData = localStorage.getItem(CACHE_KEY);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        if (Date.now() - timestamp < CACHE_EXPIRATION) {
+          setFeaturedGames(data);
+          setLoadingStates(prev => ({ ...prev, featured: false }));
+          return;
+        }
+      }
+  
       const specificGames = [
         "Red Dead Redemption 2",
         "Grand Theft Auto V",
@@ -167,7 +181,7 @@ export default function Store() {
         "Black Myth: Wukong",
         "Cyberpunk 2077",
       ];
-
+  
       // Fetch prices and discounts from Firestore
       const gamePricesSnapshot = await getDocs(collection(db, "games"));
       const gamePrices: Record<string, { price: number; discount: number }> = {};
@@ -178,7 +192,7 @@ export default function Store() {
           discount: data.discount || 0,
         };
       });
-
+  
       // Fetch game details from RAWG API
       const gamePromises = specificGames.map((gameName) =>
         fetch(`${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(gameName)}&page_size=1`)
@@ -189,9 +203,9 @@ export default function Store() {
             return null;
           })
       );
-
+  
       const gameResults = await Promise.all(gamePromises);
-
+  
       // Fallback objects for missing games
       const fallbackGames: Record<string, Game> = {
         "Red Dead Redemption 2": defaultGames[2],
@@ -201,29 +215,29 @@ export default function Store() {
         "Black Myth: Wukong": defaultGames[4],
         "Cyberpunk 2077": defaultGames[3],
       };
-
+  
       const statuses = ["FEATURED", "POPULAR", "NEW RELEASE", "BEST SELLER", "COMING SOON", "UPDATED"];
-
+  
       const transformedGames = specificGames.map((gameName, index) => {
         const game = gameResults[index] as RAWGGame | null;
-
+  
         if (!game) {
           return fallbackGames[gameName];
         }
-
+  
         // Fetch price and discount from Firestore
         const firestoreData = gamePrices[gameName];
         let basePrice = 39.99;
         let discount = 0;
-
+  
         if (firestoreData) {
           basePrice = firestoreData.price || basePrice;
           discount = firestoreData.discount || discount;
         }
-
+  
         // Calculate discounted price
         const priceAfterDiscount = basePrice - (basePrice * discount) / 100;
-
+  
         return {
           id: game.id,
           title: gameName,
@@ -240,8 +254,14 @@ export default function Store() {
           banner: game.background_image || fallbackGames[gameName].banner,
         };
       });
-
+  
       setFeaturedGames(transformedGames);
+      
+      // Update cache
+      localStorage.setItem(CACHE_KEY, JSON.stringify({
+        data: transformedGames,
+        timestamp: Date.now()
+      }));
     } catch (err: unknown) {
       const error = err as RTCError;
       console.log("Error fetching featured games:", error);
@@ -252,9 +272,23 @@ export default function Store() {
     }
   }, [defaultGames]);
 
+  const DISCOVER_CACHE_KEY = 'discoverGamesCache';
+  const DISCOVER_CACHE_EXPIRATION = 1000 * 60 * 60; // 1 hour
+
   const fetchDiscoverGames = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
+
+      // Check cache first
+      const cachedData = localStorage.getItem(DISCOVER_CACHE_KEY);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        if (Date.now() - timestamp < DISCOVER_CACHE_EXPIRATION) {
+          setDiscoverGames(data);
+          setLoadingStates(prev => ({ ...prev, discover: false }));
+          return;
+        }
+      }
 
       // Fetch all games from Firestore collection
       const gamesCollectionRef = collection(db, "games");
@@ -346,7 +380,7 @@ export default function Store() {
         })
       );
 
-      setDiscoverGames(transformedGames.map(game => ({
+      const processedGames = transformedGames.map(game => ({
         ...game,
         id: typeof game.id === 'string' ? parseInt(game.id) : game.id,
         title: game.title,
@@ -354,7 +388,15 @@ export default function Store() {
         img: game.img,
         price: game.price,
         discount: game.discount === null ? undefined : game.discount
-      })));
+      }));
+
+      // Update cache
+      localStorage.setItem(DISCOVER_CACHE_KEY, JSON.stringify({
+        data: processedGames,
+        timestamp: Date.now()
+      }));
+
+      setDiscoverGames(processedGames);
     } catch (error: unknown) {
       const err = error as RTCError;
       console.error("Error fetching discover games:", err);
@@ -365,27 +407,41 @@ export default function Store() {
     }
   }, [defaultDiscoverGames]);
 
+  const NEW_GAMES_CACHE_KEY = 'newGamesCache';
+  const NEW_GAMES_CACHE_EXPIRATION = 1000 * 60 * 60; // 1 hour
+
   const fetchNewGames = useCallback(async (): Promise<void> => {
     try {
+      // Check cache first
+      const cachedData = localStorage.getItem(NEW_GAMES_CACHE_KEY);
+      if (cachedData) {
+        const { data, timestamp } = JSON.parse(cachedData);
+        if (Date.now() - timestamp < NEW_GAMES_CACHE_EXPIRATION) {
+          setNewGames(data);
+          setLoadingStates(prev => ({ ...prev, newGames: false }));
+          return;
+        }
+      }
+  
       const response = await fetch(
         `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&dates=2025-01-01,2025-12-31&ordering=-added&page_size=20`
       );
-
+  
       if (!response.ok) {
         throw new Error('Failed to fetch new games');
       }
-
+  
       const data = await response.json();
-
+  
       // Transform the data into our app's format
       const transformedGames = data.results.map((game: RAWGGame) => {
         const hasDiscount = Math.random() > 0.5;
         const discount = hasDiscount ? [25, 33, 40, 50][Math.floor(Math.random() * 4)] : undefined;
         const basePrice = [39.99, 49.99, 59.99, 69.99][Math.floor(Math.random() * 4)];
-
+  
         const tags = ["NEW", "WINDOWS 10+ PRE-RELEASE", "", ""];
         const randomTag = tags[Math.floor(Math.random() * tags.length)];
-
+  
         return {
           id: game.id,
           title: game.name,
@@ -395,8 +451,14 @@ export default function Store() {
           discount: discount,
         };
       });
-
+  
       setNewGames(transformedGames);
+      
+      // Cache the transformed games
+      localStorage.setItem(NEW_GAMES_CACHE_KEY, JSON.stringify({
+        data: transformedGames,
+        timestamp: Date.now()
+      }));
     } catch (error: unknown) {
       const err = error as RTCError;
       console.error("Error fetching new games:", err);
