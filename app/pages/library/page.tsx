@@ -7,6 +7,7 @@ import Sidebar from "../../components/navigation/Sidebar";
 import { useUser } from "../../contexts/UserContext"
 import { getFirestore, doc, getDoc } from "firebase/firestore"; // Import Firestore functions
 import axios from "axios"; // For making API requests to RAWG
+import Spinner from "@/app/components/spinners/Spinner";
 
 interface GameItem {
     id: number
@@ -311,7 +312,8 @@ const Library = () => {
                                         {/* Loading State */}
                                         {loading && (
                                             <div className="flex justify-center items-center h-64">
-                                                <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
+                                              <Spinner/>
+                                            
                                             </div>
                                         )}
 

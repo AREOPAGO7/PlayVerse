@@ -9,6 +9,7 @@ import { useParams } from "next/navigation";
 import Image from "next/image";
 import { Check, Percent } from "lucide-react";
 import { Poppins } from 'next/font/google';
+import Spinner from "@/app/components/spinners/Spinner";
 
 
 const poppins = Poppins({
@@ -328,8 +329,7 @@ const PaymentPage = () => {
   if (loading || userLoading) {
     return (
       <div className="font-medium bg-[#111111] light:bg-light min-h-screen flex flex-col items-center justify-center text-white light:text-black">
-        <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-white"></div>
-        <p className="mt-4">Loading payment details...</p>
+        <Spinner/>
       </div>
     );
   }

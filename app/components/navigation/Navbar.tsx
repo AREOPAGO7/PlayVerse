@@ -38,9 +38,10 @@ export default function Navbar() {
       <div className="flex items-center">
         <Link href="/" className="mr-64">
           <div className="w-10 h-10 rounded flex items-center justify-center">
-            {/* <Image src='/logo.png' width={100} height={100} alt={''}></Image> */}
-            <p className={`${poppins.className} ml-28 text-lg text-white light:text-black`}>PlayVerse </p><span
-              className='text-[10px] mt-[0.20rem] ml-1 font-bold text-green-400'>v1.0</span>
+             <Image src='/logo.png' width={80} height={80} alt={''} className='ml-4'></Image> 
+            {/* <p className={`${poppins.className} ml-28 text-lg text-white light:text-black`}>PlayVerse </p> */}
+            {/* <span
+              className='text-[10px] mt-[0.20rem] ml-1 font-bold text-green-400'>v1.0</span> */}
           </div>
         </Link>
         <button className="p-2 mr-2 rounded-full hover:bg-[#303030] lg:flex hidden">
@@ -101,7 +102,7 @@ export default function Navbar() {
         
         <div className="flex items-center">
 
-             {user.user !== null ?  <div className="flex   pr-2">
+             {user.user !== null ?  <div className="flex  z-[100] pr-2">
             <NotificationPopup />
           </div> : null }
           
