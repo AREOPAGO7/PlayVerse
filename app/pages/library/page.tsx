@@ -357,8 +357,8 @@ const Library = () => {
                                                             <Image
                                                                 src={game.image || "/placeholder.svg"}
                                                                 alt={game.title}
-                                                                width={200}
-                                                                height={300}
+                                                                width={400}
+                                                                height={400}
                                                                 className={`w-full h-auto ${gridView ? "aspect-[3/4]" : "aspect-square"} object-cover`}
                                                             />
                                                             {gridView && (
@@ -371,7 +371,7 @@ const Library = () => {
                                                         </div>
                                                         <div className={gridView ? "mt-2" : "flex-1"}>
                                                             <div className="flex justify-between items-start">
-                                                                <h3 className="font-medium text-sm truncate light:text-black">{game.title}</h3>
+                                                                <h3 className="font-semibold text-sm truncate light:text-black">{game.title}</h3>
                                                                 <button 
                                                                     onClick={() => setOpenDropdown(openDropdown === game.id ? null : game.id)}
                                                                     className="h-6 w-6 pt-3 flex items-center justify-center -mr-2 text-white light:text-black rounded-full relative"

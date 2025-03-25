@@ -45,7 +45,7 @@ export default function TopicCard({ topic, onClick }: { topic: ForumTopic; onCli
                 <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-3">
                         <div className="w-8 h-8 rounded-full overflow-hidden flex-shrink-0">
-                            <Image src={topic.userAvatar} alt={topic.username} className="w-full h-full object-cover" width={32} height={32} />
+                            <Image src={topic.userAvatar} alt={topic.username} className="w-full h-full object-cover" width={100} height={100} />
                         </div>
                         <span className="text-zinc-400 truncate light:text-black/80">{topic.username}</span>
                         <span className="text-zinc-500 text-[12px] ml-auto flex-shrink-0 light:text-black/80">

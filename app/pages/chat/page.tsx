@@ -8,7 +8,15 @@ import { useChat } from "@/app/hooks/useChat"
 import { useUser } from "@/app/contexts/UserContext"
 import { doc, updateDoc } from "firebase/firestore"
 import { db } from "@/app/firebase/config"
-// import { Chat } from "@/app/types/chat"
+import { Poppins } from "next/font/google"
+import Link from "next/link"
+// import { Chat } from "@/app/types/chat"import { Poppins } from 'next/font/google';
+
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: '600',
+});
 
 const ChatPage = () => {
   const [activeChat, setActiveChat] = useState<string>("")
@@ -53,7 +61,7 @@ const ChatPage = () => {
   }
   
   if (!user) {
-    return <div className="flex items-center justify-center h-screen text-white">Please log in to access the chat.</div>
+    return <div className={`flex items-center justify-center h-screen bg-[#111] ${poppins.className}`}>Please log in to access the chat.  <Link href={'/'} className="ml-2 text-green-500"> login</Link></div>
   }
   
   return (

@@ -1,12 +1,14 @@
 "use client";
 import { Poppins } from 'next/font/google';
-import { useState, useEffect } from 'react';
+import { useState} from 'react';
 import AuthPopup from '../Auth/AuthPopup';
 import ProfileModel from '@/app/components/models/ProfileModel';
 import { useUser } from "../../contexts/UserContext";
 import Link from 'next/link';
 import Image from 'next/image';
 import NotificationPopup from './NotificationPopup';
+import { usePathname } from "next/navigation";
+
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -18,27 +20,12 @@ export default function Navbar() {
   const [isSignUp, setIsSignUp] = useState(false);
   const [searchFocused, setSearchFocused] = useState(false);
   const [isProfileOpen, setIsProfileOpen] = useState(false);
-  const [isLight, setIsLight] = useState(false);
+
   const user = useUser();
 
   // Initialize theme on component mount
-  useEffect(() => {
-    // Check if theme preference was saved
-    const savedTheme = localStorage.getItem('theme') || 'dark';
-    setIsLight(savedTheme === 'light');
-    if (savedTheme === 'light') {
-      document.documentElement.classList.add('light');
-    }
-  }, []);
 
-  // Toggle theme function
-  const toggleTheme = () => {
-    const newIsLight = !isLight;
-    setIsLight(newIsLight);
-
-    document.documentElement.classList.toggle('light');
-    localStorage.setItem('theme', newIsLight ? 'light' : 'dark');
-  };
+  const pathname = usePathname();
 
   const toggleAuth = () => {
     setIsSignUp(!isSignUp);
@@ -81,50 +68,45 @@ export default function Navbar() {
       </div>
 
       <nav className="hidden md:flex items-center ml-6 space-x-6 text-sm">
-        <Link href="/" className="font-medium text-white light:text-black hover:text-gray-300">
-          Discover
-        </Link>
-        <Link href="/pages/browse" className="font-medium text-white/70 light:text-black/70 hover:text-gray-300">
-          Browse
-        </Link>
-        <Link href="/pages/forums" className="font-medium text-white/70 light:text-black/70 hover:text-gray-300">
-          Forums
-        </Link>
-      </nav>
-      <button
-        onClick={toggleTheme}
-        className="p-2 mr-2 rounded-full hover:bg-[#404040] light:hover:bg-gray-200 ml-6"
-        aria-label="Toggle theme"
+      <Link 
+        href="/" 
+        className={`text-[13px] ${poppins.className} ${pathname === '/' 
+          ? 'text-white light:text-black' 
+          : 'text-white/70 light:text-black/70'} 
+          hover:text-gray-300`}
       >
-        {isLight ? (
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-black">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M21.752 15.002A9.718 9.718 0 0118 15.75c-5.385 0-9.75-4.365-9.75-9.75 0-1.33.266-2.597.748-3.752A9.753 9.753 0 003 11.25C3 16.635 7.365 21 12.75 21a9.753 9.753 0 009.002-5.998z" />
-          </svg>
-        ) : (
-          <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-5 h-5 text-white">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M12 3v2.25m6.364.386l-1.591 1.591M21 12h-2.25m-.386 6.364l-1.591-1.591M12 18.75V21m-4.773-4.227l-1.591 1.591M5.25 12H3m4.227-4.773L5.636 5.636M15.75 12a3.75 3.75 0 11-7.5 0 3.75 3.75 0 017.5 0z" />
-          </svg>
-        )}
-      </button>
+        Discover
+      </Link>
+      <Link 
+        href="/pages/browse" 
+        className={`text-[13px] ${poppins.className} ${pathname === '/pages/browse' 
+          ? 'text-white light:text-black' 
+          : 'text-white/70 light:text-black/70'} 
+          hover:text-gray-300`}
+      >
+        Browse
+      </Link>
+      <Link 
+        href="/pages/forums" 
+        className={`text-[13px] ${poppins.className} ${pathname === '/pages/forums' 
+          ? 'text-white light:text-black' 
+          : 'text-white/70 light:text-black/70'} 
+          hover:text-gray-300`}
+      >
+        Forums
+      </Link>
+    </nav>
 
       <div className="flex items-center ml-auto space-x-9 text-sm">
-        <a href="#" className="font-medium text-white/70 light:text-black/70 hover:text-gray-300 hidden sm:block">
-          Wishlist
-        </a>
-        <a href="#" className="flex items-center font-medium hover:text-gray-300 light:text-black/70">
-
-          <span>Cart</span>
-          <div className="ml-1 bg-green-600 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-            1
-          </div>
-        </a>
+        
         <div className="flex items-center">
-          <div className="relative mr-2">
-            
-          <div className="flex justify-end mb-2 pr-2">
+
+             {user.user !== null ?  <div className="flex   pr-2">
             <NotificationPopup />
-          </div>
-          </div>
+          </div> : null }
+          
+
+
           {user.user !== null ? (
             <div>
              

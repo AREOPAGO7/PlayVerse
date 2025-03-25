@@ -7,6 +7,14 @@ import { getFirestore, doc, getDoc, updateDoc, arrayUnion, increment } from "fir
 import axios from "axios";
 import { useParams } from "next/navigation";
 import Image from "next/image";
+import { Check, Percent } from "lucide-react";
+import { Poppins } from 'next/font/google';
+
+
+const poppins = Poppins({
+  subsets: ['latin'],
+  weight: '600',
+});
 
 
 interface CardDetails {
@@ -350,7 +358,7 @@ const PaymentPage = () => {
     <div className="font-medium bg-[#111111] light:bg-light min-h-screen flex flex-col items-center justify-center text-white light:text-black p-6">
       <div className="w-full max-w-md">
         <div className="text-center mb-8">
-          <h1 className="text-2xl font-bold">Complete Your Purchase</h1>
+          <h1 className={`text-2xl font-bold ${poppins.className}`}>Complete Your Purchase</h1>
           <p className="text-gray-400 light:text-gray-600 mt-2">
             Secure payment processing
           </p>
@@ -364,24 +372,26 @@ const PaymentPage = () => {
 
         {gameDetails && (
           <div className="bg-zinc-800 light:bg-zinc-200 rounded-lg p-4 mb-6 flex items-center shadow-lg">
-            <div className="w-16 h-16 relative rounded overflow-hidden flex-shrink-0">
+            <div className="w-16 h-20 relative rounded overflow-hidden flex-shrink-0">
               <Image
                 src={gameDetails.image}
                 alt={gameDetails.name}
-                width={64}
-                height={64}
-                className="w-full h-full object-cover"
+               fill={true}
+                className=" object-cover"
                 priority
               />
             </div>
-            <div className="ml-4 flex-1">
-              <h2 className="font-medium">{gameDetails.name}</h2>
+            <div className="ml-4 flex">
+              <div>
+              <h2 className={`font-medium ${poppins.className}`}>{gameDetails.name}</h2>
               <p className="text-xl font-bold mt-1">
                 {isCouponApplied ? "$0.00" : `$${gameDetails.price.toFixed(2)}`}
               </p>
+              </div>
               {isCouponApplied && (
-                <div className="mt-2 p-3 bg-green-900/20 border border-green-800 rounded-md">
-                  <p className="text-green-400">🎉 600 fidelity points applied!</p>
+                <div className="mt-2 p-3 flex  border border-white/40 rounded-md ml-6">
+                  <Check className="w-4 h-4 mt-[2px] mr-2" /> 
+                  <p className={` text-[13px]  ${poppins.className}`}> cupon applied!</p>
                 </div>
               )}
             </div>
@@ -390,55 +400,55 @@ const PaymentPage = () => {
 
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <label className="block text-sm font-medium mb-2">Card Number</label>
+            <label className={`block text-sm font-medium mb-2 ${poppins.className}`}>Card Number</label>
             <input
               type="text"
               name="cardNumber"
               value={cardDetails.cardNumber}
               onChange={handleInputChange}
               placeholder="1234 5678 9012 3456"
-              className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               required
               maxLength={19}
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium mb-2">Cardholder Name</label>
+            <label className={`block text-sm font-medium mb-2 ${poppins.className}`}>Cardholder Name</label>
             <input
               type="text"
               name="cardHolder"
               value={cardDetails.cardHolder}
               onChange={handleInputChange}
               placeholder="John Doe"
-              className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
               required
             />
           </div>
 
           <div className="grid grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium mb-2">Expiry Date</label>
+              <label className={`block text-sm font-medium mb-2 ${poppins.className}`}>Expiry Date</label>
               <input
                 type="text"
                 name="expiryDate"
                 value={cardDetails.expiryDate}
                 onChange={handleInputChange}
                 placeholder="MM/YY"
-                className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
                 maxLength={5}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium mb-2">CVV</label>
+              <label className={`block text-sm font-medium mb-2 ${poppins.className}`}>CVV</label>
               <input
                 type="text"
                 name="cvv"
                 value={cardDetails.cvv}
                 onChange={handleInputChange}
                 placeholder="123"
-                className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-blue-500"
+                className="w-full px-4 py-3 bg-zinc-800 light:bg-zinc-200 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
                 required
                 maxLength={4}
               />
@@ -449,10 +459,10 @@ const PaymentPage = () => {
             <button
               type="submit"
               disabled={processingPayment || !gameDetails || !user?.uid}
-              className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
+              className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${poppins.className} ${
                 processingPayment || !gameDetails || !user?.uid
-                  ? "bg-blue-700 cursor-not-allowed opacity-70"
-                  : "bg-blue-600 hover:bg-blue-700"
+                  ? "bg-green-700 cursor-not-allowed opacity-70"
+                  : "bg-green-600 hover:bg-green-700"
               }`}
             >
               {processingPayment ? (
@@ -486,11 +496,11 @@ const PaymentPage = () => {
           </div>
 
           <div className="text-center text-sm text-gray-500 light:text-gray-600 mt-4">
-            <p>Your payment information is secure and encrypted</p>
+            <p className={`${poppins.className} text-[12px]`}>Your payment information is secure and encrypted</p>
             <button
               type="button"
               onClick={() => router.push("/")}
-              className="text-blue-500 hover:text-blue-400 mt-2"
+              className={`text-green-500 hover:text-green-400 mt-2 ${poppins.className} `}
             >
               Cancel and return to store
             </button>
@@ -499,18 +509,73 @@ const PaymentPage = () => {
 
         {/* Fidelity Coupon Button */}
         {fidelityPoints !== null && fidelityPoints >= 600 && gameDetails?.price <= 69.99 && (
-          <div className="mt-6">
+            <div className="mt-4 w-full max-w-md mx-auto px-2">
             <button
               type="button"
               onClick={handleApplyCoupon}
               disabled={isCouponApplied}
-              className={`w-full py-3 px-4 rounded-md font-medium transition-colors ${
-                isCouponApplied
-                  ? "bg-green-700 cursor-not-allowed opacity-70"
-                  : "bg-green-600 hover:bg-green-700"
-              }`}
+              className={`
+                w-full 
+                relative 
+                border-2
+                border-white/80
+                rounded-xl 
+                overflow-hidden 
+                transition-all 
+                duration-300 
+                ease-out
+                bg-
+                shadow-[0_0_20px_rgba(255,255,255,0.1)]
+                hover:shadow-[0_0_30px_rgba(255,255,255,0.15)]
+                backdrop-blur-sm
+                ${isCouponApplied ? "opacity-75 cursor-not-allowed border-white/50" : "hover:border-white"}
+              `}
             >
-              {isCouponApplied ? "Coupon Applied" : "Apply Fidelity Coupon (600 points)"}
+              {/* Dotted Line Separator */}
+              <div className="absolute top-0 bottom-0 left-1/2 w-px border-l-2 border-dashed border-white/70 transform -translate-x-1/2 z-10"></div>
+      
+              {/* Circle cutouts */}
+              <div className="absolute -top-1.5 left-1/2 w-3 h-3 rounded-full bg-black border border-white/30 transform -translate-x-1/2"></div>
+              <div className="absolute -bottom-1.5 left-1/2 w-3 h-3 rounded-full bg-black border border-white/30 transform -translate-x-1/2"></div>
+      
+              {/* Coupon Content */}
+              <div className="flex items-center relative z-20">
+                {/* Discount Symbol Container */}
+                <div className="w-1/4 flex items-center justify-center p-4">
+                  <div
+                    className={`
+                    bg- 
+                    border-2
+                    border-white/80
+                    text-white
+                    w-12 
+                    h-12 
+                    rounded-full 
+                    flex 
+                    items-center 
+                    justify-center
+                    shadow-[0_0_15px_rgba(255,255,255,0.1)]
+                    transition-all
+                    duration-300
+                  `}
+                  >
+                    {isCouponApplied ? <Check className="w-6 h-6" /> : <Percent className="w-6 h-6" />}
+                  </div>
+                </div>
+      
+                {/* Button Text */}
+                <div className="flex-grow text-left py-4 pl-2 pr-4">
+                  <div className={`font-bold  text-base text-white ${poppins.className}`}>
+                    {isCouponApplied ? "Discount Applied" : "Gaming Discount"}
+                  </div>
+                  <div className={`text-sm font-normal text-white/80 ${poppins.className}`}>
+                    {isCouponApplied ? "100% off your purchase" : "Save 100% on your order"}
+                  </div>
+                  <div className={`text-xs mt-0.5 text-green-500 ${poppins.className}`}>
+                    {isCouponApplied ? "Savings activated" : "600 points required"}
+                  </div>
+                </div>
+              </div>
             </button>
           </div>
         )}

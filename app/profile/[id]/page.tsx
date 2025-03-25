@@ -129,7 +129,7 @@ const handleFieldChange = (field: keyof User, value: string | number) => {
       {/* Fixed Sidebar - extends from below navbar to bottom */}
       <div className="fixed top-14 w-72 left-0 bottom-0 bg-[#111111]  z-10 hidden xl:block">
      
-       <div className="mt-4">
+       <div className="mt-4 h-full">
        <Sidebar />
        </div>
       
