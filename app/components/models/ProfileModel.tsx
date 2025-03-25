@@ -120,6 +120,3 @@ const ProfileModel: React.FC<ProfileModelProps> = ({ isOpen, onClose }) => {
 
 export default ProfileModel;
 
-function setIsSignUp(arg0: boolean) {
-  throw new Error('Function not implemented.');
-}
