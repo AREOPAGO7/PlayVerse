@@ -11,6 +11,9 @@ import {
 import { GoogleAuthProvider, signInWithPopup ,GithubAuthProvider} from 'firebase/auth';
 
 export class AuthService {
+  static discordSignIn() {
+    throw new Error('Method not implemented.');
+  }
   static getUser() {
     throw new Error('Method not implemented.');
   }

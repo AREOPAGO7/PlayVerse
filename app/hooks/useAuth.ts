@@ -65,18 +65,7 @@ export const useAuth = () => {
 
 
 
-  const githubSignIn = useCallback(async () => {
-    setLoading(true);
-    setError('');
-    try {
-      await AuthService.githubSignIn(); // Call the new GitHub sign-in method
-      router.push('/');
-    } catch (err) {
-      setError(AuthService.getErrorMessage(err));
-    } finally {
-      setLoading(false);
-    }
-  }, [router]);
+
 
 
   const logout = useCallback(async () => {
@@ -112,7 +101,7 @@ export const useAuth = () => {
     signup,
     logout,
     googleSignIn,
-    githubSignIn, // Ensure this is included in the return object
+     // Ensure this is included in the return object
     resetPassword, // Added resetPassword to the return object
     setError
   };
