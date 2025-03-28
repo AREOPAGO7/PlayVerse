@@ -22,7 +22,7 @@ const SignUpForm = ({  }: SignInProps) => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const { loading, error, signup,googleSignIn,githubSignIn } = useAuth();
+  const { loading, error, signup,googleSignIn} = useAuth();
   const [isShowPass, setIsShowPass] = useState(false);
  
   const handleSubmit = async (e: React.FormEvent) => {
@@ -60,19 +60,7 @@ const SignUpForm = ({  }: SignInProps) => {
 
      
         <div className="flex space-x-2 w-full">
-          <button
-          onClick={githubSignIn}
-            type="button"
-            className="flex items-center justify-center w-full space-x-4 border border-gray-300 rounded-lg shadow-sm py-2 px-4 hover:bg-gray-50"
-          >
-            <Image
-              src="/github.png"
-              alt="g logo"
-              width={20}
-              height={20}
-            />
-            <span className='text-black/80'>Github</span>
-          </button>
+         
           <button
           onClick={googleSignIn}
             type="button"
