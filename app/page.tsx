@@ -278,8 +278,6 @@ export default function Store() {
   const fetchDiscoverGames = useCallback(async (): Promise<void> => {
     try {
       setLoading(true);
-
-      // Check cache first
       const cachedData = localStorage.getItem(DISCOVER_CACHE_KEY);
       if (cachedData) {
         const { data, timestamp } = JSON.parse(cachedData);
@@ -289,30 +287,21 @@ export default function Store() {
           return;
         }
       }
-
-      // Fetch all games from Firestore collection
       const gamesCollectionRef = collection(db, "games");
       const gamesSnapshot = await getDocs(gamesCollectionRef);
-
       if (gamesSnapshot.empty) {
         console.log("No games found in Firestore");
         setDiscoverGames(defaultDiscoverGames);
         return;
       }
-
-      // Create an array of game data from Firestore
       const firestoreGames: FirestoreGame[] = gamesSnapshot.docs.map(doc => ({
         id: doc.id,
         ...doc.data() as Omit<FirestoreGame, 'id'>
       }));
-
       console.log("Games fetched from Firestore:", firestoreGames);
-
-      // Fetch additional details from RAWG API for each game
       const transformedGames: TransformedGame[] = await Promise.all(
         firestoreGames.map(async (firestoreGame) => {
           try {
-            // Search for the game by name in RAWG API
             const searchResponse = await fetch(
               `${RAWG_BASE_URL}/games?key=${RAWG_API_KEY}&search=${encodeURIComponent(firestoreGame.name)}&page_size=1`
             );
@@ -511,27 +500,35 @@ export default function Store() {
 
   // Handle game carousel progress
   useEffect(() => {
-    const duration = 8000;
-    const interval = 50;
-    setProgress(0);
+    const duration = 8000; // Total duration before switch
+    const interval = 60;   // Update interval
+    let progressTimer: NodeJS.Timeout;
+    let gameTimer: NodeJS.Timeout;
 
-    const progressTimer = setInterval(() => {
-      setProgress((prev) => {
-        const newProgress = prev + (interval / duration) * 100;
-        return newProgress >= 100 ? 100 : newProgress;
-      });
-    }, interval);
+    const startTimers = () => {
+      setProgress(0);
+      
+      progressTimer = setInterval(() => {
+        setProgress((prev) => {
+          if (prev >= 100) {
+            clearInterval(progressTimer);
+            return 100;
+          }
+          return prev + (interval / duration) * 100;
+        });
+      }, interval);
 
-    const gameTimer = setTimeout(() => {
-      clearInterval(progressTimer);
-      setIsTransitioning(true);
+      gameTimer = setTimeout(() => {
+        setIsTransitioning(true);
+        setTimeout(() => {
+          setPrevGameIndex(activeGameIndex);
+          setActiveGameIndex((current) => (current + 1) % (featuredGames.length || 1));
+          setIsTransitioning(false);
+        }, 500);
+      }, duration);
+    };
 
-      setTimeout(() => {
-        setPrevGameIndex(activeGameIndex);
-        setActiveGameIndex((current) => (current + 1) % (featuredGames.length || 1));
-        setIsTransitioning(false);
-      }, 500);
-    }, duration);
+    startTimers();
 
     return () => {
       clearInterval(progressTimer);
@@ -666,8 +663,38 @@ export default function Store() {
                         >
                           Buy Now
                         </Link>
-                        <button className="bg-black/30 backdrop-blur-sm text-[14px] border border-white/20 font-semibold px-4 py-2 rounded hover:bg-white/10 transition-colors">
-                          Add to Wishlist
+                        <button 
+                          onClick={() => {
+                            const game = games[activeGameIndex];
+                            if (!game) return;
+
+                            const cartItem = {
+                              id: game.id.toString(),
+                              name: game.title,
+                              image: game.banner,
+                              price: parseFloat(game.price.replace('$', '')) || 0,
+                              quantity: 1
+                            };
+
+                            // Get existing cart
+                            const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+                            
+                            // Check if item exists
+                            const existingItemIndex = existingCart.findIndex(item => item.id === cartItem.id);
+
+                            if (existingItemIndex !== -1) {
+                              existingCart[existingItemIndex].quantity += 1;
+                            } else {
+                              existingCart.push(cartItem);
+                            }
+
+                            // Save back to localStorage
+                            localStorage.setItem('cart', JSON.stringify(existingCart));
+                            alert('Game added to cart!');
+                          }}
+                          className="bg-black/30 backdrop-blur-sm text-[14px] border border-white/20 font-semibold px-4 py-2 rounded hover:bg-white/10 transition-colors"
+                        >
+                          Add to Cart
                         </button>
                       </div>
                     </div>

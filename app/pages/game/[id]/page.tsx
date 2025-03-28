@@ -77,6 +77,42 @@ export default function GamePage() {
         return <div>Game not found</div>;
     }
 
+    // Add this function to handle adding items to cart
+    const addToCart = () => {
+        if (!game) return;
+
+        const cartItem = {
+            id: game.id,
+            name: game.name,
+            image: game.background_image,
+            price: discountedPrice || price,
+            quantity: 1
+        };
+
+        // Get existing cart items from localStorage
+        const existingCart = JSON.parse(localStorage.getItem('cart') || '[]');
+        
+        // Check if item already exists in cart
+        const existingItemIndex = existingCart.findIndex(item => item.id === game.id);
+
+        if (existingItemIndex !== -1) {
+            // Item exists, update quantity
+            existingCart[existingItemIndex].quantity += 1;
+        } else {
+            // Item doesn't exist, add new item
+            existingCart.push(cartItem);
+        }
+
+        // Save updated cart back to localStorage
+        localStorage.setItem('cart', JSON.stringify(existingCart));
+        
+        // Add this console log to verify the data
+        console.log('Current cart:', existingCart);
+
+        // Optional: Show feedback to user
+        alert('Game added to cart!');
+    };
+
     return (
         <div className="flex flex-col h-screen bg-[#111111] light:bg-zinc-100 text-white">
             <Navbar />
@@ -213,15 +249,19 @@ export default function GamePage() {
                                 <p className="text-xl font-bold light:text-black/80">Base Game</p>
                                 <p className="text-sm text-gray-400 light:text-black/80">May include In-app purchases</p>
                                 <div className="space-y-3">
-                                    <button onClick={() => router.push(`/pages/payment/${game.id}`)} className="w-full bg-green-500 hover:bg-[#0096D1] text-white font-semibold py-4 rounded transition-colors">
+                                    <button 
+                                        onClick={() => router.push(`/pages/payment/${game.id}`)} 
+                                        className="w-full bg-green-500 hover:bg-[#0096D1] text-white font-semibold py-4 rounded transition-colors"
+                                    >
                                         Get
                                     </button>
-                                    <button className="w-full bg-zinc-800 light:bg-zinc-300 light:text-black/80 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors">
+                                    <button 
+                                        onClick={addToCart}
+                                        className="w-full bg-zinc-800 light:bg-zinc-300 light:text-black/80 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors"
+                                    >
                                         Add To Cart
                                     </button>
-                                    <button className="w-full bg-zinc-800 light:bg-zinc-300 light:text-black/80 hover:bg-zinc-700 text-white font-semibold py-4 rounded transition-colors">
-                                        Add to Wishlist
-                                    </button>
+                                   
                                 </div>
                             </div>
 

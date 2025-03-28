@@ -19,7 +19,7 @@ const GameRefreshComponent = () => {
   const fetchNewReleasesFromRAWG = async () => {
     try {
       const response = await fetch(
-        `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&dates=2025-01-01,2025-12-31&ordering=-released`
+        `https://api.rawg.io/api/games?key=${RAWG_API_KEY}&dates=2000-01-01,2025-12-31&ordering=-released`
       );
 
       if (!response.ok) {
@@ -187,8 +187,9 @@ const GameRefreshComponent = () => {
                     <Image
                       src={game.image}
                       alt={game.name}
-                      className="w-full h-48 object-cover"
-                      fill={true}
+                      className=" h-48 object-cover"
+                      width={300}
+                      height={400}
                     />
                     <div className="p-4">
                       <h3 className="text-xl font-bold mb-2">{game.name}</h3>

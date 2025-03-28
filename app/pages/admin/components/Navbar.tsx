@@ -1,6 +1,7 @@
 "use client"
 import { FC } from "react"
 
+
 interface NavbarProps {
   darkMode: boolean
   toggleTheme: () => void
@@ -8,6 +9,8 @@ interface NavbarProps {
 }
 
 const Navbar: FC<NavbarProps> = ({ darkMode, toggleTheme, toggleSidebar }) => {
+ 
+
   return (
     <nav
       className={`fixed top-0 left-0 right-0 z-30 ${

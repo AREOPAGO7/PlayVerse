@@ -236,7 +236,7 @@ export function useChat(activeChatId: string) {
 
   // Function to send a message
   const sendMessage = async (content: string, files: File[] = []) => {
-    if (!activeChatId || !user?.uid || (!content.trim() && files.length === 0)) return
+    if (!activeChatId || !user?.uid || (!content.trim() && files.length === 0)) return;
 
     try {
       const attachments: never[] = []
@@ -271,10 +271,23 @@ export function useChat(activeChatId: string) {
         timestamp: serverTimestamp(),
         attachments,
       })
-    } catch (error) {
-      console.error("Error sending message:", error)
-    }
+    // Create notification for the recipient
+    const notificationsRef = collection(db, 'notifications');
+    await addDoc(notificationsRef, {
+      type: 'chat_message',
+      userId: otherParticipantId,
+      senderId: user.uid,
+      senderName: user.displayName || 'User',
+      message: `New message: ${content.slice(0, 50)}${content.length > 50 ? '...' : ''}`,
+      chatId: activeChatId,
+      read: false,
+      createdAt: serverTimestamp(),
+    });
+
+  } catch (error) {
+    console.error("Error sending message:", error);
   }
+};
 
   // Function to create a new chat
   const createChat = async (otherUserId: string) => {

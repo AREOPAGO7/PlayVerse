@@ -5,16 +5,19 @@ import { collection, query, where, onSnapshot, Timestamp, orderBy, doc, updateDo
 import { db } from '../firebase/config';
 import { useUser } from './UserContext';
 
-interface Notification {
+// Update the Notification interface to include chat type
+// Add export to the interface
+export interface Notification {
   id: string;
-  type: 'forum_comment' | 'forum_reply' | 'new_forum';
+  type: 'forum_comment' | 'forum_reply' | 'new_forum' | 'chat_message';
   message: string;
   read: boolean;
   createdAt: Timestamp;
-  forumId: string;
+  forumId?: string;
   forumTitle?: string;
   senderId: string;
   senderName: string;
+  chatId?: string;
 }
 
 interface NotificationContextType {
