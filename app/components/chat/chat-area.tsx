@@ -5,6 +5,7 @@ import { useRef, useEffect } from "react"
 import Message from "./message"
 import MessageInput from "./message-input"
 import { Message as MessageType, User, Chat, ChatParticipant } from "@/app/types/chat"
+import { useOnlineUsers } from '@/app/hooks/useOnlineUsers';
 
 interface ChatAreaProps {
   messages: MessageType[]
@@ -15,6 +16,14 @@ interface ChatAreaProps {
 
 export default function ChatArea({ messages, currentUser, activeChat, onSendMessage }: ChatAreaProps) {
   const messagesEndRef = useRef<HTMLDivElement>(null)
+  const onlineUsers = useOnlineUsers();
+  
+  const otherParticipantId = activeChat?.participantIds?.find(
+    id => id !== currentUser.uid
+  ) || activeChat?.participantIds?.[0] || '';
+  
+  // Use the hook at the component level
+
   
   useEffect(() => {
     scrollToBottom()
@@ -33,8 +42,8 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
     }
   }
   
-  const getOtherUser = (): { username: string; profilePictureUrl: string; status: string } => {
-    if (!activeChat?.participants) {
+  const getOtherUser = () => {
+    if (!activeChat?.participantIds) {
       return {
         username: 'Unknown User',
         profilePictureUrl: '/placeholder.svg?height=40&width=40',
@@ -42,14 +51,14 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
       }
     }
     
-    const otherParticipant = activeChat.participants.find(
-      (participant) => participant.uid !== currentUser.uid
-    ) || activeChat.participants[0]
+    const otherParticipant = activeChat.participants?.find(
+      p => p.uid === otherParticipantId
+    );
     
     return {
       username: otherParticipant?.username || 'Unknown User',
       profilePictureUrl: otherParticipant?.profilePictureUrl || '/placeholder.svg?height=40&width=40',
-      status: otherParticipant?.status || 'offline'
+      status: onlineUsers.includes(otherParticipantId) ? 'online' : 'offline'
     }
   }
   
@@ -68,8 +77,12 @@ export default function ChatArea({ messages, currentUser, activeChat, onSendMess
           />
         </div>
         <div>
-          <h2 className="font-medium light:text-zinc-800">{otherUser.username}</h2>
-          <p className="text-sm text-zinc-400 light:text-zinc-800">
+          <h2 className="font-semibold  light:text-zinc-800">{otherUser.username}</h2>
+          <p className={`text-sm font-semibold ${
+            otherUser.status === "online" 
+              ? "text-green-500" 
+              : "text-zinc-400"
+          } light:text-zinc-800`}>
             {otherUser.status === "online"
               ? "Online"
               : otherUser.status === "away"

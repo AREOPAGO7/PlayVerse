@@ -11,7 +11,7 @@ export interface User {
   username: string;
   profilePictureUrl?: string;
   avatar?: string;
-  status?: "online" | "offline" | "away";
+  status: string; // Make sure this is required
   bio?: string;
   id?: string;
   email?: string;

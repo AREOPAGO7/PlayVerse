@@ -2,7 +2,7 @@
 import Image from 'next/image'
 import { useState, useRef, useEffect, useCallback, useMemo } from "react"
 import Head from "next/head"
-import { collection, getDocs } from "firebase/firestore";
+import { collection, doc, getDocs, updateDoc } from "firebase/firestore";
 import { db } from "./firebase/config";
 import Navbar from './components/navigation/Navbar';
 // import { useUser } from "./contexts/UserContext";
@@ -14,6 +14,7 @@ import { Game, DiscoverGame, RAWGGame, NewGame } from './types/games'
 import { FirestoreGame, RAWGSearchResponse, TransformedGame, } from './types/fetch'
 
 import Link from 'next/link';
+import { useUser } from './contexts/UserContext';
 const poppins = Poppins({
   subsets: ['latin'],
   weight: '600',
@@ -38,7 +39,7 @@ export default function Store() {
 
   const discoverCarouselRef = useRef<HTMLDivElement>(null);
   const newReleasesCarouselRef = useRef<HTMLDivElement>(null);
-
+  const { user } = useUser();
   // State for storing API data
   const [featuredGames, setFeaturedGames] = useState<Game[]>([]);
   const [NewGames, setNewGames] = useState<NewGame[]>([]);
@@ -46,7 +47,39 @@ export default function Store() {
   const [, setLoading] = useState<boolean>(true);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [_error, setError] = useState<string | null>(null);
+  useEffect(() => {
+    if (!user?.uid) return;
 
+    const updateOnlineStatus = async () => {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        status: "online",
+        lastSeen: new Date().toISOString()
+      });
+    };
+
+    const handleOffline = async () => {
+      const userRef = doc(db, 'users', user.uid);
+      await updateDoc(userRef, {
+        status: "offline",
+        lastSeen: new Date().toISOString()
+      });
+    };
+
+    // Set initial online status
+    updateOnlineStatus();
+
+    // Add event listeners for offline/online status
+    window.addEventListener('beforeunload', handleOffline);
+    window.addEventListener('offline', handleOffline);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('beforeunload', handleOffline);
+      window.removeEventListener('offline', handleOffline);
+      handleOffline();
+    };
+  }, [user?.uid]);
   // Default games to use as fallback if API fails
   const defaultGames: Game[] = useMemo(() => [
     {

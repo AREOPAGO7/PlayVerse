@@ -5,8 +5,8 @@ import Image from "next/image"
 import { db } from "@/app/firebase/config"
 import { collection, getDocs } from "firebase/firestore"
 import { Timestamp } from "firebase/firestore"
+import { useOnlineUsers } from '@/app/hooks/useOnlineUsers'
 
-// Define proper interfaces for our data structures
 interface User {
   uid: string
   username: string
@@ -69,6 +69,7 @@ interface SidebarProps {
 }
 
 export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, onCreateChat }: SidebarProps) {
+  const onlineUsers = useOnlineUsers();
   const [searchQuery, setSearchQuery] = useState("")
   const [showNewChat, setShowNewChat] = useState(false)
   const [newChatName, setNewChatName] = useState("")
@@ -89,8 +90,8 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
         .map(doc => ({
           uid: doc.id,
           username: doc.data().username,
-          profilePictureUrl: doc.data().profilePictureUrl,
-          status: doc.data().status || "offline",
+          profilePictureUrl: doc.data().profilePictureUrl || doc.data().avatar, // Try both fields
+          avatar: doc.data().avatar,
           bio: doc.data().bio,
           ...doc.data(),
         } as User))
@@ -114,73 +115,59 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
   }, [newChatName, showNewChat, searchUsers])
 
   const getOtherUser = (chat: Chat): ChatParticipant => {
-    // Check if chat exists
-    if (!chat)
+    if (!chat) {
       return {
         uid: "",
         username: "Unknown User",
         profilePictureUrl: "/placeholder.svg?height=48&width=48",
         status: "offline",
       }
-
-    // Handle different data structures that might come from Firestore
-    if (chat.participants) {
-      const otherParticipant = chat.participants.find((participant) => participant.uid !== currentUser.uid)
-
-      return (
-        otherParticipant || {
-          uid: "",
-          username: "Unknown User",
-          profilePictureUrl: "/placeholder.svg?height=48&width=48",
-          status: "offline",
-        }
-      )
-    } else if (chat.users) {
-      const otherUser = chat.users.find((user) => user.uid !== currentUser.uid || user.id !== currentUser.uid)
-
-      return (
-        otherUser || {
-          uid: "",
-          username: "Unknown User",
-          profilePictureUrl: "/placeholder.svg?height=48&width=48",
-          status: "offline",
-        }
-      )
     }
 
-    // If no participants or users array is found, try to use direct properties
-    if (chat.username && chat.uid !== currentUser.uid) {
+    const otherParticipantId = chat.participantIds?.find(id => id !== currentUser.uid);
+    const isOnline = onlineUsers.includes(otherParticipantId || '');
+
+    if (chat.participants) {
+      const otherParticipant = chat.participants.find((participant) => participant.uid !== currentUser.uid)
       return {
-        uid: chat.uid || "",
-        username: chat.username,
-        profilePictureUrl: chat.profilePictureUrl,
-        status: chat.status || "offline"
+        ...(otherParticipant || {
+          uid: "",
+          username: "Unknown User",
+          profilePictureUrl: "/placeholder.svg?height=48&width=48",
+        }),
+        status: isOnline ? "online" : "offline"
       }
     }
 
-    // Default fallback
+    if (chat.users) {
+      const otherUser = chat.users.find((user) => user.uid !== currentUser.uid)
+      return {
+        ...(otherUser || {
+          uid: "",
+          username: "Unknown User",
+          profilePictureUrl: "/placeholder.svg?height=48&width=48",
+        }),
+        status: isOnline ? "online" : "offline"
+      }
+    }
+
     return {
-      uid: "",
-      username: "Unknown User",
-      profilePictureUrl: "/placeholder.svg?height=48&width=48",
-      status: "offline",
+      uid: chat.uid || "",
+      username: chat.username || "Unknown User",
+      profilePictureUrl: chat.profilePictureUrl || "/placeholder.svg?height=48&width=48",
+      status: isOnline ? "online" : "offline"
     }
   }
 
   const filteredChats = chats.filter((chat) => {
-    // If there's no search query, show all chats
     if (!searchQuery) return true
-
     const otherUser = getOtherUser(chat)
-    // Check if username exists and contains the search query
     return otherUser?.username?.toLowerCase().includes(searchQuery.toLowerCase()) || false
   })
 
   const formatTime = (date?: Timestamp | Date | string): string => {
     if (!date) return "";
-
     try {
-      // Handle Firestore Timestamp
       if (date && typeof date === 'object' && 'toDate' in date && typeof date.toDate === 'function') {
         return date.toDate().toLocaleTimeString("en-US", {
           hour: "numeric",
@@ -188,7 +175,6 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
           hour12: true,
         });
       }
-      // Handle regular date strings
       return new Date(date as string | number).toLocaleTimeString("en-US", {
         hour: "numeric",
         minute: "2-digit",
@@ -200,67 +186,52 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
     }
   };
 
-  const handleChatSelect = (chatId: string) => {
-    // First trigger the parent's onChatSelect
-    onChatSelect(chatId);
-    
-    // Log for debugging
-    console.log("Selected chat:", chatId);
-    console.log("Chat unread status:", chats.find(chat => chat.id === chatId)?.unread);
-  };
-  
   const handleCreateChat = async (userId: string) => {
-    const chatId = await onCreateChat(userId)
-    if (chatId) {
-      onChatSelect(chatId)
-      setShowNewChat(false)
-      setNewChatName("")
-      setSearchResults([])
+    try {
+      const chatId = await onCreateChat(userId);
+      if (chatId) {
+        onChatSelect(chatId);
+        setShowNewChat(false);
+        setNewChatName("");
+        setSearchResults([]);
+      }
+    } catch (error) {
+      console.error("Error creating chat:", error);
     }
-  }
+  };
 
-  const getStatusColor = (status: string): string => {
-    switch (status) {
-      case "online":
-        return "bg-green-500"
-      case "away":
-        return "bg-yellow-500"
-      case "offline":
-        return "bg-zinc-500"
-      default:
-        return "bg-zinc-500"
-    }
-  }
-
-  useEffect(() => {
-    console.log("Chats received in sidebar:", chats)
-  }, [chats])
-
+  // Update the return statement
   return (
-    <div className="w-80 h-full bg-[#111] border-r border-zinc-800 light:border-zinc-400 flex flex-col light:bg-light">
-      <div className="p-4 border-b border-zinc-800 light:border-zinc-400">
+    <div className="w-80 h-full bg-[#111] border-r border-zinc-800 flex flex-col">
+      <div className="p-4 border-b border-zinc-800">
         <div className="relative">
           <input
             type="text"
-            placeholder={showNewChat ? "Search users..." : "Search chats"}
-            value={showNewChat ? newChatName : searchQuery}
-            onChange={(e) => (showNewChat ? setNewChatName(e.target.value) : setSearchQuery(e.target.value))}
-            className="w-full bg-zinc-800 rounded-lg pl-10 pr-4 py-2 text-white/70 focus:outline-none light:bg-zinc-200 light:text-zinc-800"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            placeholder="Search chats..."
+            className="w-full p-2 pl-8 bg-zinc-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
           />
           <svg
-            className="absolute left-3 top-2.5 h-5 w-5 text-zinc-400"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 24 24"
+            className="absolute left-2.5 top-3 h-4 w-4 text-zinc-500"
             fill="none"
             stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            viewBox="0 0 24 24"
           >
-            <circle cx="11" cy="11" r="8" />
-            <path d="m21 21-4.3-4.3" />
+            <path
+              strokeLinecap="round"
+              strokeLinejoin="round"
+              strokeWidth={2}
+              d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+            />
           </svg>
         </div>
+        <button
+          onClick={() => setShowNewChat(!showNewChat)}
+          className="w-full mt-4 py-2 px-4 bg-green-600 text-white rounded-lg hover:bg-green-700 transition-colors"
+        >
+          {showNewChat ? "Back to Chats" : "New Chat"}
+        </button>
       </div>
 
       <div className="flex-1 overflow-y-auto">
@@ -268,138 +239,88 @@ export default function Sidebar({ chats, currentUser, activeChat, onChatSelect, 
           filteredChats.length > 0 ? (
             filteredChats.map((chat) => {
               const otherUser = getOtherUser(chat)
+              const otherParticipantId = chat.participantIds?.find(id => id !== currentUser.uid) || '';
+              const isOnline = onlineUsers.includes(otherParticipantId);
+
               return (
                 <button
                   key={chat.id}
-                  onClick={() => handleChatSelect(chat.id)}
+                  onClick={() => onChatSelect(chat.id)}
                   className={`w-full p-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors ${
-                    activeChat === chat.id 
-                      ? "bg-zinc-800 light:bg-zinc-200" 
-                      : chat.unread && chat.unread > 0
-                        ? "bg-green-900/30 border-l-4 border-green-500" // Enhanced highlight with border
-                        : ""
+                    activeChat === chat.id ? "bg-zinc-800" : ""
                   }`}
                 >
                   <div className="relative">
                     <div className="w-12 h-12 rounded-full overflow-hidden">
                       <Image
-                        src={otherUser.profilePictureUrl || "/placeholder.svg?height=48&width=48"}
+                        src={otherUser.profilePictureUrl || "/placeholder.svg"}
                         alt={otherUser.username}
                         width={48}
-                        height={60}
+                        height={48}
                         className="object-cover"
                       />
                     </div>
                     <div
-                      className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-zinc-900 ${getStatusColor(otherUser.status || "offline")}`}
+                      className={`absolute bottom-0 right-0 w-4 h-4 rounded-full border-2 border-zinc-900 ${
+                        isOnline ? "bg-green-500" : "bg-zinc-500"
+                      }`}
                     />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex justify-between">
-                      <p className={`font-medium truncate ${
-                        chat.unread && chat.unread > 0 
-                          ? 'text-green-400 font-bold' 
-                          : 'text-white/80 light:text-zinc-800'
-                      }`}>
-                        {otherUser.username}
-                      </p>
-                      <span className={`text-xs ${
-                        chat.unread && chat.unread > 0 
-                          ? 'text-green-400' 
-                          : 'text-zinc-400 light:text-zinc-800'
-                      }`}>
-                        {chat.lastMessageTime ? formatTime(chat.lastMessageTime) : ""}
-                      </span>
+                    <div className="flex justify-between items-center">
+                      <h3 className="font-semibold text-white truncate">{otherUser.username}</h3>
+                      {chat.lastMessageTime && (
+                        <span className="text-xs text-zinc-500">{formatTime(chat.lastMessageTime)}</span>
+                      )}
                     </div>
-                    <p className={`text-sm truncate text-start w-full ${
-                      chat.unread && chat.unread > 0 
-                        ? 'text-green-400' 
-                        : 'text-zinc-500 light:text-zinc-800'
-                    }`}>
-                      {chat.lastMessage}
-                    </p>
+                    {chat.lastMessage && (
+                      <p className="text-sm text-zinc-400 truncate text-left w-full">{chat.lastMessage}</p>
+                    )}
                   </div>
-                  {chat.unread && chat.unread > 0 && (
-                    <div className="bg-green-500 text-white text-xs rounded-full w-5 h-5 flex items-center justify-center">
-                      {chat.unread}
-                    </div>
-                  )}
                 </button>
               )
             })
           ) : (
-            <div className="flex items-center justify-center h-32 text-zinc-500">No chats found</div>
+            <div className="flex items-center justify-center h-32 text-zinc-500">
+              No chats found
+            </div>
           )
-        ) : searchResults.length > 0 ? (
-          searchResults.map((user) => (
-            <button
-              key={user.uid}
-              onClick={() => handleCreateChat(user.uid)}
-              className="w-full p-3 flex items-center gap-3 hover:bg-zinc-800 transition-colors light:hover:bg-zinc-200 light:text-zinc-800"
-            >
-              <div className="relative">
-                <div className="w-12 h-12 rounded-full overflow-hidden">
-                  <Image
-                    src={user.avatar || "/placeholder.svg?height=48&width=48"}
-                    alt={user.username}
-                    width={48}
-                    height={60}
-                    className="object-cover"
-                  />
-                </div>
-                <div
-                  className={`absolute bottom-0 right-0 w-3 h-3 rounded-full border-2 border-zinc-900 ${getStatusColor(user.status || "offline")}`}
-                />
-              </div>
-              <div className=" min-w-0">
-                <p className="font-medium truncate text-white/80 light:text-zinc-800 mr-14">{user.username}</p>
-                {user.bio && (
-                  <p className="text-sm text-zinc-500 truncate text-start w-full light:text-zinc-800">
-                    {user.bio !== "none" ? user.bio : ""}
-                  </p>
-                )}
-              </div>
-            </button>
-          ))
-        ) : newChatName ? (
-          <div className="flex items-center justify-center h-32 text-zinc-500">No users found</div>
-        ) : null}
-      </div>
-
-      <div className="p-4 border-t border-zinc-800 light:border-zinc-400">
-        {showNewChat ? (
-          <button
-            onClick={() => {
-              setShowNewChat(false)
-              setNewChatName("")
-              setSearchResults([])
-            }}
-            className="w-full py-2 rounded-lg bg-zinc-800 hover:bg-zinc-700 transition-colors light:bg-zinc-200 light:text-zinc-800 light:hover:bg-zinc-300"
-          >
-            Cancel
-          </button>
         ) : (
-          <button
-            onClick={() => setShowNewChat(true)}
-            className="w-full py-2 rounded-lg bg-green-600 hover:bg-green-500 transition-colors flex items-center justify-center gap-2"
-          >
-            <svg
-              xmlns="http://www.w3.org/2000/svg"
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              strokeLinecap="round"
-              strokeLinejoin="round"
-            >
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              <line x1="12" y1="11" x2="12" y2="17" />
-              <line x1="9" y1="14" x2="15" y2="14" />
-            </svg>
-            <span>New Chat</span>
-          </button>
+          <div className="p-4">
+            <input
+              type="text"
+              value={newChatName}
+              onChange={(e) => setNewChatName(e.target.value)}
+              placeholder="Search users..."
+              className="w-full p-2 bg-zinc-800 text-white rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            />
+            <div className="mt-4 space-y-2">
+              {searchResults.map((user) => (
+                <button
+                  key={user.uid}
+                  onClick={() => handleCreateChat(user.uid)}
+                  className="w-full p-3 flex items-center gap-3 hover:bg-zinc-800 rounded-lg transition-colors"
+                >
+                  <div className="w-12 h-12 rounded-full overflow-hidden">
+                    <Image
+                      src={user.profilePictureUrl || user.avatar || "/placeholder.svg"}
+                      alt={user.username}
+                      width={48}
+                      height={48}
+                      className="object-cover"
+                    />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <h3 className="font-medium text-white truncate">{user.username}</h3>
+                    {user.bio && <p className="text-sm text-zinc-400 truncate">{user.bio}</p>}
+                  </div>
+                </button>
+              ))}
+              {newChatName && searchResults.length === 0 && (
+                <p className="text-center text-zinc-500">No users found</p>
+              )}
+            </div>
+          </div>
         )}
       </div>
     </div>

@@ -2,6 +2,7 @@ import { AuthProvider } from './contexts/AuthContext';
 import { UserProvider } from './contexts/UserContext';
 import { NotificationProvider } from './contexts/NotificationContext';
 import './globals.css';
+import OnlineStatus from './components/OnlineStatus'
 
 export default function RootLayout({
   children,
@@ -14,13 +15,14 @@ export default function RootLayout({
         <title>PlayVerse</title>
       </head>
       <body>
-      <UserProvider>
-        <NotificationProvider>
-          <AuthProvider>
-            {children}
-          </AuthProvider>
-        </NotificationProvider>
-      </UserProvider>
+        <UserProvider>
+          <NotificationProvider>
+            <AuthProvider>
+              <OnlineStatus />
+              {children}
+            </AuthProvider>
+          </NotificationProvider>
+        </UserProvider>
       </body>
     </html>
   );

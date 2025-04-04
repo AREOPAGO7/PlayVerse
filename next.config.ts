@@ -7,6 +7,7 @@ const nextConfig: NextConfig = {
       'images.unsplash.com',
       'example.com',
       'res.cloudinary.com',
+      'via.placeholder.com',
       'lh3.googleusercontent.com',
       'avatars.githubusercontent.com',
       'media.rawg.io',
