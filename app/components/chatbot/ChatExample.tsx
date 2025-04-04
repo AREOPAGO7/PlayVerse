@@ -1,3 +1,4 @@
+'use client'
 import React from 'react';
 import { useState, useEffect, useRef } from 'react';
 
@@ -5,7 +6,7 @@ interface Message {
   text: string;
   isUser: boolean;
   isTyping?: boolean;
-  isNew?: boolean; // Add new property to track new messages
+  isNew?: boolean;
 }
 
 interface ChatResponse {
@@ -13,7 +14,6 @@ interface ChatResponse {
   session_id: string;
 }
 
-// TypingEffect component
 interface TypingEffectProps {
   text: string;
   speed?: number;
@@ -48,36 +48,24 @@ export default function ChatPopup() {
   const [isOpen, setIsOpen] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  // Initialize session when component mounts
-  useEffect(() => {
-    initializeSession();
-  }, []);
-
-  // Add welcome message when chat is first opened
-  useEffect(() => {
-    if (isOpen && messages.length === 0 && sessionId) {
-      addBotMessage("Hi! I'm Anaas kalkhi AI chatbot, What do you want to know?");
-    }
-  }, [isOpen, messages.length, sessionId]);
-
-  // Scroll to bottom whenever messages change
-  useEffect(() => {
-    scrollToBottom();
-  }, [messages]);
-
-  const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
-  };
-
   const initializeSession = async () => {
     try {
-      const response = await fetch('http://13.61.15.91:5000/api/new-session', {
+      const response = await fetch('/api/new-session', {
         method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
       });
+      
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+      
       const data = await response.json();
       setSessionId(data.session_id);
     } catch (error) {
-      console.error('Error initializing session:', error);
+      console.error('Connection error:', error);
+      addBotMessage('Unable to connect to the chat service. Please try again later.');
     }
   };
 
@@ -85,14 +73,13 @@ export default function ChatPopup() {
     e.preventDefault();
     if (!input.trim()) return;
 
-    // Add user message to chat
     const userMessage = { text: input, isUser: true };
     setMessages(prev => [...prev, userMessage]);
     setInput('');
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://13.61.15.91:5000/api/chat', {
+      const response = await fetch('/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -103,25 +90,25 @@ export default function ChatPopup() {
         }),
       });
 
+      if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+      }
+
       const data: ChatResponse = await response.json();
-      
-      // Add bot response to chat
       addBotMessage(data.response);
       
-      // Update session ID if new one is provided
       if (data.session_id && data.session_id !== sessionId) {
         setSessionId(data.session_id);
       }
     } catch (error) {
       console.error('Error sending message:', error);
-      addBotMessage('Sorry, there was an error processing your message.');
+      addBotMessage('Sorry, there was an error processing your message. Please try again.');
     } finally {
       setIsLoading(false);
     }
   };
 
   const addBotMessage = (response: string) => {
-    // Add new bot message with isNew flag set to true
     setMessages(prev => [...prev, { 
       text: response, 
       isUser: false,
@@ -129,20 +116,35 @@ export default function ChatPopup() {
       isNew: true
     }]);
 
-    // After the message has been displayed with the typing effect
-    // we set isNew to false to mark it as an "old" message
     setTimeout(() => {
       setMessages(prev => 
         prev.map((msg, idx) => 
           idx === prev.length - 1 ? { ...msg, isNew: false } : msg
         )
       );
-    }, response.length * 20 + 500); // Rough estimate for typing effect completion
+    }, response.length * 20 + 500);
   };
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    initializeSession();
+  }, []);
+
+  useEffect(() => {
+    if (isOpen && messages.length === 0 && sessionId) {
+      addBotMessage("Hi! I'm Anaas kalkhi AI chatbot, What do you want to know?");
+    }
+  }, [isOpen, messages.length, sessionId]);
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
 
   return (
     <>
-      {/* Chat button - small circle in the initial state */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
@@ -155,14 +157,10 @@ export default function ChatPopup() {
         </button>
       )}
 
-      {/* Chat popup */}
       {isOpen && (
-        <div 
-          className="fixed bottom-6 right-6 w-[480px] h-[640px]  rounded-lg shadow-2xl z-40 overflow-hidden bg-zinc-900"
-        >
+        <div className="fixed bottom-6 right-6 w-[480px] h-[640px] rounded-lg shadow-2xl z-40 overflow-hidden bg-zinc-900">
           <div className="flex flex-col h-[640px] bg-zinc-900">
-            {/* Header */}
-            <div className=" p-3 flex items-center justify-between border-b bg-zinc-900">
+            <div className="p-3 flex items-center justify-between border-b bg-zinc-900">
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-black flex-shrink-0 mr-3 flex items-center justify-center">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="white">
@@ -182,7 +180,6 @@ export default function ChatPopup() {
               </button>
             </div>
 
-            {/* Messages */}
             <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-900">
               {messages.map((message, index) => (
                 <div
@@ -197,7 +194,7 @@ export default function ChatPopup() {
                     </div>
                   )}
                   <div
-                    className={`w-fit rounded-lg px-4 py-2  ${
+                    className={`w-fit rounded-lg px-4 py-2 ${
                       message.isUser
                         ? 'bg-green-700 text-white/90'
                         : 'bg-zinc-800 text-white/70'
@@ -211,7 +208,7 @@ export default function ChatPopup() {
                         />
                       </div>
                     ) : (
-                      <div className="text-left text-sm font-semibold ">
+                      <div className="text-left text-sm font-semibold">
                         {message.text}
                       </div>
                     )}
@@ -237,7 +234,6 @@ export default function ChatPopup() {
               <div ref={messagesEndRef} />
             </div>
 
-            {/* Input form */}
             <form onSubmit={sendMessage} className="p-3 border-t border-gray-100 bg-zinc-900">
               <div className="flex items-center gap-2">
                 <input
@@ -259,9 +255,6 @@ export default function ChatPopup() {
                 </button>
               </div>
             </form>
-            
-            {/* Footer */}
-            
           </div>
         </div>
       )}

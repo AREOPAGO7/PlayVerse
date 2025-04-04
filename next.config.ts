@@ -19,6 +19,14 @@ const nextConfig: NextConfig = {
       'cdn.cloudflare.steamstatic.com',
     ],
   },
+  async rewrites() {
+    return [
+      {
+        source: '/api/:path*',
+        destination: 'http://13.61.15.91:5000/api/:path*',
+      },
+    ];
+  },
 };
 
 export default nextConfig;
