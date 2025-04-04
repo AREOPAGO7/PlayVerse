@@ -1,6 +1,6 @@
 "use client"
 
-import { useState, useRef } from "react"
+import { useState} from "react"
 
 interface MessageInputProps {
   onSendMessage: (content: string, attachments: File[]) => void
@@ -9,7 +9,7 @@ interface MessageInputProps {
 export default function MessageInput({ onSendMessage }: MessageInputProps) {
   const [message, setMessage] = useState("")
   const [attachments, setAttachments] = useState<File[]>([])
-  const fileInputRef = useRef<HTMLInputElement>(null)
+
 
   const handleSend = () => {
     if (message.trim() || attachments.length > 0) {
