@@ -9,7 +9,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import NotificationPopup from './NotificationPopup';
 import { usePathname } from "next/navigation";
-// import ChatPopup from '../chatbot/ChatExample';
+import ChatPopup from '../chatbot/ChatExample';
 
 interface Game {
   id: string | number;
@@ -116,7 +116,7 @@ export default function Navbar() {
   // Replace the search input section
   return (
     <header className="flex items-center px-4 py-3 bg-[#111111] light:bg-light border-b border-white/10 light:border-gray-200">
-      {/* <ChatPopup /> */}
+      <ChatPopup />
       <div className="flex items-center">
         <Link href="/" className="mr-40">
           <div className="rounded flex items-center justify-center">

@@ -71,7 +71,7 @@ export default function ChatPopup() {
 
   const initializeSession = async () => {
     try {
-      const response = await fetch('http://localhost:5000/api/new-session', {
+      const response = await fetch('http://13.61.15.91:5000/api/new-session', {
         method: 'POST',
       });
       const data = await response.json();
@@ -92,7 +92,7 @@ export default function ChatPopup() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://localhost:5000/api/chat', {
+      const response = await fetch('http://13.61.15.91:5000/api/chat', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -158,18 +158,18 @@ export default function ChatPopup() {
       {/* Chat popup */}
       {isOpen && (
         <div 
-          className="fixed bottom-6 right-6 w-[480px] h-[640px] bg-white rounded-lg shadow-2xl z-40 overflow-hidden "
+          className="fixed bottom-6 right-6 w-[480px] h-[640px]  rounded-lg shadow-2xl z-40 overflow-hidden bg-zinc-900"
         >
           <div className="flex flex-col h-[640px] bg-zinc-900">
             {/* Header */}
-            <div className="bg-white p-3 flex items-center justify-between border-b ">
+            <div className=" p-3 flex items-center justify-between border-b bg-zinc-900">
               <div className="flex items-center">
                 <div className="w-8 h-8 rounded-full bg-black flex-shrink-0 mr-3 flex items-center justify-center">
                   <svg className="w-4 h-4" viewBox="0 0 24 24" fill="white">
                     <path d="M20 2H4c-1.1 0-2 .9-2 2v18l4-4h14c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2z"/>
                   </svg>
                 </div>
-                <h3 className="font-bold text-black">AI Chatbot</h3>
+                <h3 className="font-medium text-white">AI Chatbot</h3>
               </div>
               <button 
                 onClick={() => setIsOpen(false)}
@@ -183,7 +183,7 @@ export default function ChatPopup() {
             </div>
 
             {/* Messages */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-100">
+            <div className="flex-1 overflow-y-auto p-4 space-y-3 bg-zinc-900">
               {messages.map((message, index) => (
                 <div
                   key={index}
@@ -238,14 +238,14 @@ export default function ChatPopup() {
             </div>
 
             {/* Input form */}
-            <form onSubmit={sendMessage} className="p-3 border-t border-gray-100 bg-white">
+            <form onSubmit={sendMessage} className="p-3 border-t border-gray-100 bg-zinc-900">
               <div className="flex items-center gap-2">
                 <input
                   type="text"
                   value={input}
                   onChange={(e) => setInput(e.target.value)}
                   placeholder="Message..."
-                  className="flex-1 p-2 text-white bg-zinc-100 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 focus:bg-zinc-800 transition-all"
+                  className="flex-1 p-2 text-white bg-zinc-800 rounded-md focus:outline-none focus:ring-1 focus:ring-zinc-700 focus:bg-zinc-800 transition-all"
                   disabled={isLoading}
                 />
                 <button
